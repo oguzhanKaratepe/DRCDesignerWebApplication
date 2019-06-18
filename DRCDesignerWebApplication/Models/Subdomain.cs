@@ -4,6 +4,13 @@ namespace DRCDesignerWebApplication.Models
 {
     public class Subdomain:BaseEntity
     {
+
+
+        public Subdomain()
+        {
+            DRCards = new List<DrcCard>();
+            SubdomainRoles = new List<Role>();
+        }
         public int Id { get; set; }
         public int DrcProjectId { get; set; } 
         public string SubdomainName { get; set; }
