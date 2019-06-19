@@ -12,4 +12,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.4" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="DAL\UnitOfWork\" />
+  </ItemGroup>
+
 </Project>
