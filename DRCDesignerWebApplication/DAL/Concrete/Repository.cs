@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,39 +8,41 @@ namespace DRCDesignerWebApplication.DAL
 {
      public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-
-        public Repository()
+        protected DbContext _context;
+        private DbSet<TEntity> _dbSet;
+        public Repository(DbContext context)
         {
+            _context = context;
+            _dbSet = _context.Set<TEntity>();
 
         }
         public void Add(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(entity);
         }
-
         public IEnumerable<TEntity> GetAll()
         {
-            throw new NotImplementedException();
+           return  _dbSet.ToList();
         }
 
         public TEntity GetById(int id)
         {
-            throw new NotImplementedException();
+           return _dbSet.Find(id);
         }
 
         public void remove(int id)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(GetById(id));
         }
 
         public void remove(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(entity);
         }
 
         public void update(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(entity);
         }
     }
 }

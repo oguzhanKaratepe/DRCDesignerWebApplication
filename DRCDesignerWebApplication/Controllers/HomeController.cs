@@ -14,9 +14,7 @@ namespace DRCDesignerWebApplication.Controllers
         {
             using (MyDbContext dbContext=new MyDbContext())
             {
-                dbContext.Roles.Add(new Role() { RoleName = "x" });
-                dbContext.SaveChanges();
-                dbContext.Roles.Where(x => x.RoleName == "aa");
+                
             }
             
                 return View();

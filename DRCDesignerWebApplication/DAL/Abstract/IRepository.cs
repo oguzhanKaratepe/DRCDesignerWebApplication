@@ -7,6 +7,9 @@ namespace DRCDesignerWebApplication.DAL
 {
     public interface IRepository<TEntity> where TEntity: class
     {
+
+
+
         void Add(TEntity entity);
         void remove(int id);
         void remove(TEntity entity);
