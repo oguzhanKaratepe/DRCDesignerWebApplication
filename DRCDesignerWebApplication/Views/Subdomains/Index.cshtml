@@ -1,0 +1,32 @@
+﻿@model IEnumerable<DRCDesignerWebApplication.Models.Subdomain>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Subdomains</h3>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SubdomainName)
+            </th>
+            <th>  <a asp-action="CreateOrUpdate" class="btn btn-outline-success">New Subdomain</a></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubdomainName)
+            </td>
+            <td>
+                <a asp-action="CreateOrUpdate" asp-route-id="@item.Id">Update</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger ml-1" onclick="return confirm('Are you sure to delete this record?')">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

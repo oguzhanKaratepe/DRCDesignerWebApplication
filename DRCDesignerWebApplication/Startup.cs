@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DRCDesignerWebApplication.DAL.Context;
+using DRCDesignerWebApplication.DAL.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using DRCDesignerWebApplication.DAL.Context;
+using DRCDesignerWebApplication.DAL.UnitOfWork;
+
+using Microsoft.AspNetCore.Routing;
+using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
 
 namespace DRCDesignerWebApplication
 {
@@ -31,8 +39,15 @@ namespace DRCDesignerWebApplication
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddScoped<ISubdomainUnitOfWork, SubdomainUnitOfWork>();
+            services.AddScoped<IDrcUnitOfWork, DrcUnitOfWork>();
+            services.AddScoped<IRoleUnitOfWork, RoleUnitOfWork>();
+            services.AddScoped<DrcCardContext, DrcCardContext>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddDbContext<DrcCardContext>(context => { context.UseInMemoryDatabase("OguzDatabase"); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,13 +67,12 @@ namespace DRCDesignerWebApplication
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc(configureRoutes);
+            
+        }
+        private void configureRoutes(IRouteBuilder routeBuilder)
+        {
+            routeBuilder.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}");
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DRCDesignerWebApplication.Models
 {
-    public class DrcCard:BaseEntity
+    public class DrcCard
     {
         public int Id { get; set; }
         public int SubdomainId { get; set; }

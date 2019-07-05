@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRCDesignerWebApplication.Models
 {
-    public class Subdomain:BaseEntity
+    public class Subdomain
     {
 
 
@@ -11,11 +13,11 @@ namespace DRCDesignerWebApplication.Models
             DRCards = new List<DrcCard>();
             SubdomainRoles = new List<Role>();
         }
-        public int Id { get; set; }
-        public int DrcProjectId { get; set; } 
+        [Key]
+        public int Id { get; set; }    
+        [Required(ErrorMessage = "This field is required.")]
+        [DisplayName("Full Name")]
         public string SubdomainName { get; set; }
-
-        public virtual DrcProject DrcProject { get; set; }
         public virtual ICollection<DrcCard> DRCards { get; set; }
         public virtual ICollection<Role> SubdomainRoles { get; set; }
     }

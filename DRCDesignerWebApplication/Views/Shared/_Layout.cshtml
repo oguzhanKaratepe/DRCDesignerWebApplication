@@ -13,40 +13,93 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        * {
+            margin: 0px;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        #sidebar {
+            position: fixed;
+            width: 9%;
+            height: 93%;
+            background: #151719;
+            z-index: 5;
+        }
+
+        .footer {
+            color: white;
+            background-color: #151719;
+            margin-bottom: -15px;
+        }
+
+        #sidebar ul li {
+            list-style: none;
+            padding: 15px 10px;
+            border-bottom: 1px solid rgba(230,230,230,0.9);
+        }
+
+            #sidebar ul li .abcd12 {
+                color: rgba(230,230,230,0.9);
+            }
+        h5 {
+            color: rgba(230,230,230,0.9);
+           
+        }
+    </style>
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DRCDesignerWebApplication</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+    <div id="sidebar" class="container">
+        <ul>
+            <br />
+            <h5>DRC <br />DESIGNER</h5>
+            <li>
+                <a class="abcd12" asp-area="" asp-controller="Subdomains" asp-action="index">Subdomains</a>
+            </li>
+            <li class="abcd12">
+                <a class="abcd12" asp-area="" asp-controller="Roles" asp-action="index">Roles</a>
+            </li>
+        </ul>
+    </div>
+
+
+    @*<header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-controller="home" asp-action="ındex">DRCDesignerWebApplication</a>
+
+
+
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="home" asp-action="index">home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="home" asp-action="privacy">privacy</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>*@
+    <br />
     <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+    </div>
 
-    <footer class="border-top footer text-muted">
+
+    <footer class=" footer">
         <div class="container">
             &copy; 2019 - DRCDesignerWebApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

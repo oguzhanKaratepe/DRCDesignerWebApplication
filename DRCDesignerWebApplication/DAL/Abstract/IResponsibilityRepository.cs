@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DRCDesignerWebApplication.DAL.Abstract
 {
-  public interface IResponsibilityCollaborationRepository: IRepository<ResponsibilityCollaboration>
+    public interface IResponsibilityRepository:IRepository<Responsibility>
     {
-        IEnumerable<ResponsibilityCollaboration> getDrcCardAllResponsibilityCollaboration(int id);
+        ICollection<Responsibility> getDrcCardAllResponsibilities(int id); //id: drcCard id
     }
 }

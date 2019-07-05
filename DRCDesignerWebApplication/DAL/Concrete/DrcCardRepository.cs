@@ -14,17 +14,33 @@ namespace DRCDesignerWebApplication.DAL.Concrete
         public DrcCardRepository(DrcCardContext context) : base(context)
         {
         }
-
+       
         public int getDrcCardOrder(int id) //drcCard id
         {
-            return DrcCardContext.DrcCards.Where(s => s.Id == id).Single().Order;
+            DrcCard DrcCard = DrcCardContext.DrcCards.Where(s => s.Id == id).Single();
+
+            return DrcCard.Order;
         }
+        public DrcCard getDrcCardWithAllEntities(int id) //drcCard id
+        {
+            
+            return DrcCardContext.DrcCards.Include(a=>a.Fields).Include(a => a.Responsibilities).Include(a=>a.Authorizations).Where(s => s.Id == id).Single();
+            
+        }
+
 
         public void setDrcCardOrder(int id, int order) //drcCard id and Card order
         {
             DrcCard DrcCard = DrcCardContext.DrcCards.Where(s => s.Id == id).Single();
             DrcCard.Order = order;
             DrcCardContext.SaveChanges();
+        }
+
+        public IEnumerable<DrcCard> getAllCardsBySubdomain(int subdomainId)
+        {
+            var Subdomaincards = DrcCardContext.DrcCards.Where(s => s.SubdomainId == subdomainId).ToList();
+
+            return Subdomaincards;
         }
 
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }

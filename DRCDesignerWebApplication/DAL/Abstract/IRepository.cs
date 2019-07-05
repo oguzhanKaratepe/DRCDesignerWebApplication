@@ -16,6 +16,6 @@ namespace DRCDesignerWebApplication.DAL
         void update(TEntity entity);
 
         TEntity GetById(int id);
-        IEnumerable<TEntity> GetAll();
+        Task <IEnumerable<TEntity>> GetAll();
     }
 }

@@ -10,5 +10,6 @@ namespace DRCDesignerWebApplication.DAL.Abstract
     {
         IEnumerable<Role> getRolesBySubdomain(int id); //id:subdomain id
         IEnumerable<Role> getGlobalRoles();
+         Task<IEnumerable<Role>> getRoles();
     }
 }

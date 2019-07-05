@@ -8,7 +8,7 @@ namespace DRCDesignerWebApplication.DAL.Abstract
 {
    public interface IFieldRepository: IRepository<Field>
     {
-        IEnumerable<Field> getDrcCardAllFields(int id); //id: drcCard id
+        ICollection<Field> getDrcCardAllFields(int id); //id: drcCard id
 
     }
 }

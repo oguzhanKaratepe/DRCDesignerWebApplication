@@ -9,13 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DRCDesignerWebApplication.DAL.Concrete
 {
-    public class FieldRepository : Repository<Field>, IFieldRepository
+    public class FieldRepository : Repository<Field>, IFieldRepository 
     {
         public FieldRepository(DrcCardContext context) : base(context)
         {
+
         }
 
-        public IEnumerable<Field> getDrcCardAllFields(int id) //drcCard id
+        public ICollection<Field> getDrcCardAllFields(int id) //drcCard id
         {
             return DrcCardContext.Fields.Where(s => s.drcCardId == id).ToList();
         }

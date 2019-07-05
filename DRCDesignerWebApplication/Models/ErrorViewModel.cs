@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace DRCDesignerWebApplication.Models
 {
-    public class BaseEntity
+    public class ErrorViewModel
     {
-        public DateTime? CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
+        public string RequestId { get; set; }
+
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }

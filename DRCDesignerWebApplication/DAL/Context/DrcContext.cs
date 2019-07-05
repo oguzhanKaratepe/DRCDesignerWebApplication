@@ -11,16 +11,26 @@ namespace DRCDesignerWebApplication.DAL.Context
     public class DrcCardContext:DbContext
     {
 
-  
-        public DbSet<DrcProject> Projects { get; set; }
+        public DrcCardContext(DbContextOptions<DrcCardContext> context) : base(context)
+        {
+
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DrcCardResponsibility>().HasKey(sc => new { sc.DrcCardID, sc.ResponsibilityID });
+            modelBuilder.Entity<AuthorizationRole>().HasKey(sc => new { sc.AuthorizationId, sc.RoleId });
+        }
+
+      
         public DbSet<Subdomain> Subdomains { get; set; }
         public DbSet<DrcCard> DrcCards { get; set; }
         public DbSet<Responsibility> Responsibilities { get; set; }
-        public DbSet<ResponsibilityCollaboration> ResponsibilityCollaborations { get; set; }
+        public DbSet<DrcCardResponsibility> DrcCardResponsibilities { get; set; }
         public DbSet<Field> Fields { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Authorization> Authorizations { get; set; }
         public DbSet<AuthorizationRole> AuthorizationRoles { get; set; }
-        
+
+
     }
 }
