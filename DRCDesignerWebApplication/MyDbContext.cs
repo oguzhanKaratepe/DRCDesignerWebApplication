@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DRCDesignerWebApplication.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,10 @@ namespace DRCDesignerWebApplication
 {
     public class MyDbContext : DbContext
     {
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public MyDbContext(DbContextOptions<MyDbContext> options):base(options)
         {
-            optionsBuilder.UseInMemoryDatabase("x");
-            base.OnConfiguring(optionsBuilder);
+
         }
+        
     }
 }

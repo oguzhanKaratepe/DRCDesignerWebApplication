@@ -9,7 +9,7 @@ namespace DRCDesignerWebApplication.DAL
      public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected DbContext _context;
-        private DbSet<TEntity> _dbSet;
+        
         public Repository(DbContext context)
         {
             _context = context;
@@ -29,17 +29,17 @@ namespace DRCDesignerWebApplication.DAL
            return _context.Set<TEntity>().Find(id);
         }
 
-        public void remove(int id)
+        public void Remove(int id)
         {
             _context.Set<TEntity>().Remove(GetById(id));
         }
 
-        public void remove(TEntity entity)
+        public void Remove(TEntity entity)
         {
             _context.Set<TEntity>().Remove(entity);
         }
 
-        public void update(TEntity entity)
+        public void Update(TEntity entity)
         {
             _context.Set<TEntity>().Update(entity);
         }

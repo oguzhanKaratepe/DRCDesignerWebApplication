@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,11 +15,13 @@ namespace DRCDesignerWebApplication.Models
             DRCards = new List<DrcCard>();
             SubdomainRoles = new List<Role>();
         }
-        [Key]
-        public int Id { get; set; }    
-        [Required(ErrorMessage = "This field is required.")]
-        [DisplayName("Full Name")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "ID")]
+        public int ID { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "SubdomainName")]
+        [DisplayName("Subdomain Name")]
         public string SubdomainName { get; set; }
+
         public virtual ICollection<DrcCard> DRCards { get; set; }
         public virtual ICollection<Role> SubdomainRoles { get; set; }
     }

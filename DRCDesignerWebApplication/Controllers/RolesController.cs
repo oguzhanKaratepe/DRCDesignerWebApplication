@@ -9,6 +9,9 @@ using DRCDesignerWebApplication.DAL.Context;
 using DRCDesignerWebApplication.Models;
 using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
 using System.Collections;
+using DevExtreme.AspNet.Mvc;
+using DevExtreme.AspNet.Data;
+using Newtonsoft.Json;
 
 namespace DRCDesignerWebApplication.Controllers
 {
@@ -21,61 +24,54 @@ namespace DRCDesignerWebApplication.Controllers
             _roleUnitOfWork = roleUnitOfWorkt;
         }
 
-        // GET: Roles
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-
-            var roles = await _roleUnitOfWork.RoleRepository.getRoles();
-            return View(roles);
+            return View();
         }
 
-        // GET: Roles/Create
-        public async Task<IActionResult> CreateOrUpdate(int id = 0)
+        [HttpGet]
+        public async Task<object> Get(DataSourceLoadOptions loadOptions)
         {
-            var subdomains = await _roleUnitOfWork.SubdomainRepository.GetAll();
 
-            ViewData["SubdomainId"] = new SelectList(subdomains, "Id", "SubdomainName");
-            if (id == 0)
-                return View(new Role());
-            else
-                return View(_roleUnitOfWork.RoleRepository.GetById(id));
+            IEnumerable<Role> roles = await _roleUnitOfWork.RoleRepository.GetAll();
 
+            return DataSourceLoader.Load(roles, loadOptions);
         }
 
-        // POST: Roles/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrUpdate([Bind("Id,RoleName,SubdomainId")] Role role)
+        public IActionResult Post(string values)
         {
-            if (ModelState.IsValid)
-            {
-                if (role.Id == 0)
-                    _roleUnitOfWork.RoleRepository.Add(role);
-                else
-                    _roleUnitOfWork.RoleRepository.update(role);
+            var newRole = new Role();
+            JsonConvert.PopulateObject(values, newRole);
 
-                _roleUnitOfWork.Complete();
+            if (!TryValidateModel(newRole))
+                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
 
-                return RedirectToAction(nameof(Index));
-            }
-            var subdomains = await _roleUnitOfWork.SubdomainRepository.GetAll();
-            ViewData["SubdomainId"] = new SelectList(subdomains, "Id", "SubdomainName", role.SubdomainId);
-            return View(role);
+            _roleUnitOfWork.RoleRepository.Add(newRole);
+            _roleUnitOfWork.Complete();
+
+            return Ok();
         }
 
-
-        // GET: Roles/Delete/5
-        public async Task<IActionResult> Delete(int id)
+        [HttpPut]
+        public IActionResult Put(int key, string values)
         {
+            var role = _roleUnitOfWork.RoleRepository.GetById(key);
 
-            var role = _roleUnitOfWork.RoleRepository.GetById(id);
-            if (role == null)
-            {
-                return NotFound();
-            }
-            _roleUnitOfWork.RoleRepository.remove(role);
+            JsonConvert.PopulateObject(values, role);
+
+            if (!TryValidateModel(role))
+                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
             _roleUnitOfWork.Complete();
-            return RedirectToAction(nameof(Index));
+
+            return Ok();
+        }
+        [HttpDelete]
+        public void Delete(int key)
+        {
+            var role = _roleUnitOfWork.RoleRepository.GetById(key);
+            _roleUnitOfWork.RoleRepository.Remove(role);
+            _roleUnitOfWork.Complete();
         }
 
 

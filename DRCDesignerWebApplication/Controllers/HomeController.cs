@@ -12,17 +12,25 @@ namespace DRCDesignerWebApplication.Controllers
     {
         public IActionResult Index()
         {
-            using (MyDbContext dbContext=new MyDbContext())
-            {
-                
-            }
+           
             
                 return View();
         }
 
-        public IActionResult Privacy()
+    
+        public ActionResult Deleted()
         {
-            return View();
+            return Json("deleted");
+        }
+
+        public ActionResult Sent()
+        {
+            return Json("sended");
+        }
+
+        public ActionResult Spam()
+        {
+            return Json("spamed");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -24,4 +24,5 @@ namespace DRCDesignerWebApplication.DAL.UnitOfWork
         public IRoleRepository RoleRepository { get; private set; }
        
     }
+
 }

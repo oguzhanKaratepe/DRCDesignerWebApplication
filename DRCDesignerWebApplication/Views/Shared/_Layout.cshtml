@@ -1,130 +1,136 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DRCDesignerWebApplication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
-              crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
-    </environment>
+    <title>web designer</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <link href="~/css/devextreme/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/devextreme/dx.common.css" rel="stylesheet" />
+    <link href="~/css/devextreme/dx.material.blue.light.css" rel="stylesheet" />
+
+    <script src="~/js/devextreme/jquery.js"></script>
+    <script src="~/js/devextreme/bootstrap.js"></script>
+
+    <script src="~/js/devextreme/cldr.js"></script>
+    <script src="~/js/devextreme/cldr/event.js"></script>
+    <script src="~/js/devextreme/cldr/supplemental.js"></script>
+    <script src="~/js/devextreme/cldr/unresolved.js"></script>
+
+    <script src="~/js/devextreme/globalize.js"></script>
+    <script src="~/js/devextreme/globalize/message.js"></script>
+    <script src="~/js/devextreme/globalize/number.js"></script>
+    <script src="~/js/devextreme/globalize/currency.js"></script>
+    <script src="~/js/devextreme/globalize/date.js"></script>
+
+    @* JSZip for client side export *@
+    @*<script src="~/js/devextreme/jszip.js"></script>*@
+
+    <script src="~/js/devextreme/dx.all.js"></script>
+    <script src="~/js/devextreme/vectormap-data/world.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
     <style>
-        * {
-            margin: 0px;
-            padding: 0;
-            font-family: sans-serif;
+        .dx-drawer-panel-content, .dx-overlay-content {
+            background-color: lightgray;
+            margin-right: 22px;
         }
 
-        #sidebar {
-            position: fixed;
-            width: 9%;
-            height: 93%;
-            background: #151719;
-            z-index: 5;
+        #layout-toolbar {
+            background-color: rgba(191, 191, 191, .15);
+            padding: 5px 5px;
+            margin-top:-30px;
+            height:60px;
         }
+ 
+        #layout-toolbar .dx-toolbar-button .dx-button {
+            background-color: rgba(191, 191, 191, -0.15);
+            border: none;
+        }
+ 
+        #layout-toolbar .dx-toolbar-button > .dx-toolbar-item-content {
+            margin-left: -7px;
+        }
+ 
+        #layout-toolbar .dx-list-item-icon {
+            margin-right: 10px;
+        }
+     
 
-        .footer {
-            color: white;
-            background-color: #151719;
-            margin-bottom: -15px;
-        }
-
-        #sidebar ul li {
-            list-style: none;
-            padding: 15px 10px;
-            border-bottom: 1px solid rgba(230,230,230,0.9);
-        }
-
-            #sidebar ul li .abcd12 {
-                color: rgba(230,230,230,0.9);
-            }
-        h5 {
-            color: rgba(230,230,230,0.9);
-           
-        }
     </style>
 
 </head>
 <body>
 
-    <div id="sidebar" class="container">
-        <ul>
-            <br />
-            <h5>DRC <br />DESIGNER</h5>
-            <li>
-                <a class="abcd12" asp-area="" asp-controller="Subdomains" asp-action="index">Subdomains</a>
-            </li>
-            <li class="abcd12">
-                <a class="abcd12" asp-area="" asp-controller="Roles" asp-action="index">Roles</a>
-            </li>
-        </ul>
-    </div>
 
 
-    @*<header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container">
-                    <a class="navbar-brand" asp-area="" asp-controller="home" asp-action="ındex">DRCDesignerWebApplication</a>
+    @(Html.DevExtreme().Toolbar()
+              .ID("layout-toolbar")
+              .Items(items =>
+              {
+                  items.Add().Widget(w => w.Button()
+                      .Icon("menu")
+                      .OnClick("button_clickHandler")
+                      ).Location(ToolbarItemLocation.Before);
+              })
+    )
+@(Html.DevExtreme().Drawer()
+              .ID("layout-drawer")
+              .MinSize(50)
+                .Height(675)
+
+              .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
+              .RevealMode(DrawerRevealMode.Expand)
+              .OpenedStateMode(DrawerOpenedStateMode.Shrink)
+              .Template(@<text>
+                @(Html.DevExtreme().List()
+                          .Width(200)
+                          .OnInitialized("list_onInitialized")
+                          .Items(items =>
+                          {
+                                                items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
+                                                items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
+                                                items.Add().Text("Roles").Icon("card").Option("path", @Url.Action("Index", "Roles"));
+                                                items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
 
 
+                                            })
+                          .KeyExpr("path")
+                          .SelectionMode(ListSelectionMode.Single)
+                          .OnSelectionChanged("list_onSelectionChanged")
+                )
+            </text>)
+                  .Content(@<text>@RenderBody()</text>)
+    )
 
-                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="home" asp-action="index">home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="home" asp-action="privacy">privacy</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>*@
-    <br />
-    <div class="container">
-        <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    </div>
-
-
-    <footer class=" footer">
+    <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - DRCDesignerWebApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2019 - DRC Designer - <a asp-area="" asp-controller="Home" asp-action="Index">More</a>
         </div>
     </footer>
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
-        </script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
-        </script>
-    </environment>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+    function button_clickHandler() {
+        var drawer = $("#layout-drawer").dxDrawer("instance");
+        drawer.toggle();
+        sessionStorage.setItem("drawerOpened", JSON.stringify(drawer.option("opened")));
+    }
 
-    @RenderSection("Scripts", required: false)
+    function list_onSelectionChanged(e) {
+        document.location.pathname = e.addedItems[0].path;
+    }
+
+    function list_onInitialized(e) {
+        var t = "@Url.Action()";
+        e.component.option("selectedItemKeys", ["@Url.Action()"])
+    }
+    </script>
+
 </body>
 </html>

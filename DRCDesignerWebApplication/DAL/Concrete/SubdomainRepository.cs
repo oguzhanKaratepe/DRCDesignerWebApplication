@@ -14,6 +14,17 @@ namespace DRCDesignerWebApplication.DAL
     {
         public SubdomainRepository(DrcCardContext context) : base(context)
         {
+            
+        }
+    
+
+        public async Task<ICollection<Subdomain>> searchSubdomainName(String searchString)
+        {
+            return await DrcCardContext.Subdomains.Where(s => s.SubdomainName.ToLower().Contains(searchString.ToLower())).ToListAsync();
+        }
+        public int subdomainSize()
+        {
+            return DrcCardContext.Subdomains.Count();
         }
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
     }

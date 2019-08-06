@@ -12,7 +12,6 @@ namespace DRCDesignerWebApplication.DAL.UnitOfWork.Abstract
         IDrcCardRepository DrcCardRepository { get;  }
     
         IFieldRepository FieldRepository { get;}
-        IAuthorizationRoleRepository AuthorizationRoleRepository { get; }
 
     }
 }

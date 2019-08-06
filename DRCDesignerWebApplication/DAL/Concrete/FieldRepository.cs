@@ -16,10 +16,7 @@ namespace DRCDesignerWebApplication.DAL.Concrete
 
         }
 
-        public ICollection<Field> getDrcCardAllFields(int id) //drcCard id
-        {
-            return DrcCardContext.Fields.Where(s => s.drcCardId == id).ToList();
-        }
+   
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
     }
 }

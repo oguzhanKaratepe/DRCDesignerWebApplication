@@ -1,38 +1,61 @@
-﻿@model IEnumerable<DRCDesignerWebApplication.Models.Role>
+﻿@using DRCDesignerWebApplication.Models
 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "index";
+}
+@{
+    Layout = "_Layout";
 }
 
-<h3>Roles</h3>
+<style>
+    #gridContainer {
+        margin-left: 50px;
+    }
+</style>
+
+@(Html.DevExtreme().DataGrid<DRCDesignerWebApplication.Models.Role>().ID("gridContainer")
+                                            .ShowBorders(true)
+                                            .Paging(paging => paging.PageSize(6))
+                                             .Width(1200)
+                                            .Editing(editing =>
+                                            {
+                                                editing.Mode(GridEditMode.Cell);
+                                                editing.AllowAdding(true);
+                                                editing.AllowDeleting(true);
+                                                editing.AllowUpdating(true);
+
+                                            })
+                                            .Columns(columns =>
+                                            {
+                                                columns.AddFor(m => m.RoleName);
+                                                columns.AddFor(m => m.SubdomainId)
+
+                                                 .Width(160).HeaderCellTemplate("Subdomain")
+                                                 .Lookup(lookup => lookup
+                                                 .DataSource(d => d.Mvc().Controller("DataGridSubdomainsLookup").LoadAction("Get").Key("ID"))
+                                                 .DisplayExpr("SubdomainName").ValueExpr("ID").AllowClearing(true)).Width(200);
+                                            })
+                                            .DataSource(d => d.Mvc()
+                                                .Controller("Roles")
+                                                .LoadAction("Get")
+                                                .UpdateAction("Put")
+                                                .InsertAction("Post")
+                                                .DeleteAction("Delete")
+                                                .Key("ID")
+                                            ).SearchPanel(searchPanel => searchPanel
+                           .Visible(true)
+                           .Width(240)
+                           .Placeholder("Search...")
+                        )
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                .OnRowRemoved(@<text> function(e) { logEvent("RowRemoved"); } </text>)
+)
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RoleName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Subdomain)
-            </th>
-            <th>  <a asp-action="CreateOrUpdate" class="btn btn-outline-success">New Role</a></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoleName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Subdomain.SubdomainName)
-            </td>
-            <td>
-                <a asp-action="CreateOrUpdate" asp-route-id="@item.Id">Update</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger ml-1" onclick="return confirm('Are you sure to delete this record?')">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<script>
+    function logEvent(eventName) {
+        var logList = $("#events ul"),
+            newItem = $("<li>", { text: eventName });
+        logList.prepend(newItem);
+    }
+</script>

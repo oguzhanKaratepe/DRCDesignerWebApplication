@@ -12,11 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DRCDesignerWebApplication.DAL.Context;
-using DRCDesignerWebApplication.DAL.UnitOfWork;
+
 
 using Microsoft.AspNetCore.Routing;
 using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace DRCDesignerWebApplication
 {
@@ -44,8 +45,16 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IRoleUnitOfWork, RoleUnitOfWork>();
             services.AddScoped<DrcCardContext, DrcCardContext>();
 
+            services.AddMvc().AddJsonOptions(options => {
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+          
+
+
+            services.AddSession();
 
             services.AddDbContext<DrcCardContext>(context => { context.UseInMemoryDatabase("OguzDatabase"); });
         }
@@ -66,6 +75,7 @@ namespace DRCDesignerWebApplication
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
             app.UseCookiePolicy();
             app.UseMvc(configureRoutes);
             

@@ -11,9 +11,9 @@ namespace DRCDesignerWebApplication.DAL
 
 
         void Add(TEntity entity);
-        void remove(int id);
-        void remove(TEntity entity);
-        void update(TEntity entity);
+        void Remove(int id);
+        void Remove(TEntity entity);
+        void Update(TEntity entity);
 
         TEntity GetById(int id);
         Task <IEnumerable<TEntity>> GetAll();

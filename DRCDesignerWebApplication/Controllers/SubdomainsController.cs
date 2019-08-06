@@ -8,71 +8,76 @@ using Microsoft.EntityFrameworkCore;
 using DRCDesignerWebApplication.DAL.Context;
 using DRCDesignerWebApplication.Models;
 using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+
+using DevExtreme.AspNet.Mvc;
+using DevExtreme.AspNet.Data;
 
 namespace DRCDesignerWebApplication.Controllers
 {
     public class SubdomainsController : Controller
     {
-        private readonly ISubdomainUnitOfWork _subdomainUnitOfWork;
 
+        private ISubdomainUnitOfWork _subdomainUnitOfWork;
         public SubdomainsController(ISubdomainUnitOfWork subdomainUnitOfWork)
         {
             _subdomainUnitOfWork = subdomainUnitOfWork;
+
         }
 
-
-        // GET: Subdomains
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
-            return View(subdomains);
+            return View();
         }
 
-
-        // GET: Subdomains/Create
-        public async Task<IActionResult> CreateOrUpdate(int id = 0)
+        [HttpGet]
+        public async Task<object> Get(DataSourceLoadOptions loadOptions)
         {
 
-            if (id == 0)
-                return View(new Subdomain());
-            else
-                return View(_subdomainUnitOfWork.SubdomainRepository.GetById(id));
+            IEnumerable<Subdomain> subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
+
+            return DataSourceLoader.Load(subdomains, loadOptions);
         }
 
-        // POST: Subdomains/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrUpdate([Bind("Id,SubdomainName,")]Subdomain subdomain)
+        public IActionResult Post(string values)
         {
-            if (ModelState.IsValid)
-            {
-                if (subdomain.Id == 0)
-                    _subdomainUnitOfWork.SubdomainRepository.Add(subdomain);
-                else
-                    _subdomainUnitOfWork.SubdomainRepository.update(subdomain);
-                _subdomainUnitOfWork.Complete();
-                return RedirectToAction(nameof(Index));
-            }
+            var newSubdomain = new Subdomain();
+            JsonConvert.PopulateObject(values, newSubdomain);
 
-            return View(subdomain);
-        }
+            if (!TryValidateModel(newSubdomain))
+                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
 
-        // GET: Subdomains/Delete/5
-        public async Task<IActionResult> Delete(int id)
-        {
-
-            var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(id);
-            if (subdomain == null)
-            {
-                return NotFound();
-            }
-            _subdomainUnitOfWork.SubdomainRepository.remove(subdomain);
+            _subdomainUnitOfWork.SubdomainRepository.Add(newSubdomain);
             _subdomainUnitOfWork.Complete();
 
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
+        [HttpPut]
+        public IActionResult Put(int key, string values)
+        {
+            var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(key);
+
+            JsonConvert.PopulateObject(values, subdomain);
+
+            if (!TryValidateModel(subdomain))
+                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
+            _subdomainUnitOfWork.SubdomainRepository.Update(subdomain);
+            _subdomainUnitOfWork.Complete();
+            
+            return Ok();
+        }
+        [HttpDelete]
+        public void Delete(int key)
+        {
+            var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(key);
+            
+            _subdomainUnitOfWork.SubdomainRepository.Remove(subdomain);
+            _subdomainUnitOfWork.Complete();
+        }
+
+       
     }
 }

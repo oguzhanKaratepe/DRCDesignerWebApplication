@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="">
+    <Position X="8.308" Y="4.274" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="">
+    <Position X="32.159" Y="11.598" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="">
+    <Position X="1.234" Y="37.395" Height="0.75" Width="1.7" />
+  </Comment>
+  <Class Name="DRCDesignerWebApplication.Models.DrcCard">
+    <Position X="6.75" Y="29" Width="2" />
+    <AssociationLine Name="Responsibilities" Type="DRCDesignerWebApplication.Models.Responsibility" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.969" Y="30.873" />
+        <Point X="6.969" Y="31" />
+        <Point X="5.75" Y="31" />
+        <Point X="5.75" Y="31.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.808" Y="0.395" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAABAAAAQAAAQgAIAAAAAAgAAAAAAAAAAgAA=</HashCode>
+      <FileName>Models\DrcCard.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Subdomain" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Fields" />
+      <Property Name="Responsibilities" />
+      <Property Name="Authorizations" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Models.Field">
+    <Position X="9.25" Y="31.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAJAAAAAAAAAAAAABAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Models\Field.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="type" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Models.Responsibility">
+    <Position X="4.75" Y="31.25" Width="1.5" />
+    <AssociationLine Name="ShadowCards" Type="DRCDesignerWebApplication.Models.DrcCard" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.812" Y="31.25" />
+        <Point X="4.812" Y="29.375" />
+        <Point X="6.75" Y="29.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAAAAAAEAAAAAAAAAAAAIAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Models\Responsibility.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ShadowCards" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Models.Authorization">
+    <Position X="7" Y="31.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Models\Authorization.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="RoleFields" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Models.Role">
+    <Position X="8" Y="34" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAQAAIAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\Role.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Models.Subdomain">
+    <Position X="6.75" Y="26.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAQwAAAAAAA=</HashCode>
+      <FileName>Models\Subdomain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Context.DrcCardContext">
+    <Position X="19.75" Y="27.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAIBAAAQAAAAAAAAAEgBAAgAAAAAAAAAAgAA=</HashCode>
+      <FileName>DAL\Context\DrcCardContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.UnitOfWork.DrcUnitOfWork">
+    <Position X="9.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIBAAAAAAAIAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Concrete\DrcUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.UnitOfWork.RoleUnitOfWork">
+    <Position X="11" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Concrete\RoleUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.UnitOfWork.SubdomainUnitOfWork">
+    <Position X="12.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Concrete\SubdomainUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.UnitOfWork.Concrete.UnitOfWork">
+    <Position X="11.25" Y="12" Width="1.5" />
+    <AssociationLine Name="_context" Type="Microsoft.EntityFrameworkCore.DbContext" ManuallyRouted="true">
+      <Path>
+        <Point X="12.75" Y="12.744" />
+        <Point X="22.717" Y="12.744" />
+        <Point X="22.717" Y="23.665" />
+        <Point X="22.811" Y="23.665" />
+        <Point X="22.811" Y="25.732" />
+        <Point X="23.625" Y="25.732" />
+        <Point X="23.625" Y="25.75" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAABAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Concrete\UnitOfWork.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.EntityFrameworkCore.DbContext" Collapsed="true">
+    <Position X="22.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Concrete.DrcCardRepository">
+    <Position X="9.75" Y="22" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAEwAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\Concrete\DrcCardRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Concrete.ResponsibilityRepository">
+    <Position X="13" Y="22" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DAL\Concrete\ResponsibilityRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Concrete.AuthorizationRoleRepository">
+    <Position X="15.5" Y="22" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\Concrete\AuthorizationRoleRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Concrete.RoleRepository">
+    <Position X="18" Y="22" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAICAACAAAAAACAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>DAL\Concrete\RoleRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.SubdomainRepository">
+    <Position X="20.25" Y="22" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>DAL\Concrete\SubdomainRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.DAL.Repository&lt;TEntity&gt;">
+    <Position X="15.25" Y="18.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAABAAAAAAABAAAAAAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>DAL\Concrete\Repository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.DrcCardsController">
+    <Position X="4" Y="7.25" Width="4" />
+    <AssociationLine Name="_drcUnitOfWork" Type="DRCDesignerWebApplication.DAL.UnitOfWork.Abstract.IDrcUnitOfWork" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.375" Y="9.252" />
+        <Point X="5.375" Y="9.627" />
+        <Point X="6.688" Y="9.627" />
+        <Point X="6.688" Y="14.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.267" Y="0.086" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAACAEAAAAAAAEAAAAAAAg=</HashCode>
+      <FileName>Controllers\DrcCardsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_drcUnitOfWork" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.SubdomainsController">
+    <Position X="0.75" Y="7.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAACAEAAAAAAAEQAAAAAAg=</HashCode>
+      <FileName>Controllers\SubdomainsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_subdomainUnitOfWork" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.RolesController">
+    <Position X="8.25" Y="7.25" Width="2.25" />
+    <AssociationLine Name="_roleUnitOfWork" Type="DRCDesignerWebApplication.DAL.UnitOfWork.Abstract.IRoleUnitOfWork" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="9.375" Y="9.444" />
+        <Point X="9.375" Y="13.629" />
+        <Point X="6.771" Y="13.629" Type="JumpStart" />
+        <Point X="6.604" Y="13.629" Type="JumpEnd" />
+        <Point X="4.875" Y="13.629" />
+        <Point X="4.875" Y="14.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAACAEAAAAAAAEAAAAAACg=</HashCode>
+      <FileName>Controllers\RolesController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_roleUnitOfWork" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.HomeController">
+    <Position X="11" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAUAAAAAAAAAAAAAEAABAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.ViewModels.SubdomainListViewModel">
+    <Position X="21.5" Y="10.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ViewModels\SubdomainListViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.ViewModels.ShadowCardSelectBoxViewModel">
+    <Position X="24.25" Y="10.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Controllers\ViewModels\ShadowCardSelectBoxViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.ViewModels.DrcCardViewModel">
+    <Position X="27.25" Y="10.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIBAABAAAAAACAAAAAAAAgAAAAAAAAAAgAA=</HashCode>
+      <FileName>Controllers\ViewModels\DrcCardViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.DataGridSubdomainsLookup">
+    <Position X="21.5" Y="7.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Controllers\DataGridSubdomainsLookup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DRCDesignerWebApplication.Controllers.ShadowCardSelectBox">
+    <Position X="24.25" Y="7.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ShadowCardSelectBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="DRCDesignerWebApplication.DAL.IRepository&lt;TEntity&gt;">
+    <Position X="3.5" Y="19.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAAAAAABAAAAAAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>DAL\Abstract\IRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.Abstract.IRoleRepository">
+    <Position X="5.75" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAACAAAAAACAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>DAL\Abstract\IRoleRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.Abstract.IResponsibilityRepository">
+    <Position X="2.25" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DAL\Abstract\IResponsibilityRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.Abstract.IAuthorizationRoleRepository">
+    <Position X="4" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\Abstract\IAuthorizationRoleRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.UnitOfWork.Abstract.IDrcUnitOfWork">
+    <Position X="5.5" Y="14.25" Width="1.5" />
+    <InheritanceLine Type="DRCDesignerWebApplication.DAL.UnitOfWork.IUnitOfWork" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.75" Y="13.233" />
+        <Point X="4.75" Y="13.875" />
+        <Point X="4.792" Y="13.875" Type="JumpStart" />
+        <Point X="4.958" Y="13.875" Type="JumpEnd" />
+        <Point X="6.25" Y="13.875" />
+        <Point X="6.25" Y="14.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIBAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Abstract\IDrcUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.UnitOfWork.Abstract.IRoleUnitOfWork">
+    <Position X="3.75" Y="14.25" Width="1.5" />
+    <InheritanceLine Type="DRCDesignerWebApplication.DAL.UnitOfWork.IUnitOfWork" FixedFromPoint="true">
+      <Path>
+        <Point X="4.625" Y="13.233" />
+        <Point X="4.625" Y="13.875" />
+        <Point X="4.5" Y="13.875" />
+        <Point X="4.5" Y="14.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Abstract\IRoleUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.UnitOfWork.Abstract.ISubdomainUnitOfWork">
+    <Position X="2" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Abstract\ISubdomainUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.UnitOfWork.IUnitOfWork">
+    <Position X="3.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\UnitOfWork\Abstract\IUnitOfWork.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.Abstract.ISubdomainRepository">
+    <Position X="7.5" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>DAL\Abstract\ISubdomainRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DRCDesignerWebApplication.DAL.Abstract.IDrcCardRepository">
+    <Position X="0.5" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEwAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL\Abstract\IDrcCardRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="DRCDesignerWebApplication.Models.FieldType">
+    <Position X="12.25" Y="31.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAQQAAAAAAAAAICAgSAAAAAAgAAAAA=</HashCode>
+      <FileName>Models\FieldType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

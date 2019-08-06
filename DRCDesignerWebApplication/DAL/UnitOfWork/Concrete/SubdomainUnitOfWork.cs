@@ -12,8 +12,6 @@ namespace DRCDesignerWebApplication.DAL.UnitOfWork
 {
     public class SubdomainUnitOfWork : DAL.UnitOfWork.Concrete.UnitOfWork, ISubdomainUnitOfWork
     {
-
-
         private DrcCardContext _context;
         public SubdomainUnitOfWork(DrcCardContext context) : base(context)
         {

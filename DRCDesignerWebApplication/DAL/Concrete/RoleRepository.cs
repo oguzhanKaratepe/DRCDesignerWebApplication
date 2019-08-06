@@ -29,6 +29,12 @@ namespace DRCDesignerWebApplication.DAL.Concrete
         {
             return await DrcCardContext.Roles.Include(s => s.Subdomain).ToListAsync();
         }
+
+        public async Task<ICollection<Role>> searchRoleName(string searchString)
+        {
+            return await DrcCardContext.Roles.Where(s => s.RoleName.ToLower().Contains(searchString)).ToListAsync();
+        }
+
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
     }
 }

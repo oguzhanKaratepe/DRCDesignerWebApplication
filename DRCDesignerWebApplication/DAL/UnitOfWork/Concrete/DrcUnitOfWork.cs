@@ -12,7 +12,6 @@ namespace DRCDesignerWebApplication.DAL.UnitOfWork
     public class DrcUnitOfWork : UnitOfWork.Concrete.UnitOfWork, IDrcUnitOfWork
     {
         private DrcCardContext _context;
-
         public DrcUnitOfWork(DrcCardContext context) : base(context)
         {
             _context = context;

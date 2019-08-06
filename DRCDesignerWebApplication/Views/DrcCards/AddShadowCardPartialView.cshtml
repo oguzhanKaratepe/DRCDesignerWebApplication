@@ -1,0 +1,183 @@
+﻿
+@model DRCDesignerWebApplication.Controllers.ViewModels.DrcCardViewModel
+@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesignerWebApplication.Controllers.ViewModels
+
+<style>
+
+    #AddButton2 {
+        font-size: 10px;
+        margin-top: 5px;
+        background-color: lightgray;
+    }
+
+    #addSubdomainAlert {
+        margin-top: 280px;
+        margin-left: 370px;
+    }
+
+    .long-title h4 {
+        font-family: 'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana;
+        font-weight: 200;
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 20px;
+    }
+
+    .CloseButton {
+        float: right;
+        margin-top: -50px;
+    }
+</style>
+
+@{
+    if (Model.TotalSubdomainSize >=1 && Model.DrcCard.SubdomainId != 0)
+    {
+        <div class="dx-field flex-column">
+            <div class="dx-field-value">
+                @(Html.DevExtreme().Button()
+                                      .StylingMode(ButtonStylingMode.Text).Text("Add Shadow").ID("AddButton2").Height(40).Width(165).OnClick(@<text>
+                                        function showInfo(data) {
+                                        var popup = $("#AddShadowCard-popup").dxPopup("instance");
+                                        popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
+                                        popup.show();
+                                        }
+                                    </text>))
+            </div>
+        </div>
+
+    }
+}
+
+@(Html.DevExtreme().Popup()
+          .ID("AddShadowCard-popup")
+          .ElementAttr("class", "popup")
+          .TitleTemplate(@<text>
+            <div class="long-title"><h4>Add a Shadow Card</h4></div>
+            <div class="CloseButton">
+                @(Html.DevExtreme().Button().Icon("close").OnClick("closeShadowAddButton"))
+            </div>
+        </text>)
+             .Width(750)
+             .Height(700)
+              .ShowTitle(true)
+              .Visible(false)
+              .DragEnabled(true)
+              .CloseOnOutsideClick(false)
+              .CloseOnBackButton(true)
+              .ShowCloseButton(true)
+
+)
+
+@using (Html.DevExtreme().NamedTemplate("Add-ShadowPopup-template"))
+{
+    @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "AddShadow" }))
+    {
+        <div dx-field >Select Source Card*</div>
+        @(Html.DevExtreme().Lookup()
+              .DataSource(d => d.Mvc().Controller("ShadowCardSelectBox").LoadAction("Get").Key("Id").LoadParams(new { SubdomainId= @Model.DrcCard.SubdomainId }))
+              .DataSourceOptions(o => o.Group("SubdomainName"))
+              .ValueExpr("Id")
+              .Grouped(true)
+              .DisplayExpr("DrcCardName")
+              .Placeholder("Select Card")
+              .SearchEnabled(true)
+              .ShowCancelButton(true)
+              .OnSelectionChanged("selectBox_valueChanged")
+                                                                                            
+              )
+        @Html.HiddenFor(m => m.DrcCard.SubdomainId)
+        @Html.HiddenFor(m => m.DrcCard.Id)
+        @(Html.DevExtreme().Form<DrcCardViewModel>().ID("AddForm")
+                      .ValidationGroup("DrcCard")
+                                       .FormData(Model)
+
+                                       .Items(formItems =>
+                                       {
+
+                                           formItems.AddGroup().ColCount(2)
+                                               .Items(groupItem =>
+                                               {
+                                          
+                                                  
+                                                   groupItem.AddSimpleFor(m => m.DrcCard.DrcCardName)
+                                                       .IsRequired(true).Editor(e => e
+                                                           .TextBox()
+                                                           .Width("100%")
+                                                       );
+                                               });
+
+                                           formItems.AddGroup()
+                                               .Items(groupItem =>
+                                               {
+                                                   groupItem.AddTabbed().TabPanelOptions(o =>
+                                                   {
+                                                       o.DeferRendering(false);
+                                                       o.Height(425);
+                                                       o.AnimationEnabled(true);
+                                                   }).Tabs(tabItem =>
+                                                   {
+                                                       tabItem.Add().Title("RESPONSIBILITIES").Template(@<text>
+                                                    @( Html.DevExtreme().DataGrid<Responsibility>()
+                                                                       .Height(352)
+                                                                       .ID("gridResponsibility")
+                                                                       .ShowBorders(true)
+                                                                       .Editing(s => s.AllowUpdating(true).AllowAdding(true).AllowDeleting(true))
+                                                                       //.KeyExpr(new string[] { "Id" })
+                                                                       .DataSource(new JS("[]"))
+                                                                       .Columns(columns =>
+                                                                       {
+                                                                     //columns.AddFor(m => m.Id);
+                                                                     columns.AddFor(m => m.IsMandatory);
+                                                                                         columns.AddFor(m => m.ResponsibilityDefinition);
+                                                                                         columns.AddFor(m => m.Title);
+                                                                      //columns.AddFor(m => m.DrcCardId); add select
+                                                                 })
+                                                               .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual))
+                                                    )
+                                                </text>);
+
+                                                   });
+                                               });
+
+
+                                       })
+
+
+        )
+        <div class="submitButton">
+            @(Html.DevExtreme().Button()
+                              .Text("Add Card")
+                              .ValidationGroup("DrcCard")
+                              //.OnClick("clickHandler")
+                              .UseSubmitBehavior(false)
+            )
+        </div>
+
+
+
+    }
+
+}
+
+
+
+<script>
+
+    function getFormInstance() {
+        return $("#AddForm").dxForm("instance");
+    }
+    function selectBox_valueChanged(data) {
+        getFormInstance().option("formData", data.value);
+    }
+
+    function closeShadowAddButton() {
+
+        $("#AddShadowCard-popup").dxPopup({
+            visible: false
+        });
+    }
+
+
+</script>
