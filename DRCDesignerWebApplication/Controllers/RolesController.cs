@@ -3,25 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DRCDesignerWebApplication.DAL.Context;
-using DRCDesignerWebApplication.Models;
-using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
 using System.Collections;
 using DevExtreme.AspNet.Mvc;
 using DevExtreme.AspNet.Data;
+using DRCDesigner.Business.Abstract;
+using DRCDesigner.Entities.Concrete;
+using DRCDesignerWebApplication.ViewModels;
 using Newtonsoft.Json;
 
 namespace DRCDesignerWebApplication.Controllers
 {
     public class RolesController : Controller
     {
-        private readonly IRoleUnitOfWork _roleUnitOfWork;
+        private readonly IRoleService _roleService;
 
-        public RolesController(IRoleUnitOfWork roleUnitOfWorkt)
+        public RolesController(IRoleService roleService)
         {
-            _roleUnitOfWork = roleUnitOfWorkt;
+            _roleService = roleService;
         }
 
         public IActionResult Index()
@@ -30,25 +28,24 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<object> Get(DataSourceLoadOptions loadOptions)
+        public async Task<object> Get(int Id,DataSourceLoadOptions loadOptions)
         {
+            RoleListViewModel roleListViewModel = new RoleListViewModel
+            {
+                Roles = await _roleService.GetAll()
+            };
 
-            IEnumerable<Role> roles = await _roleUnitOfWork.RoleRepository.GetAll();
-
-            return DataSourceLoader.Load(roles, loadOptions);
+            return DataSourceLoader.Load(roleListViewModel.Roles, loadOptions);
         }
 
         [HttpPost]
-        public IActionResult Post(string values)
+        public IActionResult Post(int Id, string values)
         {
-            var newRole = new Role();
-            JsonConvert.PopulateObject(values, newRole);
+            if (ModelState.IsValid)
+                _roleService.Add(values);
 
-            if (!TryValidateModel(newRole))
-                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-
-            _roleUnitOfWork.RoleRepository.Add(newRole);
-            _roleUnitOfWork.Complete();
+            else
+                return BadRequest("I will add error to here");
 
             return Ok();
         }
@@ -56,22 +53,23 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPut]
         public IActionResult Put(int key, string values)
         {
-            var role = _roleUnitOfWork.RoleRepository.GetById(key);
+            if (ModelState.IsValid)
+                _roleService.Update(values, key);
 
-            JsonConvert.PopulateObject(values, role);
-
-            if (!TryValidateModel(role))
-                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-            _roleUnitOfWork.Complete();
+            else
+                return BadRequest("I will add error to here");
 
             return Ok();
         }
         [HttpDelete]
-        public void Delete(int key)
+        public ActionResult Delete(int key)
         {
-            var role = _roleUnitOfWork.RoleRepository.GetById(key);
-            _roleUnitOfWork.RoleRepository.Remove(role);
-            _roleUnitOfWork.Complete();
+            if (!_roleService.Remove(key))
+            {
+                return BadRequest("I will add error to here");
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
 

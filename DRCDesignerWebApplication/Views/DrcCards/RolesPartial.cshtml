@@ -1,0 +1,6 @@
+﻿
+
+@(Html.DevExtreme().TagBox()  
+      .DataSource(d => d.Mvc().LoadAction("GetMenus").Key("MenuId"))  
+      .DisplayExpr("MenuTitle")  
+      .ValueExpr("MenuId"))

@@ -8,12 +8,23 @@
     <meta name="author" content="">
 
     <title>web designer</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link href="~/css/devextreme/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/devextreme/dx.common.css" rel="stylesheet" />
     <link href="~/css/devextreme/dx.material.blue.light.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+            asp-fallback-src="~/lib/popper.js/dist/umd/popper.min.js"
+            asp-fallback-test="window.Popper"
+            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+            crossorigin="anonymous">
+    </script>
 
     <script src="~/js/devextreme/jquery.js"></script>
     <script src="~/js/devextreme/bootstrap.js"></script>
@@ -36,6 +47,11 @@
     <script src="~/js/devextreme/vectormap-data/world.js"></script>
     <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
     <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js"></script>
+
+ 
+   
     <style>
         .dx-drawer-panel-content, .dx-overlay-content {
             background-color: lightgray;
@@ -45,24 +61,22 @@
         #layout-toolbar {
             background-color: rgba(191, 191, 191, .15);
             padding: 5px 5px;
-            margin-top:-30px;
-            height:60px;
+            margin-top: -30px;
+            height: 60px;
         }
- 
-        #layout-toolbar .dx-toolbar-button .dx-button {
-            background-color: rgba(191, 191, 191, -0.15);
-            border: none;
-        }
- 
-        #layout-toolbar .dx-toolbar-button > .dx-toolbar-item-content {
-            margin-left: -7px;
-        }
- 
-        #layout-toolbar .dx-list-item-icon {
-            margin-right: 10px;
-        }
-     
 
+            #layout-toolbar .dx-toolbar-button .dx-button {
+                background-color: rgba(191, 191, 191, -0.15);
+                border: none;
+            }
+
+            #layout-toolbar .dx-toolbar-button > .dx-toolbar-item-content {
+                margin-left: -7px;
+            }
+
+            #layout-toolbar .dx-list-item-icon {
+                margin-right: 10px;
+            }
     </style>
 
 </head>
@@ -70,7 +84,7 @@
 
     @(Html.DevExtreme().Toolbar()
               .ID("layout-toolbar")
-              .Items(items =>
+          .Items(items =>
               {
                   items.Add().Widget(w => w.Button()
                       .Icon("menu")
@@ -83,22 +97,20 @@
     @(Html.DevExtreme().Drawer()
               .ID("layout-drawer")
               .MinSize(50)
-              .Height(675)
-
               .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
               .RevealMode(DrawerRevealMode.Expand)
               .OpenedStateMode(DrawerOpenedStateMode.Shrink)
               .Template(@<text>
                 @(Html.DevExtreme().List()
                           .Width(200)
-                          .OnInitialized("list_onInitialized")
+                         .Height(675)
+                         // .OnInitialized("list_onInitialized")
                           .Items(items =>
                           {
                                                 items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
                                                 items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
                                                 items.Add().Text("Roles").Icon("card").Option("path", @Url.Action("Index", "Roles"));
                                                 items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
-
 
                                             })
                           .KeyExpr("path")
@@ -110,11 +122,11 @@
                        @RenderBody()</text>)
     )
 
-    <footer class="border-top footer text-muted">
+    @*<footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2019 - DRC Designer - <a asp-area="" asp-controller="Home" asp-action="Index">More</a>
         </div>
-    </footer>
+    </footer>*@
 
     <script type="text/javascript">
     function button_clickHandler() {
@@ -124,23 +136,15 @@
     }
 
     function list_onSelectionChanged(e) {
-        document.location.pathname = e.addedItems[0].path;
+        document.location= e.addedItems[0].path;
     }
 
-    function list_onInitialized(e) {
+    @*function list_onInitialized(e) {
         var t = "@Url.Action()";
         e.component.option("selectedItemKeys", ["@Url.Action()"])
-    }
-
+    }*@
 
     </script>
-    <script>
 
-        function menuItem_click(data) {
-            var item = data.itemData;
-            location.href = "/DrcCards/index/" + item.ID;
-
-        }
-    </script>
 </body>
 </html>

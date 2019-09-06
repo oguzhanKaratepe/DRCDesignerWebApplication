@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DRCDesignerWebApplication.DAL.Context;
-using DRCDesignerWebApplication.Models;
-using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 
 using DevExtreme.AspNet.Mvc;
 using DevExtreme.AspNet.Data;
+using DRCDesigner.Business.Abstract;
+using DRCDesignerWebApplication.ViewModels;
+using   DRCDesigner.Entities.Concrete;
 
 namespace DRCDesignerWebApplication.Controllers
 {
     public class SubdomainsController : Controller
     {
 
-        private ISubdomainUnitOfWork _subdomainUnitOfWork;
-        public SubdomainsController(ISubdomainUnitOfWork subdomainUnitOfWork)
+        private readonly ISubdomainService _subdomainService;
+        private readonly IMapper _mapper;
+        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper)
         {
-            _subdomainUnitOfWork = subdomainUnitOfWork;
-
+            _subdomainService = subdomainService;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -34,50 +37,55 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> Get(DataSourceLoadOptions loadOptions)
         {
+            SubdomainListViewModel subdomainListViewModel=new SubdomainListViewModel
+            {
+                Subdomains= await _subdomainService.GetAll()
+        };
 
-            IEnumerable<Subdomain> subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
-
-            return DataSourceLoader.Load(subdomains, loadOptions);
+            return DataSourceLoader.Load(subdomainListViewModel.Subdomains, loadOptions);
         }
 
         [HttpPost]
         public IActionResult Post(string values)
         {
-            var newSubdomain = new Subdomain();
-            JsonConvert.PopulateObject(values, newSubdomain);
-
-            if (!TryValidateModel(newSubdomain))
+            if (ModelState.IsValid)
+                _subdomainService.Add(values);
+            
+            else
                 return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-
-            _subdomainUnitOfWork.SubdomainRepository.Add(newSubdomain);
-            _subdomainUnitOfWork.Complete();
-
+            
             return Ok();
         }
 
         [HttpPut]
         public IActionResult Put(int key, string values)
         {
-            var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(key);
+            if (ModelState.IsValid)
+                _subdomainService.Update(values,key);
 
-            JsonConvert.PopulateObject(values, subdomain);
+            else
+                return BadRequest("I will add error to here");
 
-            if (!TryValidateModel(subdomain))
-                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-            _subdomainUnitOfWork.SubdomainRepository.Update(subdomain);
-            _subdomainUnitOfWork.Complete();
-            
             return Ok();
         }
         [HttpDelete]
-        public void Delete(int key)
+        public async Task<ActionResult> Delete(int key)
         {
-            var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(key);
-            
-            _subdomainUnitOfWork.SubdomainRepository.Remove(subdomain);
-            _subdomainUnitOfWork.Complete();
+            if (! await _subdomainService.Remove(key))
+            {
+                return BadRequest("I will add error to here");
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-       
+        [HttpGet]
+        public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
+        {
+            var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
+            return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
+        }
+
+
     }
 }

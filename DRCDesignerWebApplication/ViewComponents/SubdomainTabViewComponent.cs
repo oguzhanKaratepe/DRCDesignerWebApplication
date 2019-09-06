@@ -1,11 +1,12 @@
-﻿using DRCDesignerWebApplication.Controllers.ViewModels;
-using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DRCDesigner.DataAccess.UnitOfWork.Abstract;
+using DRCDesignerWebApplication.ViewModels;
 
 namespace DRCDesignerWebApplication.ViewComponents
 {

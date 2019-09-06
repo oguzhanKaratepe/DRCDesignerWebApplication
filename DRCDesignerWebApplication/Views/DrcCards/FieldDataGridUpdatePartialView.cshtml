@@ -1,0 +1,49 @@
+﻿
+@using DRCDesignerWebApplication.Controllers
+@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
+@(Html.DevExtreme().DataGrid<FieldViewModel>()
+      .ShowBorders(true)
+      .Editing(editing =>
+      {
+          editing.Mode(GridEditMode.Cell);
+          editing.AllowAdding(true);
+          editing.AllowUpdating(true);
+          editing.AllowDeleting(true);
+
+      })
+      .ElementAttr(new{style="margin-top:-37px"})
+      .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
+      .Height(460)
+      .DataSource(a => a.Mvc().Controller("Fields")
+          .LoadAction("Get")
+          .UpdateAction("Put")
+          .InsertAction("Post")
+          .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting")
+      .Columns(columns => {
+          columns.AddFor(m => m.AttributeName).Width(230);
+          columns.AddFor(m => m.Type)
+              .SetCellValue("setTypeValue")
+              .Caption("Attribute Type")
+              .Width(185)
+              .Lookup(lookup => {
+                                    lookup.DataSource(FieldsController.GetFieldTypeDataSource());
+                                    lookup.DisplayExpr("Name");
+                                    lookup.AllowClearing(true);
+                                    lookup.ValueExpr("Id");
+
+              });
+
+                columns.AddFor(m => m.CollaborationId)
+                    .Caption("Collaboration")
+                    .Width(145)
+                    .Lookup(lookup => lookup.DataSource("getCollaborationCards")
+                    .DisplayExpr("DrcCardName").AllowClearing(true)
+                    .ValueExpr("Id")
+                    ).MinWidth(180);
+      })
+      .Paging(p => p.PageSize(10))
+      .RemoteOperations(true)
+      )
+      

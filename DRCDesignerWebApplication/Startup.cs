@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DRCDesignerWebApplication.DAL.Context;
-using DRCDesignerWebApplication.DAL.UnitOfWork;
+using AutoMapper;
+using DRCDesigner.DataAccess.Concrete;
+using DRCDesigner.DataAccess.UnitOfWork.Abstract;
+using DRCDesigner.DataAccess.UnitOfWork.Concrete;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,12 +15,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-
 using Microsoft.AspNetCore.Routing;
-using DRCDesignerWebApplication.DAL.UnitOfWork.Abstract;
+using DRCDesignerWebApplication.Helpers;
+
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using DRCDesigner.Business.Abstract;
+using DRCDesigner.Business.Concrete;
 
 namespace DRCDesignerWebApplication
 {
@@ -39,11 +43,15 @@ namespace DRCDesignerWebApplication
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+          
             services.AddScoped<ISubdomainUnitOfWork, SubdomainUnitOfWork>();
             services.AddScoped<IDrcUnitOfWork, DrcUnitOfWork>();
             services.AddScoped<IRoleUnitOfWork, RoleUnitOfWork>();
+            services.AddScoped<IDocumentTransferUnitOfWork,DocumentTransferUnitOfWork>();
             services.AddScoped<DrcCardContext, DrcCardContext>();
+            services.AddScoped<ISubdomainService, SubdomainManager>();
+            services.AddScoped<IRoleService, RoleManager>();
+            services.AddScoped<IDrcCardService, DrcCardManager>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -51,8 +59,17 @@ namespace DRCDesignerWebApplication
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-          
 
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfiles());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddMvc();
 
             services.AddSession();
 
@@ -62,6 +79,7 @@ namespace DRCDesignerWebApplication
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+       
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

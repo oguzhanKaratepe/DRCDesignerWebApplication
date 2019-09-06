@@ -1,15 +1,9 @@
-﻿
-@model DRCDesignerWebApplication.Controllers.ViewModels.DrcCardViewModel
-@using DRCDesignerWebApplication.Controllers.ViewModels
+﻿@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
 
 <style>
-    #AddButton1 {
-        font-size: 10px;
-        margin-top: 5px;
-        background-color: lightgray;
-        min-width: 90px;
-        margin-left: 35px;
-    }
+
 
     #addSubdomainAlert {
         margin-top: 280px;
@@ -24,6 +18,7 @@
         margin-bottom: 10px;
         margin-top: 20px;
     }
+
     .long-title h4 {
         font-family: 'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana;
         font-weight: 200;
@@ -31,194 +26,39 @@
         text-align: center;
         margin-bottom: 10px;
         margin-top: 20px;
-        
     }
+
     .CloseButton {
         float: right;
         margin-top: -50px;
     }
+
     .submitButton {
         display: flex;
         justify-content: flex-end;
     }
 </style>
 
-@{
-   
-    if (Model.TotalSubdomainSize >= 1 && Model.DrcCard.SubdomainId != 0)
+
+
+    @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "addCard" }))
     {
-        
-        <div class="dx-field flex-column">
-            <div class="dx-field-value">
-                @(Html.DevExtreme().Button()
-                              .StylingMode(ButtonStylingMode.Text).Text("Add Card").Width(115).ID("AddButton1").Height(40).OnClick(@<text>
-                                function showInfo(data) {
-                                var popup = $("#AddCard-popup").dxPopup("instance");
-                                popup.option("contentTemplate", $("#Add-popup-template"));
-                                popup.show();
-                                }
-                            </text>))
-            </div>
-        </div>
-
+        @Html.HiddenFor(m => m.SubdomainId)
+        @(Html.DevExtreme().Form<DrcCardViewModel>())
+       
     }
-    else if (Model.TotalSubdomainSize < 1)
-    {
-        <p class="alert-light text-lg-center align-content-center" id="addSubdomainAlert">To be able start design, you must start by adding a new subdomain to your project.. </p>
 
-    }
-}
-
-
-@(Html.DevExtreme().Popup()
-                      .ID("AddCard-popup")
-                      .TitleTemplate(@<text>
-                        <div class="long-title"><h3>Add a New Card</h3></div>
-                        <div class="CloseButton">
-                            @(Html.DevExtreme().Button().Icon("close").OnClick("closeAddButton"))
-                        </div>
-                    </text>)
-                                      .Width(750)
-                                      .Height(700)
-                                      .ShowTitle(true)
-                                      .Visible(false)
-                                      .DragEnabled(true)
-                                      .CloseOnOutsideClick(false)
-                                      .CloseOnBackButton(true)
-                                      .ShowCloseButton(true)
-
-      )
-
-
-    @using (Html.DevExtreme().NamedTemplate("Add-popup-template"))
-    {
-        
-        
-        @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "editCard" }))
-        {
-           
-            @Html.HiddenFor(m => m.DrcCard.SubdomainId)
-            @Html.HiddenFor(m => m.DrcCard.Id)
-            @(Html.DevExtreme().Form<DrcCardViewModel>().ID("AddForm")
-                  .ValidationGroup("DrcCard")
-                                   .FormData(Model)
-
-                                   .Items(formItems =>
-                                   {
-                              
-                                       formItems.AddGroup()
-
-                                           .Items(groupItem =>
-                                           {
-                                           
-                                               groupItem.AddSimpleFor(m => m.DrcCard.DrcCardName)
-                                                   .IsRequired(true).Editor(e => e
-                                                       .TextBox().Placeholder("Card Name")
-                                                       .Width("35%")
-                                                   );
-
-                                           });
-
-                                       formItems.AddGroup()
-                                           .Items(groupItem =>
-                                           {
-                                               groupItem.AddTabbed().TabPanelOptions(o =>
-                                               {
-                                                   o.DeferRendering(false);
-                                                   o.Height(425);
-                                                   o.AnimationEnabled(true);
-                                               }).Tabs(tabItem =>
-                                               {
-                                                   tabItem.Add().Title("RESPONSIBILITIES").Template(@<text>
-                                                    @( Html.DevExtreme().DataGrid<Responsibility>()
-                                                                       .Height(352)
-                                                                       .ID("gridResponsibility")
-                                                                       .ShowBorders(true)
-                                                                       .Editing(s => s.AllowUpdating(true).AllowAdding(true).AllowDeleting(true))
-                                                                       //.KeyExpr(new string[] { "Id" })
-                                                                       .DataSource(new JS("[]"))
-                                                                       .Columns(columns =>
-                                                                       {
-                                                                     //columns.AddFor(m => m.Id);
-                                                                     columns.AddFor(m => m.IsMandatory);
-                                                                                         columns.AddFor(m => m.ResponsibilityDefinition);
-                                                                                         columns.AddFor(m => m.Title);
-                                                                      //columns.AddFor(m => m.DrcCardId); add select
-                                                                 })
-                                                               .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-                                                    )
-                                                </text>);
-
-                                                                                       tabItem.Add().Title("AUTHORIZATIONS").Template(@<text>
-                                                                                        @(Html.DevExtreme().DataGrid<Authorization>()
-                                                                                                          .Height(352)
-                                                                                                          .ID("gridAuthorization")
-                                                                                                          .ShowBorders(true)
-                                                                                                          .Editing(s => s.AllowUpdating(true).AllowAdding(true).AllowDeleting(true))
-                                                                                                          //.KeyExpr(new string[] { "Id" })
-                                                                                                          .DataSource(new JS("[]"))
-                                                                                                          .Columns(columns =>
-                                                                                                          {
-                                                                                                         //columns.AddFor(m => m.Id);
-                                                                                                         columns.AddFor(m => m.OperationName);
-
-                                                                                                         //columns.AddFor(m => m.DrcCardId); add select
-                                                                                                     })
-                                                                                                          .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual)))
-                                                                                    </text>);
-
-                                                                                                                           tabItem.Add().Title("FIELDS").Template(@<text>
-                                                                                                                            @(Html.DevExtreme().DataGrid<Field>()
-                                                                                                                                      .Height(352)
-                                                                                                                                              .ID("gridField")
-                                                                                                                                              .ShowBorders(true)
-                                                                                                                                              .Editing(s => s.AllowUpdating(true).AllowAdding(true).AllowDeleting(true))
-                                                                                                                                              //.KeyExpr(new string[] { "Id" })
-                                                                                                                                              .DataSource(new JS("[]"))
-                                                                                                                                              .Columns(columns =>
-                                                                                                                                              {
-                                                                                                                                            //columns.AddFor(m => m.Id);
-                                                                                                                                            columns.AddFor(m => m.AttributeName);
-
-                                                                                                                                            //columns.AddFor(m => m.DrcCardId); add select
-                                                                                                                                        })
-                                                                                                                                      .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual)))
-                                                                                                                        </text>);
-
-
-                                                                                                                                                           });
-                                                                                                                                                       });
-
-
-
-
-
-
-                                                                                                                                               })
-
-                  )
-            <div class="submitButton">
-                @(Html.DevExtreme().Button()
-                          .Text("Add Card")
-                          .ValidationGroup("DrcCard")
-                          .OnClick("clickHandler")
-                          .UseSubmitBehavior(false)
-                )
-            </div>
-        }
-
-    }
 
 
 <script>
 
-    function closeAddButton() {
-
-        $("#AddCard-popup").dxPopup({
-            visible: false
-        });
+    function AddClickHandler(e) {
+        $("#addCard").submit();
     }
-  
-
-   
+    function shadowCardPopUp() {
+        var popup = $("#AddShadowCard-popup").dxPopup("instance");
+        popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
+        popup.show();
+    }
+    
 </script>

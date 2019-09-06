@@ -91,7 +91,7 @@
               .Template(@<text>
                 @(Html.DevExtreme().List()
                           .Width(200)
-                          .OnInitialized("list_onInitialized")
+                        //  .OnInitialized("list_onInitialized")
                           .Items(items =>
                           {
                                                 items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
@@ -109,27 +109,23 @@
                   .Content(@<text>@RenderBody()</text>)
     )
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2019 - DRC Designer - <a asp-area="" asp-controller="Home" asp-action="Index">More</a>
-        </div>
-    </footer>
 
     <script type="text/javascript">
-    function button_clickHandler() {
+        function button_clickHandler() {
+
         var drawer = $("#layout-drawer").dxDrawer("instance");
         drawer.toggle();
         sessionStorage.setItem("drawerOpened", JSON.stringify(drawer.option("opened")));
     }
 
     function list_onSelectionChanged(e) {
-        document.location.pathname = e.addedItems[0].path;
+        document.location = e.addedItems[0].path;
     }
 
-    function list_onInitialized(e) {
+    @*function list_onInitialized(e) {
         var t = "@Url.Action()";
         e.component.option("selectedItemKeys", ["@Url.Action()"])
-    }
+    }*@
     </script>
 
 </body>

@@ -1,4 +1,6 @@
-﻿@using DRCDesignerWebApplication.Models
+﻿
+@using DRCDesigner.Entities.Concrete
+
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -15,7 +17,7 @@
 </style>
 <div>
 
-    @(Html.DevExtreme().DataGrid<DRCDesignerWebApplication.Models.Subdomain>().ID("gridContainer")
+    @(Html.DevExtreme().DataGrid<Subdomain>().ID("gridContainer")
                                                         .ShowBorders(true)
                                                         .Paging(paging => paging.PageSize(6))
                                                         .Width(1200)
@@ -27,13 +29,10 @@
                                                             editing.AllowUpdating(true);
                                                             editing.UseIcons(true);
 
-
-
                                                         })
                                                         .Columns(columns =>
                                                         {
                                                             columns.AddFor(m => m.SubdomainName);
-
 
                                                         })
                                                           .DataSource(d => d.Mvc()
@@ -42,7 +41,7 @@
                                                         .UpdateAction("Put")
                                                         .InsertAction("Post")
                                                         .DeleteAction("Delete")
-                                                        .Key("ID")
+                                                        .Key("Id")
                                                     ).SearchPanel(searchPanel => searchPanel
                                    .Visible(true)
                                    .Width(240)

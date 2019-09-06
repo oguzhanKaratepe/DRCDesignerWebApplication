@@ -1,0 +1,51 @@
+﻿@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
+
+
+@{
+    ViewBag.Title = "AuthorizationUpdatePartial";
+}
+
+@(Html.DevExtreme().DataGrid()
+      .ID("authorizationGridContainer")
+      .Editing(editing =>
+      {
+          editing.Mode(GridEditMode.Cell);
+          editing.AllowAdding(true);
+          editing.AllowUpdating(true);
+          editing.AllowDeleting(true);
+
+      })
+      .ElementAttr(new{style="margin-top:-37px"})
+      .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
+      .Height(460)
+      .ShowBorders(true)
+      .ShowRowLines(true)
+      .Columns(columns =>
+      {
+          columns.Add()
+              .DataField("OperationName").Alignment(HorizontalAlignment.Center);
+
+          columns.Add()
+              .DataField("RoleIds").Alignment(HorizontalAlignment.Center)
+             .AllowFiltering(false).CellTemplate(new JS("customizeAuthorizationDisplayText"))
+              .Lookup(lookup => lookup
+                  .DataSource(d => d.Mvc().Controller("Authorizations").LoadAction("GetAuthorizationRoles")
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainId }))
+                  .DisplayExpr("RoleName")
+                  .ValueExpr("Id")
+
+              )
+              .Caption("Add Authorization")
+              .EditCellTemplate(@<text>
+                                     @Html.Partial("RoleDropDownBox",Model)
+                                  </text>);
+
+
+      }).DataSource(a => a.Mvc().Controller("Authorizations")
+          .LoadAction("Get")
+          .UpdateAction("Put")
+          .InsertAction("Post")
+          .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting"))
+
+

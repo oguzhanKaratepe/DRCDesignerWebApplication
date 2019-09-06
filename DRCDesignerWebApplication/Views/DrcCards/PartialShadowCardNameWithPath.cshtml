@@ -1,0 +1,75 @@
+﻿@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
+<style>
+    .flex-container #CardForm {
+        margin-right: 20px;
+        margin-top: -10px;
+        margin-left: 6px;
+    }
+
+    .shadowCardPath {
+        font-size: 12px;
+        font-style: italic;
+        color: rgba(0, 0, 0, 0.87);
+        margin-right: -10px;
+        justify-content: flex-end;
+        display: flex;
+    }
+</style>
+
+@using (Html.BeginForm("Put", "DrcCards", FormMethod.Post)) //, new { id = "UpdateDrcCardName"+@Model.Id}
+{
+    <div class="flex-container flex-wrap flex-row">
+        <div id="CardForm">
+
+            <h6 class="shadowCardPath">@Model.SourceDrcCardPath </h6>
+            @(Html.DevExtreme().Form<DrcCardViewModel>()
+                          .FormData(Model)
+                          //    .OnFieldDataChanged("UpdateCardNameClickHandler")
+                          .ElementAttr(new { style = "margin-top: -40px;" })
+                          .ValidationGroup("CardName")
+                          .Items(formItems =>
+                          {
+                  //formItems.AddGroup()
+                  //    .Items(groupItem =>
+                  //    {
+                  //        groupItem.AddSimpleFor(m => m.Id);
+                  //        groupItem.AddSimpleFor(m => m.DrcCardName); }
+                  //    );
+
+                  formItems.AddSimpleFor(m => m.Id)
+                                  .Editor(m => m.TextBox().Width(0).Height(-100))
+                                  .Label(l => l.Visible(false));
+
+                              formItems.AddSimpleFor(m => m.SubdomainId)
+                                  .Editor(m => m.TextBox().Width(0).Height(-100))
+                                  .Label(l => l.Visible(false));
+
+                              formItems.AddSimpleFor(m => m.DrcCardName)
+                                  .Label(l => l.Visible(false))
+                                  .IsRequired(true).Editor(e => e
+                                      .TextBox()
+                                      .StylingMode(EditorStylingMode.Underlined)
+                                      .Height(30)
+                                      .Width(280)
+
+
+                                  );
+                          })
+
+            )
+        </div>
+        <div>
+            @(Html.DevExtreme().Button()
+                          .Icon("save")
+                          .Visible(false)
+                          .StylingMode(ButtonStylingMode.Text)
+                          .Width(20)
+                          .ValidationGroup("CardName")
+                          .UseSubmitBehavior(true))
+        </div>
+    </div>
+
+
+}

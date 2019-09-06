@@ -1,0 +1,81 @@
+﻿@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
+
+@{
+    ViewBag.Title = "ResponsibilityUpdatePartial";
+}
+
+@(Html.DevExtreme().DataGrid<Responsibility>()
+          .ID("gridContainer")
+          .Editing(editing =>
+          {
+              editing.Mode(GridEditMode.Popup).Popup(p => p
+             .Title("Responsibility Details")
+             .ShowTitle(true)
+             .Width(700)
+             .Height(415)
+             .Position(pos => pos
+                 .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                 .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                 .Of(new JS("window"))
+             )
+                  ).Form(f => f.Items(items => {
+                      items.AddGroup()
+                      .ColCount(4)
+                      .ColSpan(2)
+                      .Items(groupItems => {
+
+                          groupItems.AddSimple().DataField("Title").Editor(editor=>editor.TextBox().Width(170));
+                          groupItems.AddSimple().DataField("ShadowCardIds").Editor(editor => editor.Lookup().Width(550));
+                          groupItems.AddSimple().DataField("IsMandatory").Editor(editor=>editor.CheckBox().Width(80).ElementAttr(new{style="margin-left:20px;"}));
+                                               groupItems.AddSimple().DataField("PriorityOrder").Editor(editor=>editor.TextBox().Width(50));                   
+                          groupItems.AddSimple().DataField("ResponsibilityDefinition")
+                              .ColSpan(3)
+                              .Editor(editor => editor.TextArea().MinHeight(95).StylingMode(EditorStylingMode.Outlined).Width(645));
+                      });
+
+
+                  }));
+              editing.AllowAdding(true);
+              editing.AllowUpdating(true);
+              editing.AllowDeleting(true);
+
+
+          })
+      .ElementAttr(new{style="margin-top:-37px"})
+          .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
+      .Height(460)
+          .ShowBorders(true)
+          .ShowRowLines(true)
+
+          .Columns(columns =>
+          {
+              columns.Add().DataField("Title").Alignment(HorizontalAlignment.Center);
+              columns.Add().DataField("IsMandatory");
+             
+
+              columns.Add()
+                  .DataField("ShadowCardIds")
+                  .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
+                  .Lookup(lookup => lookup
+                      .DataSource(d => d.Mvc().Controller("Responsibilities").LoadAction("GetResponsibilityShadows")
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainId, cardId=new JS("getDrcId") }))
+                      .DisplayExpr("DrcCardName")
+                      .ValueExpr("Id")
+
+                  )
+              .Caption("Add Collaboration")
+                  .EditCellTemplate(@<text>
+                @Html.Partial("ShadowDropDownBox",Model)
+            </text>);
+              columns.Add().DataField("PriorityOrder");
+              columns.AddFor(m=>m.ResponsibilityDefinition).Visible(false);
+
+          }).DataSource(a => a.Mvc().Controller("Responsibilities").LoadAction("Get")
+                      .UpdateAction("Put")
+                      .InsertAction("Post")
+                      .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting")
+   
+      )
+
+

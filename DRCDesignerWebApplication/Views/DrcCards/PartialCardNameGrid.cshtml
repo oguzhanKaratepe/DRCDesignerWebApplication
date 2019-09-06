@@ -1,0 +1,34 @@
+﻿@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+
+<style>
+  
+</style>
+<div class="d-flex flex-column">
+    <h5>Document Name:</h5>
+        @(Html.DevExtreme().DataGrid<DrcCardViewModel>()
+              .ShowBorders(false)
+              .Height(52)
+              .Width(450)
+              .Scrolling(z=>z.ShowScrollbar(ShowScrollbarMode.Never))
+              .ShowColumnHeaders(false)
+              .ElementAttr(new {style="margin-top:-2px;"})
+              .Editing(editing =>
+              {
+                  editing.Mode(GridEditMode.Cell);
+                  editing.AllowUpdating(true);
+              })
+              .DataSource(a => a.Mvc().Controller("DrcCards")
+                  .LoadAction("GetCard")
+                  .UpdateAction("Put")
+                  .Key("Id").LoadParams(new { Id = new JS("getDrcId") }))
+              .Columns(columns => {
+                                      columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate(@<text>ewa</text>);
+                                  
+              })
+       
+              )
+
+</div>
+    
