@@ -26,7 +26,7 @@ namespace DRCDesigner.DataAccess.Concrete
         public DrcCard getDrcCardWithAllEntities(int id) //drcCard id
         {
 
-            return DrcCardContext.DrcCards.Include(a => a.DrcCardFields).Include(a => a.DrcCardResponsibilities).ThenInclude(a=>a.Responsibility).Include(a => a.Authorizations).ThenInclude(a=>a.AuthorizationRoles).ThenInclude(a=>a.Authorization).Where(s => s.Id == id).Single();
+            return DrcCardContext.DrcCards.Include(a => a.DrcCardFields).Include(a => a.DrcCardResponsibilities).Include(a => a.Authorizations).Where(s => s.Id == id).Single();
 
         }
 

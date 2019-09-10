@@ -13,7 +13,7 @@ namespace DRCDesigner.Business.Abstract
        void Update(DrcCard drcCard);
        void Delete(DrcCard drcCard);
        Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int id);
-       bool MoveCardToDestinationSubdomain(int destId, int cardId);
+       bool MoveCardToDestinationSubdomain(DrcCard drcCard);
        string GetShadowCardSourcePath(int? shadowId);
    }
 }

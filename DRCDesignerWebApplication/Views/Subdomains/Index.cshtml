@@ -12,16 +12,18 @@
 
 <style>
     #gridContainer {
-        margin-left: 50px;
+        margin-left: 5%
+  
     }
+
 </style>
-<div>
+<div class="d-flex align-content-center m-5">
 
     @(Html.DevExtreme().DataGrid<Subdomain>().ID("gridContainer")
                                                         .ShowBorders(true)
                                                         .Paging(paging => paging.PageSize(6))
                                                         .Width(1200)
-                                                        .Editing(editing =>
+          .Editing(editing =>
                                                         {
                                                             editing.Mode(GridEditMode.Cell);
                                                             editing.AllowAdding(true);
@@ -44,8 +46,7 @@
                                                         .Key("Id")
                                                     ).SearchPanel(searchPanel => searchPanel
                                    .Visible(true)
-                                   .Width(240)
-                                   .Placeholder("Search...")
+                                                        .Placeholder("Search...")
                                 )
 
     )

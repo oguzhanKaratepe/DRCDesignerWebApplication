@@ -7,25 +7,12 @@
 <style>
     .AdShadowCardId {
         visibility: hidden;
-        margin-bottom: -50px;
+        max-height: 1px;
     }
     .AdShadowCardName {
         margin-top: 20px;
     }
- 
-    #addSubdomainAlert {
-        margin-top: 280px;
-        margin-left: 370px;
-    }
 
-    .long-title h4 {
-        font-family: 'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana;
-        font-weight: 200;
-        font-size: 18px;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-top: 20px;
-    }
 
     .CloseButton {
         float: right;
@@ -38,13 +25,13 @@
               .ID("AddShadowCard-popup")
               .ElementAttr("class", "popup")
               .TitleTemplate(@<text>
-                <div class="long-title"><h4>Add a Shadow Card</h4></div>
+                <div class="long-title text-light d-flex justify-content-center p-3"><h3>Add a Shadow Card</h3></div>
                 <div class="CloseButton">
                     @(Html.DevExtreme().Button().Icon("close").OnClick("closeShadowAddButton"))
                 </div>
             </text>)
                          .Width(450)
-                         .Height(320)
+                         .Height(300)
                           .ShowTitle(true)
                           .Visible(false)
                           .DragEnabled(true)
@@ -57,9 +44,7 @@
 
 @using (Html.DevExtreme().NamedTemplate("Add-ShadowPopup-template"))
 {
-    @*<div class="current-value">
-            Selected card is <span></span>
-        </div>*@
+ 
     @using (Html.BeginForm("PostShadow", "DrcCards", FormMethod.Post, new { id = "AddShadow" }))
     {
 
@@ -67,7 +52,7 @@
                       .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainId = @Model.SubdomainId }))
                       .DataSourceOptions(o => o.Group("SubdomainName"))
                       .Grouped(true)
-                      .Placeholder("Select Main Card")
+              .Placeholder("Select Main Card")
                       .DisplayExpr("DrcCardName")
                       .SearchEnabled(true)
                       .OnValueChanged("selectBox_valueChanged")
@@ -89,9 +74,6 @@
                       })
                                                                                                        
                                                   )
-        
-                                                  
-
 
         <div class="submitButton">
             @(Html.DevExtreme().Button()
@@ -106,8 +88,6 @@
 
 
 }
-
-
 
 <script>
     function getFormInstance() {

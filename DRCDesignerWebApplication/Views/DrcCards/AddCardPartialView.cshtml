@@ -10,24 +10,6 @@
         margin-left: 370px;
     }
 
-    .long-title h3 {
-        font-family: 'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana;
-        font-weight: 200;
-        font-size: 28px;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-top: 20px;
-    }
-
-    .long-title h4 {
-        font-family: 'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana;
-        font-weight: 200;
-        font-size: 18px;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-top: 20px;
-    }
-
     .CloseButton {
         float: right;
         margin-top: -50px;
@@ -48,17 +30,14 @@
        
     }
 
-
-
 <script>
-
-    function AddClickHandler(e) {
-        $("#addCard").submit();
-    }
     function shadowCardPopUp() {
         var popup = $("#AddShadowCard-popup").dxPopup("instance");
         popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
         popup.show();
     }
-    
+    function AddClickHandler(e) {
+        $("#addCard").submit();
+    }
+
 </script>

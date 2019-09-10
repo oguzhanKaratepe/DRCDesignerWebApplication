@@ -11,44 +11,44 @@
 
 <style>
     #gridContainer {
-        margin-left: 50px;
+        margin-left: 5%
     }
 </style>
+<div class="d-flex align-content-center m-5">
+    @(Html.DevExtreme().DataGrid<Role>().ID("gridContainer")
+                                                    .ShowBorders(true)
+                                                    .Paging(paging => paging.PageSize(6))
+                                                     .Width(1200)
+                                                    .Editing(editing =>
+                                                    {
+                                                        editing.Mode(GridEditMode.Cell);
+                                                        editing.AllowAdding(true);
+                                                        editing.AllowDeleting(true);
+                                                        editing.AllowUpdating(true);
 
-@(Html.DevExtreme().DataGrid<Role>().ID("gridContainer")
-                                            .ShowBorders(true)
-                                            .Paging(paging => paging.PageSize(6))
-                                             .Width(1200)
-                                            .Editing(editing =>
-                                            {
-                                                editing.Mode(GridEditMode.Cell);
-                                                editing.AllowAdding(true);
-                                                editing.AllowDeleting(true);
-                                                editing.AllowUpdating(true);
+                                                    })
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.AddFor(m => m.RoleName);
+                                                        columns.AddFor(m => m.SubdomainId)
+                                                            .Width(160).HeaderCellTemplate("Subdomain")
+                                                         .Lookup(lookup => lookup
+                                                         .DataSource(d => d.Mvc().Controller("Subdomains").LoadAction("Get").Key("Id"))
+                                                         .DisplayExpr("SubdomainName").ValueExpr("Id").AllowClearing(true)).Width(200);
+                                                    })
+                                                    .DataSource(d => d.Mvc()
+                                                        .Controller("Roles")
+                                                        .LoadAction("Get")
+                                                        .UpdateAction("Put")
+                                                        .InsertAction("Post")
+                                                        .DeleteAction("Delete")
+                                                        .Key("Id")
+                                                    ).SearchPanel(searchPanel => searchPanel
+                                   .Visible(true)
+                                   .Width(240)
+                                   .Placeholder("Search...")
+                                )
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        .OnRowRemoved(@<text> function(e) { logEvent("RowRemoved"); } </text>)
+    )
 
-                                            })
-                                            .Columns(columns =>
-                                            {
-                                                columns.AddFor(m => m.RoleName);
-                                                columns.AddFor(m => m.SubdomainId)
-                                                    .Width(160).HeaderCellTemplate("Subdomain")
-                                                 .Lookup(lookup => lookup
-                                                 .DataSource(d => d.Mvc().Controller("Subdomains").LoadAction("Get").Key("Id"))
-                                                 .DisplayExpr("SubdomainName").ValueExpr("Id").AllowClearing(true)).Width(200);
-                                            })
-                                            .DataSource(d => d.Mvc()
-                                                .Controller("Roles")
-                                                .LoadAction("Get")
-                                                .UpdateAction("Put")
-                                                .InsertAction("Post")
-                                                .DeleteAction("Delete")
-                                                .Key("Id")
-                                            ).SearchPanel(searchPanel => searchPanel
-                           .Visible(true)
-                           .Width(240)
-                           .Placeholder("Search...")
-                        )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                .OnRowRemoved(@<text> function(e) { logEvent("RowRemoved"); } </text>)
-)
-
-
+</div>

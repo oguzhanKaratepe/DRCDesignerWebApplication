@@ -17,10 +17,11 @@ namespace DRCDesigner.DataAccess.Concrete
 
         }
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
-        //public ICollection<Responsibility> GetResponsibilityWithDrcResponsibilities(int id)
-        //{
-        //    return DrcCardContext.Responsibilities.Where(m => m.Id == id).Include(m => m.DrcCardResponsibilities).ThenInclude(m=>m.IsRelationCollaboration)
-        //        .ToList();
-        //}
+        public IEnumerable<Responsibility> GetDrcAllResponsibilities(int id)
+        {
+            var result = DrcCardContext.Responsibilities.Include(m => m.DrcCardResponsibilities).ThenInclude(m => m.DrcCard).ToList();
+
+            return result.Where(m => m.DrcCardResponsibilities.Any(c => c.DrcCardId == id)).ToList();
+        }
     }
 }

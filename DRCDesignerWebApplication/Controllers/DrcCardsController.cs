@@ -222,17 +222,19 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpPost]
-        public ActionResult MoveCardToDestinationSubdomain(int destinationId, int cardId)
+        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainId,DrcCardViewModel drcCardViewModel)
         {
-            var result = _drcCardService.MoveCardToDestinationSubdomain(destinationId, cardId);
+            var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
+            var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
             if (result != true)
             {
                 return BadRequest();
             }
             else
             {
-                return Ok();
+                return Redirect("/DrcCards/index?id=" + currentSubdomainId);
             }
+
         }
     }
 }

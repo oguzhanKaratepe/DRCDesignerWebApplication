@@ -23,7 +23,8 @@
       .ValueExpr("Id")
       .DisplayExpr("DrcCardName")
       .DataSource(d => d.Mvc().LoadAction("GetResponsibilityShadows").Controller("Responsibilities").Key("Id").LoadParams(new {Id = Model.SubdomainId, cardId = new JS("getDrcId") }))
-      .Placeholder("Select a Collaboration...")
+      .Placeholder("Select Collaboration")
+      .Width(172)
       .ShowClearButton(true)
       .OnValueChanged(@"function(args) { gridBox_valueChanged(args, setValue); }")
       .DropDownOptions(op =>

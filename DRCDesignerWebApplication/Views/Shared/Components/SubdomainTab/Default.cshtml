@@ -1,45 +1,20 @@
 ﻿
 @model DRCDesignerWebApplication.ViewModels.SubdomainListViewModel
-<style>
 
-    .active {
-        /*background-color: rgba(133, 125, 125, 1) !important;*/
-        /*//color: rgba(28, 168, 221, 1) !important;*/
-   
-    }
-    a.active {
-        /*background-color: black;*/
+<ul class="nav nav-pills">
 
-    }
-    .nav {
-        margin-left: 10px;
-        background-color: lightgray;
-        margin-bottom: 10px;
-    }
-  .tabtext{
-      
-      /*font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-      font-size:1rem;
-      font-weight:400;
-      color:#212529;*/
-      text-align:left;
-  }
-  
-</style>
-
-<div class="nav d-flex flex-wrap ">
-    <div>
-        @foreach (var subdomain in Model.Subdomains)
-        {
-            var css = "tabtext btn ";
-            if (subdomain.Id == Model.CurrentSubdomain)
+    @foreach (var subdomain in Model.Subdomains)
+    {
+        var css = "btn nav-link text-white";
+        <li class="nav-item">
+            @if (subdomain.Id == Model.CurrentSubdomain)
             {
                 css += "active btn-secondary";
             }
 
-            <a href="/DrcCards/index?id=@subdomain.Id" type="button" class="@css">@subdomain.SubdomainName</a>
-        }
-    </div>
+            <a href="/DrcCards/index?id=@subdomain.Id" class="@css">@subdomain.SubdomainName</a>
+        </li>
+    }
 
+</ul>
 
-</div>

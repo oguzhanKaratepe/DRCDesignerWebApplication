@@ -1,4 +1,5 @@
-﻿@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+﻿@using DevExtreme.AspNet.Mvc.Builders
+@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
 
 
 @{
@@ -21,16 +22,18 @@
              )
                   ).Form(f => f.Items(items => {
                       items.AddGroup()
-                      .ColCount(4)
+
+                          .ColCount(4)
                       .ColSpan(2)
                       .Items(groupItems => {
 
-                          groupItems.AddSimple().DataField("Title").Editor(editor=>editor.TextBox().Width(170));
+                          groupItems.AddSimple().DataField("Title").Editor(editor=>editor.TextBox().Width(190));
                           groupItems.AddSimple().DataField("ShadowCardIds").Editor(editor => editor.Lookup().Width(550));
-                          groupItems.AddSimple().DataField("IsMandatory").Editor(editor=>editor.CheckBox().Width(80).ElementAttr(new{style="margin-left:20px;"}));
-                                               groupItems.AddSimple().DataField("PriorityOrder").Editor(editor=>editor.TextBox().Width(50));                   
+                          groupItems.AddSimple().DataField("IsMandatory").Editor(editor=>editor.CheckBox().Width(50).ElementAttr(new{style="margin-left:20px;"}));
+                                               groupItems.AddSimple().DataField("PriorityOrder").Editor(editor=>editor.NumberBox().Width(30));                   
                           groupItems.AddSimple().DataField("ResponsibilityDefinition")
                               .ColSpan(3)
+                              
                               .Editor(editor => editor.TextArea().MinHeight(95).StylingMode(EditorStylingMode.Outlined).Width(645));
                       });
 
@@ -55,7 +58,7 @@
              
 
               columns.Add()
-                  .DataField("ShadowCardIds")
+                  .DataField("ShadowCardIds").Width(172)
                   .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
                   .Lookup(lookup => lookup
                       .DataSource(d => d.Mvc().Controller("Responsibilities").LoadAction("GetResponsibilityShadows")
@@ -68,8 +71,9 @@
                   .EditCellTemplate(@<text>
                 @Html.Partial("ShadowDropDownBox",Model)
             </text>);
-              columns.Add().DataField("PriorityOrder");
-              columns.AddFor(m=>m.ResponsibilityDefinition).Visible(false);
+              columns.Add().DataField("PriorityOrder").Width(110);
+
+              columns.AddFor(m=>m.ResponsibilityDefinition).Visible(false).Width(0);
 
           }).DataSource(a => a.Mvc().Controller("Responsibilities").LoadAction("Get")
                       .UpdateAction("Put")

@@ -15,12 +15,14 @@ namespace DRCDesignerWebApplication.ViewModels
             Fields=new List<FieldViewModel>();
         }
         public int Id { get; set; }
+        [Required(ErrorMessage = "Subdomain is required")]
+        [DisplayName("Subdomain")]
         public int SubdomainId { get; set; }
         [JsonIgnore]
         public virtual Subdomain Subdomain { get; set; }
         public int? MainCardId { get; set; }
-        [Required(ErrorMessage = "Card Name is required")]
-        [DisplayName("Card Name")]
+        [Required(ErrorMessage = "Document Name is required")]
+        [DisplayName("Document Name")]
         public string DrcCardName { get; set; }
         public int Order { get; set; }
         public string SourceDrcCardPath { get; set; }
