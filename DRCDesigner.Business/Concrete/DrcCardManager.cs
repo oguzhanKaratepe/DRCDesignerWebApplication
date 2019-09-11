@@ -162,6 +162,13 @@ namespace DRCDesigner.Business.Concrete
                     }
                 }
 
+                var cardRelationsWithOtherCards = _drcUnitOfWork.DrcCardResponsibilityRepository
+                    .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(drcCard.Id);
+                foreach (var cardReletion in cardRelationsWithOtherCards)
+                {
+                    _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(cardReletion);
+                }
+
                 var cardFields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(drcCard.Id);
 
                 foreach (var cardField in cardFields)

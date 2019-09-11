@@ -172,21 +172,21 @@ namespace DRCDesignerWebApplication.Controllers
             _drcUnitOfWork.Complete();
         }
 
-        [HttpGet]
-        public async Task<object> GetResponsibilityShadows(int Id, int cardId, DataSourceLoadOptions loadOptions)
-        {
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(Id);
-            IList<DrcCard> cards = new List<DrcCard>();
-            foreach (var card in drcCards)
-            {
-                if (card.Id != cardId)
-                {
-                    cards.Add(card);
-                }
-            }
+        //[HttpGet]
+        //public async Task<object> GetResponsibilityShadows(int Id, int cardId, DataSourceLoadOptions loadOptions)
+        //{
+        //    var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(Id);
+        //    IList<DrcCard> cards = new List<DrcCard>();
+        //    foreach (var card in drcCards)
+        //    {
+        //        if (card.Id != cardId)
+        //        {
+        //            cards.Add(card);
+        //        }
+        //    }
 
-            return DataSourceLoader.Load(cards, loadOptions);
-        }
+        //    return DataSourceLoader.Load(cards, loadOptions);
+        //}
     }
 
 

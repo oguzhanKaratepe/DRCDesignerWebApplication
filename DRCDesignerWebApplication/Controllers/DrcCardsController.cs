@@ -174,20 +174,21 @@ namespace DRCDesignerWebApplication.Controllers
 
             return Ok();
         }
+        [HttpGet]
+        public async Task<object> GetCardCollaborationOptions(int Id, int cardId, DataSourceLoadOptions loadOptions)
+        {
+            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(Id);
+            IList<DrcCard> cards = new List<DrcCard>();
+            foreach (var card in drcCards)
+            {
+                if (card.Id != cardId)
+                {
+                    cards.Add(card);
+                }
+            }
 
-        //[HttpPut]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Put(DrcCardViewModel drcCardViewModel)
-        //{
-        //    if (!TryValidateModel(drcCardViewModel))
-        //        return BadRequest("I will add error to here");
-
-        //    var updatedCard = _mapper.Map<DrcCard>(drcCardViewModel);
-
-        //    _drcCardService.Update(updatedCard);
-
-        //    return Redirect("/DrcCards/index?id=" + updatedCard.SubdomainId);
-        //}
+            return DataSourceLoader.Load(cards, loadOptions);
+        }
 
 
         [HttpPost]

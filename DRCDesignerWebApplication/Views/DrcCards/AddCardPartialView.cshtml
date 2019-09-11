@@ -10,18 +10,7 @@
         margin-left: 370px;
     }
 
-    .CloseButton {
-        float: right;
-        margin-top: -50px;
-    }
-
-    .submitButton {
-        display: flex;
-        justify-content: flex-end;
-    }
 </style>
-
-
 
     @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "addCard" }))
     {
@@ -30,14 +19,3 @@
        
     }
 
-<script>
-    function shadowCardPopUp() {
-        var popup = $("#AddShadowCard-popup").dxPopup("instance");
-        popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
-        popup.show();
-    }
-    function AddClickHandler(e) {
-        $("#addCard").submit();
-    }
-
-</script>

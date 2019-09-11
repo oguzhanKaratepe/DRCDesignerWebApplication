@@ -22,7 +22,7 @@
       .Value(new JS("data.ShadowCardIds"))
       .ValueExpr("Id")
       .DisplayExpr("DrcCardName")
-      .DataSource(d => d.Mvc().LoadAction("GetResponsibilityShadows").Controller("Responsibilities").Key("Id").LoadParams(new {Id = Model.SubdomainId, cardId = new JS("getDrcId") }))
+      .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {Id = Model.SubdomainId, cardId = Model.Id }))
       .Placeholder("Select Collaboration")
       .Width(172)
       .ShowClearButton(true)
@@ -42,7 +42,7 @@
                                  .ShowBorders(true)
                                  .ShowRowLines(true)
                                  .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-                                 .DataSource(d => d.Mvc().LoadAction("GetResponsibilityShadows").Controller("Responsibilities").Key("Id").LoadParams(new {Id = Model.SubdomainId, cardId = new JS("getDrcId") }))
+                                 .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {Id = Model.SubdomainId, cardId = Model.Id }))
                                  .Columns(columns =>
                                  {
 

@@ -202,32 +202,14 @@
                 <p class=" text-lg-center align-content-center" id="addSubdomainAlert" >To be able start design, you must start by adding a new subdomain to your project.. </p>
             }
         
-        <div class="card-deck d-flex flex-wrap align-self-start  ml-2">
+        <div class="flex-container d-flex flex-wrap ml-2 align-items-baseline">
 
         @foreach (var property in Model.DrcCardViewModes)
             {
      
         Model.DrcCardViewModel = property;
-                <div class="d-flex">
-                <script>
-                    function OpenEditPage(data) {
-                        var popup = $("#Card-popup").dxPopup("instance");
-                        popup.option("contentTemplate", $("#Update-popup-template"+ data));
-                        popup.show();
-                    }
-                    function DeleteThisCard(data) {
-                        var popup = $("#Card-delete-popup").dxPopup("instance");
-                        popup.option("contentTemplate", $("#Delete-popup-template"+ data));
-                        popup.show();
-                    }
-                  
-                    function moveCardPopUp(data) {
-                        var popup = $("#MoveCard-popup").dxPopup("instance");
-                        popup.option("contentTemplate", $("#Move-CardPopup-template"+data));
-                        popup.show();
-                    }
-                </script>
-                <div class="card border-secondary  mb-3 mr-2 mt-2" style="min-width: 20rem;">
+
+                <div class="card border-secondary  mb-3 mr-2 mt-2 d-flex" style="min-width: 28rem; max-width: 36rem;">
                 @if (property.MainCardId != null)
                 {
                     <div id="shadowcardheader" class="card-header  text-light disabled border-secondary d-flex flex-column pb-5">
@@ -239,13 +221,11 @@
                                 <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
                                     <a class="dropdown-item cursor-pointer " onclick="OpenEditPage(@property.Id);" id="@property.Id">Edit</a>
                                     <a class="dropdown-item cursor-pointer" onclick="DeleteThisCard(@property.Id);" id="@property.Id">Delete</a>
-                                  
                                 </div>
                             </div>
                         </div>
 
                     </div>
-
                 }
                 else
                 {
@@ -265,7 +245,7 @@
 
                 }
 
-                <div class="card-body text-dark bg-light row m-0 p-0" style="min-height: 10rem">
+                <div class="card-body text-dark bg-light row m-0 p-0" style="min-height: 11rem">
 
                     <div class="bd-highlight bg-light col col-5 pr-0 pl-0">
 
@@ -275,7 +255,7 @@
                                 @if (@responsibility.IsMandatory == true)
                                 {
                                     <div class="pt-1 pb-1">
-                                        <a class="text-danger">!</a>
+                                        <a class="text-danger pl-1">!</a>
                                         <a class="text-truncate pl-0 pr-2 text-dark " id="@("house" + responsibility.Id)">
                                             @responsibility.Title
                                         </a>
@@ -317,19 +297,14 @@
                                       .Offset(0, 2)
                                   )
                                   )
-
-
-
-
-
-                        }
+                                     }
 
                     </div>
-                    <div class="bg-light border-right border-left rounded-left rounded-right col col-3">
+                    <div class="bg-light border-right border-left rounded-left rounded-right col col-3 pr-0 pl-0">
                         @foreach (var Authorization in property.Authorizations)
                         {
                             <div>
-                                <div class="p-1 text-dark">@Authorization.OperationName (<a class="small">@string.Join(", ", Authorization.Roles.Select(r => r.RoleName))</a>)</div>
+                                <div class="p-1 text-dark">@Authorization.OperationName (<a class="small text-center text-dark">@string.Join(", ", Authorization.Roles.Select(r => r.RoleName))</a>)</div>
                             </div>
                         }
                     </div>
@@ -360,40 +335,35 @@
                             }
                         }
                     </div>
-                    <script>
-                        function getAllCollaborations(document) {
-                            alert(document.Id);
-                        }
-                    </script>
+                
                 </div>
 
 
-                <div id="card-footer" class=" border-top rounded-top card-footer text-dark bg-light d-flex align-content-start flex-wrap">
+                <div id="card-footer" class="border-top rounded-top card-footer text-dark bg-light d-flex flex-wrap " style="min-height: 4rem">
 
 
                     @foreach (var field in property.Fields)
                     {
 
-                        <div id="@("field" + field.Id)" class=" border-right border-bottom rounded-bottom rounded-right p-1 m-1">
+                    <div id="@("field" + field.Id)" class=" border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 ">
 
-                            @field.AttributeName
+                        @field.AttributeName
 
-                            @(Html.DevExtreme().Popover()
-                                  .Target("#field" + field.Id)
-                                  .ShowEvent("mouseenter")
-                                  .HideEvent("mouseleave")
-                                  .Position(Position.Bottom)
-                                  .Width(270)
-                                  .ContentTemplate(@<text>
-                                                       <h6>@field.Type <br></h6>
-                                                       @if (@field.CollaborationCard != null)
-                                                       {
-                                                           <h6> Collaboration Card:</h6>
-                                                           <span>@field.CollaborationCard.DrcCardName</span>
-                                                       }
-
-                                                    </text>))
-                        </div>
+                        @(Html.DevExtreme().Popover()
+                                      .Target("#field" + field.Id)
+                                      .ShowEvent("mouseenter")
+                                      .HideEvent("mouseleave")
+                                      .Position(Position.Bottom)
+                                      .Width(270)
+                                      .ContentTemplate(@<text>
+                                        <h6>@field.Type <br></h6>
+                                        @if (@field.CollaborationCard != null)
+                                    {
+                                    <h6> Collaboration Card:</h6>
+                                    <span>@field.CollaborationCard.DrcCardName</span>
+                            }
+                                                        </text>))
+                    </div>
                     }
 
                 </div>
@@ -420,16 +390,11 @@
                                    formItems.AddSimpleFor(m => m.DrcCardName).HelpText("You can update your document name before move..");
                                    formItems.AddSimpleFor(m => m.Id).CssClass("AdShadowCardId");
 
-                                  
-
-                                  
-
                                    formItems.AddButton()
                                        .HorizontalAlignment(HorizontalAlignment.Right)
                                        .ButtonOptions(b => b.Text("Move Document")
                                            .UseSubmitBehavior(true)
                                        );
-
                                })
                                                                                                        
                                )
@@ -465,84 +430,11 @@
 
                                       });
                                   });
-
                           })
 
                           )
-
-                    <script>
-
-                        function onEditorPreparing(e) {
-                            if (e.parentType === "dataRow" && e.dataField === "DrcCardId") {
-                                e.editorOptions.disabled = (typeof e.row.data.Type !== "number");
-                            }
-                        }
-
-
-                        function getCollaborationCards(options) {
-                            return {
-                                store: DevExpress.data.AspNet.createStore({
-                                    key: "Id",
-                                    loadUrl:
-                                        '@Url.Action("GetCollaborations", "Fields", new {Id = @property.SubdomainId, cardId = @property.Id})'
-                                })
-
-                            };
-                        }
-
-                        function setTypeValue(rowData, value) {
-                            rowData.Type = value;
-                        }
-
-                        function customizeAuthorizationDisplayText(cell, info) {
-                            var rowData = info.row.data;
-                            if (!rowData)
-                                return;
-                            var texts = [];
-                            if (rowData.RoleIds && rowData.RoleIds.length) {
-                                for (var i = 0; i < rowData.RoleIds.length; i++) {
-                                    var value = rowData.RoleIds[i];
-                                    var displayText = info.column.lookup.calculateCellValue(value);
-
-                                    if (displayText)
-                                        texts.push(displayText);
-                                }
-                            }
-                            cell.append(texts.toString());
-
-                        };
-
-                        function customizeDisplayText(cell, info) {
-                            var rowData = info.row.data;
-
-                            if (!rowData)
-                                return;
-                            var texts = [];
-                            if (rowData.ShadowCardIds && rowData.ShadowCardIds.length) {
-                                for (var i = 0; i < rowData.ShadowCardIds.length; i++) {
-                                    var value = rowData.ShadowCardIds[i];
-                                    var displayText = info.column.lookup.calculateCellValue(value);
-                                    if (displayText)
-                                        texts.push(displayText);
-                                }
-                            }
-                            cell.append(texts.toString());
-                        };
-
-                        function getDrcId() {
-                            return @property.Id;
-                        }
-
-
-                        function onRowInserting(e) {
-                            e.data.DrcCardId = @property.Id;
-                        }
-
-
-                    </script>
-
-
                 }
+                
                 @using (Html.DevExtreme().NamedTemplate("Delete-popup-template" + property.Id))
                 {
                     Model.DrcCardViewModel = property;
@@ -562,7 +454,6 @@
                              @(Html.DevExtreme().Form<DrcCardContainerViewModel>()
                                    .FormData(Model)
                                    .ID("form")
-                                   .ColCount(2)
                                    .Items(formItems =>
                                    {
                                        formItems.AddSimpleFor(m => m.DrcCardViewModel.DrcCardName).Editor(e => e.TextBox().Disabled(true));
@@ -578,72 +469,69 @@
                                    .UseSubmitBehavior(true)
                                    )
                          </div>
-
                      }
-
                 }
-
-                </div>
-
-
-                </div>
-
-        }
-
+          </div>
+            }
         </div>
-
-
     </div>
+</div>
 
-    </div>
 
 
-    @(Html.DevExtreme().Popup()
-                                  .ID("Card-popup")
-                                  .ElementAttr("class", "popup")
-                                  .TitleTemplate(@<text>
-                                    <div class="long-title text-light d-flex justify-content-center p-3"><h3>Update Document</h3></div>
-                                    <div class="CloseButton pb-2 mb-5">
-                                        @(Html.DevExtreme().Button().Icon("close").OnClick("closeButton"))
-                                    </div>
-                                </text>)
-                                                                                                          .Width(750)
-                                                                                                          .Height(700)
-                                                                                                          .ShowTitle(true)
-                                                                                                          .Visible(false)
-                                                                                                          .DragEnabled(true)
-                                                                                                          .CloseOnOutsideClick(false)
-                                                                                                          .CloseOnBackButton(true)
-                                                                                                          .ShowCloseButton(true)
-    )
 
-    @(Html.DevExtreme().Popup()
-                                  .ID("Card-delete-popup")
-                                  .ElementAttr("class", "popup")
-                                  .Width(500)
-                                  .Height(250)
-                                  .ShowTitle(true)
-                                  .Title("Do you want to delete this Item?")
-                                  .Visible(false)
-                                  .DragEnabled(true)
-                                  .CloseOnOutsideClick(false)
-                                  .CloseOnBackButton(true)
-                                  .ShowCloseButton(true)
-    )
-    @(Html.DevExtreme().Popover()
-                      .ID("more-option")
-                      .ElementAttr("class", "popup")
-                      .Width(80)
-                      .Height(120)
-                      .CloseOnOutsideClick(false)
-                      .CloseOnBackButton(true)
-                      .ShowCloseButton(true)
-    )
+@(Html.DevExtreme().Popup()
+      .ID("Card-popup")
+      .ElementAttr("class", "popup")
+      .TitleTemplate(@<text>
+                         <div class="long-title text-light d-flex justify-content-center p-3"><h3>Update Document</h3></div>
+                         <div class="CloseButton pb-2 mb-5">
+                             @Html.DevExtreme().Button().Icon("close").OnClick("closeButton")
+                         </div>
+                      </text>)
+      .Width(750)
+      .Height(710)
+      .ShowTitle(true)
+      .Visible(false)
+      .HoverStateEnabled(true)
+      .DragEnabled(true)
+      .CloseOnOutsideClick(false)
+      .CloseOnBackButton(true)
+      .ShowCloseButton(true)
+ 
+
+      )
+
+@(Html.DevExtreme().Popup()
+     .ID("Card-delete-popup")
+     .ElementAttr("class", "popup")
+     .Width(500)
+     .Height(350)
+     .ShowTitle(true)
+     .Title("Do you want to delete this Item?")
+     .Visible(false)
+     .DragEnabled(true)
+     .CloseOnOutsideClick(false)
+     .CloseOnBackButton(true)
+     .ShowCloseButton(true)
+      )
+
+@(Html.DevExtreme().Popover()
+     .ID("more-option")
+     .ElementAttr("class", "popup")
+     .Width(80)
+     .Height(120)
+     .CloseOnOutsideClick(false)
+     .CloseOnBackButton(true)
+     .ShowCloseButton(true)
+      )
+
 @(Html.DevExtreme().Popup()
       .ID("MoveCard-popup")
       .ElementAttr("class", "popup")
       .TitleTemplate(@<text>
-                         <div class="long-title text-light d-flex justify-content-center p-3"><h3>Subdomain Change</h3></div>
+                         <div class="long-title text-light d-flex justify-content-center p-3">
+                             <h3>Subdomain Change</h3></div>
                          <div class="CloseButton">
                              @(Html.DevExtreme().Button().Icon("close").OnClick("closeMoveDocumentPopUp"))
                          </div>
@@ -659,7 +547,18 @@
 
       )
     <script>
-   
+        function shadowCardPopUp() {
+            var popup = $("#AddShadowCard-popup").dxPopup("instance");
+            popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
+            popup.show();
+        }
+        function AddClickHandler(e) {
+            $("#addCard").submit();
+        }
+        function addShadowClickHandler(e) {
+      
+            $("#AddShadow").submit();
+        }
 
         function moveCardClickHandler(e) {
       
@@ -680,6 +579,55 @@
             location.reload();
         }
 
+        function customizeAuthorizationDisplayText(cell, info) {
+            var rowData = info.row.data;
+            if (!rowData)
+                return;
+            var texts = [];
+            if (rowData.RoleIds && rowData.RoleIds.length) {
+                for (var i = 0; i < rowData.RoleIds.length; i++) {
+                    var value = rowData.RoleIds[i];
+                    var displayText = info.column.lookup.calculateCellValue(value);
 
+                    if (displayText)
+                        texts.push(displayText);
+                }
+            }
+            cell.append(texts.toString());
 
+        };
+        
+        function customizeDisplayText(cell, info) {
+            var rowData = info.row.data;
+
+            if (!rowData)
+                return;
+            var texts = [];
+            if (rowData.ShadowCardIds && rowData.ShadowCardIds.length) {
+                for (var i = 0; i < rowData.ShadowCardIds.length; i++) {
+                    var value = rowData.ShadowCardIds[i];
+                    var displayText = info.column.lookup.calculateCellValue(value);
+                    if (displayText)
+                        texts.push(displayText);
+                }
+            }
+            cell.append(texts.toString());
+        };
+
+        function OpenEditPage(data) {
+            var popup = $("#Card-popup").dxPopup("instance");
+            popup.option("contentTemplate", $("#Update-popup-template"+ data));
+            popup.show();
+        }
+        function DeleteThisCard(data) {
+            var popup = $("#Card-delete-popup").dxPopup("instance");
+            popup.option("contentTemplate", $("#Delete-popup-template"+ data));
+            popup.show();
+        }
+                  
+        function moveCardPopUp(data) {
+            var popup = $("#MoveCard-popup").dxPopup("instance");
+            popup.option("contentTemplate", $("#Move-CardPopup-template"+data));
+            popup.show();
+        }
     </script>
