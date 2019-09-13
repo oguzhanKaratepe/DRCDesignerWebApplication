@@ -7,22 +7,25 @@ using DRCDesigner.Core.Entities;
 
 namespace DRCDesigner.Entities.Concrete
 {
-    public class Subdomain : IEntity
+    public class SubdomainVersion : IEntity
     {
 
-
-        public Subdomain()
+        public SubdomainVersion()
         {
             DRCards = new List<DrcCard>();
-            SubdomainRoles = new List<Role>();
+            SubdomainVersionRoles = new List<Role>();
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id { get; set; }
 
-        [DisplayName("Subdomain Name")]
-        public string SubdomainName { get; set; }
+        public int? SubdomainId { get; set; }
+        [JsonIgnore]
+        public virtual Subdomain Subdomain { get; set; }
+
+        [DisplayName("Version number")]
+        public int VersionNumber { get; set; }
 
         public virtual ICollection<DrcCard> DRCards { get; set; }
-        public virtual ICollection<Role> SubdomainRoles { get; set; }
+        public virtual ICollection<Role> SubdomainVersionRoles { get; set; }
     }
 }

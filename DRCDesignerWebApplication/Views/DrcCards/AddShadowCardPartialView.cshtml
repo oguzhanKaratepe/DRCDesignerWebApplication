@@ -63,7 +63,7 @@
         @(Html.DevExtreme().Form<DrcCardViewModel>()
                       .ID("form")
                       .ValidationGroup("ShadowDrcCard")
-                      .LabelLocation(FormLabelLocation.Top)
+              .LabelLocation(FormLabelLocation.Top)
                       .ReadOnly(false)
                       .ShowColonAfterLabel(true)
                       .Items(formItems =>
@@ -81,6 +81,7 @@
                   .ValidationGroup("ShadowDrcCard")
                           .OnClick("addShadowClickHandler")
                           .UseSubmitBehavior(false)
+                  
             )
         </div>
     }

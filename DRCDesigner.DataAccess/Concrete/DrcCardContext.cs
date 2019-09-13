@@ -64,9 +64,16 @@ namespace DRCDesigner.DataAccess.Concrete
                 .WithOne(s => s.DrcCard)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
             
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasMany(c => c.SubdomainVersionRoles)
+                .WithOne(s => s.SubdomainVersion)
+                .HasForeignKey(pt => pt.SubdomainVersionId)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+
             modelBuilder.Entity<Subdomain>()
-                .HasMany(c => c.SubdomainRoles)
-                .WithOne(s => s.Subdomain)
+                .HasMany(c => c.)
+                .WithOne(s => s.SubdomainVersion)
+                .HasForeignKey(pt => pt.SubdomainVersionId)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
         }
 

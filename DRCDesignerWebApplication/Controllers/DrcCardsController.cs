@@ -141,7 +141,7 @@ namespace DRCDesignerWebApplication.Controllers
             shadowCard.MainCardId = shadowCard.Id;
             shadowCard.Id = 0;
             if (!TryValidateModel(shadowCard))
-                return BadRequest("I will add error to here");
+                return BadRequest(ModelState.GetFullErrorMessage());
             _drcCardService.Add(shadowCard);
 
             return Redirect("/DrcCards/index?id=" + shadowCard.SubdomainId);
