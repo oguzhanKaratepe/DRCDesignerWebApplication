@@ -177,12 +177,14 @@
     }
 </style>
 
-<div class="min-vh-100">
+<div class="min-vh-100 ">
 
     <div class="d-flex justify-content-between">
         <div class="sticky-top w-100 ml-4">
             @await Component.InvokeAsync("SubdomainTab")
         </div>
+
+        <div class="justify-content-end mr-4">@Model.SubdomainName:@Model.VersionNumber </div>
 
     </div>
     <div class="d-flex flex-column align-items-start bg-dark w-100 ml-3">
@@ -192,8 +194,9 @@
 
         }
 
-        @if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainId != 0)
+        @if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainVersionId != 0)
         {
+           
             <div role="group">
                 <button id="btnGroupDrop1" class="btn btn-secondary btn-circle btn-circle-sm m-1 dx-icon-plus m-2" data-toggle="dropdown"></button>
                 <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
@@ -201,7 +204,7 @@
                     <a class="dropdown-item" onclick="shadowCardPopUp();">Shadow Document</a>
                 </div>
             </div>
-
+            
         }
 
         else if (Model.TotalSubdomainSize < 1)
@@ -379,10 +382,10 @@
 
                     @using (Html.DevExtreme().NamedTemplate("Move-CardPopup-template" + property.Id))
                     {
-                        @using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainId = @property.SubdomainId }))
+                        @using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainId = @property.SubdomainVersionId }))
                         {
                             Model.DrcCardViewModel = property;
-                            @Html.Hidden("currentSubdomainId", @property.SubdomainId)
+                            @Html.Hidden("currentSubdomainId", @property.SubdomainVersionId)
                             @(Html.DevExtreme().Form<DrcCardViewModel>()
                                           .ID("form")
                                           .FormData(Model.DrcCardViewModel)
@@ -391,10 +394,10 @@
                                           .ShowColonAfterLabel(true)
                                           .Items(formItems =>
                                           {
-                                              formItems.AddSimpleFor(m => m.SubdomainId).Editor(m => m.SelectBox().DataSource(d => d.Mvc()
+                                              formItems.AddSimpleFor(m => m.SubdomainVersionId).Editor(m => m.SelectBox().DataSource(d => d.Mvc()
                                                   .Controller("Subdomains")
                                                   .LoadAction("GetDropDownButtonSubdomains")
-                                                  .Key("Id").LoadParams(new { Id = @property.SubdomainId })).DisplayExpr("SubdomainName").ValueExpr("Id"));
+                                                  .Key("Id").LoadParams(new { Id = @property.SubdomainVersionId})).DisplayExpr("SubdomainName").ValueExpr("Id"));
                                               formItems.AddSimpleFor(m => m.DrcCardName).HelpText("You can update your document name before move..");
                                               formItems.AddSimpleFor(m => m.Id).CssClass("AdShadowCardId");
 
@@ -456,7 +459,7 @@
                                     </div>
 
                                 }
-                                @Html.HiddenFor(m => m.DrcCardViewModel.SubdomainId)
+                                @Html.HiddenFor(m => m.DrcCardViewModel.SubdomainVersionId)
                                 @Html.HiddenFor(m => m.DrcCardViewModel.Id)
                                 @Html.HiddenFor(m => m.DrcCardViewModel.MainCardId)
                                 @(Html.DevExtreme().Form<DrcCardContainerViewModel>()

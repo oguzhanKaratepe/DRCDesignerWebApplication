@@ -18,42 +18,46 @@ using   DRCDesigner.Entities.Concrete;
 
 namespace DRCDesignerWebApplication.Controllers
 {
-    public class SubdomainsController : Controller
+    public class SubdomainVersionsController : Controller
     {
 
-        private readonly ISubdomainService _subdomainService;
+        private readonly ISubdomainVersionService _subdomainVersionService;
         private readonly IMapper _mapper;
-        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper)
+        public SubdomainVersionsController(ISubdomainVersionService subdomainVersionService,IMapper mapper)
         {
-            _subdomainService = subdomainService;
+            _subdomainVersionService = subdomainVersionService;
             _mapper = mapper;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
-        public async Task<object> Get(DataSourceLoadOptions loadOptions)
+        public async Task<object> Get(int id,DataSourceLoadOptions loadOptions)
         {
-            SubdomainListViewModel subdomainListViewModel=new SubdomainListViewModel
+            IList<SubdomainVersionViewModel> viewModels=new List<SubdomainVersionViewModel>();
+            var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersions(id);
+            foreach (var BModelVersion in subdomainVersions)
             {
-                Subdomains= await _subdomainService.GetAll()
-             };
-
-            return DataSourceLoader.Load(subdomainListViewModel.Subdomains, loadOptions);
+                var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
+                viewModels.Add(viewmodel);
+            }
+            return DataSourceLoader.Load(viewModels, loadOptions);
         }
-
+        [HttpGet]
+        public async Task<object> GetReferenceOptions(int id, DataSourceLoadOptions loadOptions)
+        {
+            var refenceOptions = await _subdomainVersionService.GetReferenceOptions(id);
+            return DataSourceLoader.Load(refenceOptions, loadOptions);
+        }
+       
         [HttpPost]
         public IActionResult Post(string values)
         {
+        
             if (ModelState.IsValid)
-                _subdomainService.Add(values);
-            
+                _subdomainVersionService.Add(values);
+
             else
                 return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-            
+
             return Ok();
         }
 
@@ -61,32 +65,23 @@ namespace DRCDesignerWebApplication.Controllers
         public IActionResult Put(int key, string values)
         {
             if (ModelState.IsValid)
-                _subdomainService.Update(values,key);
+                _subdomainVersionService.Update(values, key);
 
             else
                 return BadRequest("I will add error to here");
 
             return Ok();
         }
+
         [HttpDelete]
         public async Task<ActionResult> Delete(int key)
         {
-            if (! await _subdomainService.Remove(key))
+            if (!await _subdomainVersionService.Remove(key))
             {
                 return BadRequest("I will add error to here");
             }
 
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
-
-        [HttpGet]
-        public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
-        {
-            //var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
-            //return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
-            throw new NotImplementedException();
-        }
-
-
     }
 }

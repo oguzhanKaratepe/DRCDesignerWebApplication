@@ -1,20 +1,45 @@
 ﻿
 @model DRCDesignerWebApplication.ViewModels.SubdomainListViewModel
 
-<ul class="nav nav-pills">
+<div class="d-flex flex-wrap">
 
     @foreach (var subdomain in Model.Subdomains)
     {
-        var css = "btn nav-link text-white";
+        @*var css = "btn nav-link text-white";
         <li class="nav-item">
             @if (subdomain.Id == Model.CurrentSubdomain)
             {
                 css += "active btn-secondary";
+
             }
 
             <a href="/DrcCards/index?id=@subdomain.Id" class="@css">@subdomain.SubdomainName</a>
         </li>
+        @if (subdomain.Id == Model.CurrentSubdomain)
+         {
+             foreach (var version in subdomain.SubdomainVersions)
+             {
+                 <a class="btn nav-link text-white">@version.VersionNumber</a>
+             }
+         }*@
+
+        <div >
+            @(Html.DevExtreme().DropDownButton()
+                  .Text(subdomain.SubdomainName)
+                  .DropDownOptions(options => options.Width(230))
+                  .DataSource(subdomain.SubdomainVersions)
+                  .DisplayExpr("VersionNumber")
+                  .OnItemClick("selectVersionButton_click")
+                  )
+        </div>
+      
     }
+   
+</div>
 
-</ul>
-
+<script>
+    function selectVersionButton_click(e) {
+      
+        window.location.href = "/DrcCards/index?id="+e.itemData.Id;
+    }
+</script>

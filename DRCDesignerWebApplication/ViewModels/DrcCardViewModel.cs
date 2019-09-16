@@ -17,9 +17,9 @@ namespace DRCDesignerWebApplication.ViewModels
         public int Id { get; set; }
         [Required(ErrorMessage = "Subdomain is required")]
         [DisplayName("Subdomain")]
-        public int SubdomainId { get; set; }
+        public int SubdomainVersionId { get; set; }
         [JsonIgnore]
-        public virtual Subdomain Subdomain { get; set; }
+        public virtual SubdomainVersion SubdomainVersion { get; set; }
         public int? MainCardId { get; set; }
         [Required(ErrorMessage = "Document Name is required")]
         [DisplayName("Document Name")]

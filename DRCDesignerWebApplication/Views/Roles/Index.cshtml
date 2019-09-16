@@ -11,14 +11,14 @@
 
 <style>
     #gridContainer {
-        margin-left: 5%
+        margin-left: 2%
     }
 </style>
 <div class="d-flex align-content-center m-5">
     @(Html.DevExtreme().DataGrid<Role>().ID("gridContainer")
                                                     .ShowBorders(true)
                                                     .Paging(paging => paging.PageSize(6))
-                                                     .Width(1200)
+          
                                                     .Editing(editing =>
                                                     {
                                                         editing.Mode(GridEditMode.Cell);
@@ -30,12 +30,13 @@
                                                     .Columns(columns =>
                                                     {
                                                         columns.AddFor(m => m.RoleName);
-                                                        columns.AddFor(m => m.SubdomainId)
-                                                            .Width(160).HeaderCellTemplate("Subdomain")
-                                                         .Lookup(lookup => lookup
-                                                         .DataSource(d => d.Mvc().Controller("Subdomains").LoadAction("Get").Key("Id"))
-                                                         .DisplayExpr("SubdomainName").ValueExpr("Id").AllowClearing(true)).Width(200);
+                                                        //columns.AddFor(m => m.SubdomainId)
+                                                        //    .Width(160).HeaderCellTemplate("Subdomain")
+                                                        // .Lookup(lookup => lookup
+                                                        // .DataSource(d => d.Mvc().Controller("Subdomains").LoadAction("Get").Key("Id"))
+                                                        // .DisplayExpr("SubdomainName").ValueExpr("Id").AllowClearing(true)).Width(200);
                                                     })
+
                                                     .DataSource(d => d.Mvc()
                                                         .Controller("Roles")
                                                         .LoadAction("Get")

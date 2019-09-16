@@ -1,0 +1,76 @@
+﻿@using DRCDesignerWebApplication.ViewModels
+
+<div class="master-detail-caption  m-2"><%- data.SubdomainName %> Versions:</div>
+@(Html.DevExtreme().DataGrid<SubdomainVersionViewModel>()
+              .ColumnAutoWidth(true)
+              .ShowBorders(true)
+
+              .Editing(editing =>
+              {
+                  editing.Mode(GridEditMode.Popup).Popup(p => p
+                .Title("Version Details")
+                .ShowTitle(true)
+                .Width(700)
+                .Height(415)
+                .Position(pos => pos
+                    .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .Of(new JS("window"))
+                )
+                ).Form(f => f.Items(items =>
+                {
+                    items.AddGroup()
+
+                        .ColCount(3)
+                        .ColSpan(2)
+                        .Items(groupItems =>
+                        {
+
+                            groupItems.AddSimple().DataField("VersionNumber").Editor(editor => editor.TextBox().Width(190));
+                            groupItems.AddSimple().DataField("EditLock").Editor(editor => editor.CheckBox().Width(50).ElementAttr(new { style = "margin-left:20px;" }));
+                            groupItems.AddSimple().DataField("ReferencedVersionIds").Editor(editor => editor.Lookup().Width(550));
+
+
+                        });
+
+
+                }));
+                  editing.AllowAdding(true);
+                  editing.AllowDeleting(true);
+                  editing.AllowUpdating(true);
+                  editing.UseIcons(true);
+
+              })
+              .Columns(columns =>
+              {
+              
+                  columns.AddFor(m => m.VersionNumber);
+                  columns.AddFor(m => m.EditLock);
+                  columns.AddFor(m => m.ReferencedVersionIds).Width(172)
+                      .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
+                      .Lookup(lookup => lookup
+                          .DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
+                              .Key("Id").LoadParams(new { Id = new JS("data.Id")}))
+                          .DisplayExpr("VersionNumber")
+                          .ValueExpr("Id")
+                      )
+                      .Caption("Add Ref")
+                      .EditCellTemplate(@<text>
+
+                                            @Html.Partial("MasterDetailDropDownPartialView")
+
+                                         </text>);
+
+                                          })
+                                          .DataSource(d => d.Mvc()
+                                              .Controller("SubdomainVersions")
+                                              .LoadAction("Get")
+                                              .UpdateAction("Put")
+                                              .InsertAction("Post")
+                                              .DeleteAction("Delete")
+                                              .Key("Id")
+
+                                              .LoadParams(new { id = new JS("data.Id") })
+                                          ).OnRowInserting("function(e) {  e.data.SubdomainId = data.Id; }")
+)
+

@@ -28,6 +28,19 @@ namespace DRCDesignerWebApplication.Helpers
                 .ForMember(dto => dto.SubdomainId, opt => opt.MapFrom(src => src.SubdomainId))
                 .ForMember(dto => dto.SubdomainName, opt => opt.MapFrom(src => src.SubdomainName));
 
+            CreateMap<FieldBusinessModel, FieldViewModel>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dto => dto.AttributeName, opt => opt.MapFrom(src => src.AttributeName))
+                .ForMember(dto => dto.CollaborationCard, opt => opt.MapFrom(src => src.CollaborationCard))
+                .ForMember(dto => dto.CollaborationId, opt => opt.MapFrom(src => src.CollaborationId))
+                .ForMember(dto => dto.DrcCardId, opt => opt.MapFrom(src => src.DrcCardId))
+                .ForMember(dto => dto.DrcCard, opt => opt.MapFrom(src => src.DrcCard))
+                .ForMember(dto => dto.Type, opt => opt.MapFrom(src => src.Type));
+
+            CreateMap<SubdomainVersionViewModel, SubdomainVersionBusinessModel>();
+            CreateMap<SubdomainVersionBusinessModel, SubdomainVersionViewModel>();
+
+
         }
     }
 }

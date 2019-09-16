@@ -70,15 +70,27 @@ namespace DRCDesigner.DataAccess.Concrete
                 .HasForeignKey(pt => pt.SubdomainVersionId)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
 
-            modelBuilder.Entity<Subdomain>()
-                .HasMany(c => c.)
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasMany(c => c.SubdomainVersionRoles)
+                .WithOne(s => s.SubdomainVersion)
+                .HasForeignKey(pt => pt.SubdomainVersionId);
+
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasMany(c => c.DRCards)
                 .WithOne(s => s.SubdomainVersion)
                 .HasForeignKey(pt => pt.SubdomainVersionId)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+            modelBuilder.Entity<Subdomain>()
+                .HasMany(c => c.SubdomainVersions)
+                .WithOne(s => s.Subdomain)
+                .HasForeignKey(pt => pt.SubdomainId)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
         }
 
 
         public DbSet<Subdomain> Subdomains { get; set; }
+        public DbSet<SubdomainVersion> SubdomainVersions { get; set; }
         public DbSet<DrcCard> DrcCards { get; set; }
         public  DbSet<Responsibility> Responsibilities { get; set; }
         public DbSet<Field> Fields { get; set; }

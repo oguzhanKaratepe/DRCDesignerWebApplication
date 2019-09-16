@@ -21,7 +21,7 @@
           .LoadAction("Get")
           .UpdateAction("Put")
           .InsertAction("Post")
-          .DeleteAction("Delete").Key("Id").LoadParams(new { Id =Model.Id })).OnRowInserting(@<text>
+          .DeleteAction("Delete").Key("Id").LoadParams(new { cardId =Model.Id })).OnRowInserting(@<text>
                                                                                                  function (e) {
                                                                                                  e.data.DrcCardId = @Model.Id;
                                                                                                  }
@@ -42,7 +42,7 @@
           columns.AddFor(m => m.CollaborationId)
               .Caption("Collaboration")
               .Width(145)
-              .Lookup(lookup => lookup.DataSource(m=>m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id =Model.SubdomainId, cardId = Model.Id }))
+              .Lookup(lookup => lookup.DataSource(m=>m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id =Model.SubdomainVersionId, cardId = Model.Id }))
               .DisplayExpr("DrcCardName").AllowClearing(true)
               .ValueExpr("Id")
               ).MinWidth(180);

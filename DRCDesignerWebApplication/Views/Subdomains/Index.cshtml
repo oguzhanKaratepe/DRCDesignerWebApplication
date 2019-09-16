@@ -1,4 +1,5 @@
 ﻿
+@using DevExtreme.AspNet.Mvc.Builders
 @using DRCDesigner.Entities.Concrete
 
 
@@ -12,7 +13,7 @@
 
 <style>
     #gridContainer {
-        margin-left: 5%
+        margin-left: 2%
   
     }
 
@@ -21,11 +22,16 @@
 
     @(Html.DevExtreme().DataGrid<Subdomain>().ID("gridContainer")
                                                         .ShowBorders(true)
-                                                        .Paging(paging => paging.PageSize(6))
-                                                        .Width(1200)
-          .Editing(editing =>
-                                                        {
-                                                            editing.Mode(GridEditMode.Cell);
+                                                        .Paging(paging => paging.PageSize(9))
+                                                        .Width(1700).Height(600).SearchPanel(searchPanel => searchPanel
+                                                            .Visible(true)
+                                                            .Width(300)
+                                                            
+                                                            .Placeholder("Search..."))
+                                                         .Editing(editing =>
+                                                         {
+
+                                                             editing.Mode(GridEditMode.Cell);
                                                             editing.AllowAdding(true);
                                                             editing.AllowDeleting(true);
                                                             editing.AllowUpdating(true);
@@ -35,7 +41,6 @@
                                                         .Columns(columns =>
                                                         {
                                                             columns.AddFor(m => m.SubdomainName);
-
                                                         })
                                                           .DataSource(d => d.Mvc()
                                                         .Controller("Subdomains")
@@ -44,22 +49,32 @@
                                                         .InsertAction("Post")
                                                         .DeleteAction("Delete")
                                                         .Key("Id")
-                                                    ).SearchPanel(searchPanel => searchPanel
-                                   .Visible(true)
-                                                        .Placeholder("Search...")
+                                                    ).MasterDetail(md => {
+                                                                              md.Enabled(true);
+                                                                              md.Template(@<text>
+                                                                                              @Html.Partial("MasterDetailPartialView")
+                                                                                           </text>);
+                                                                             
+                                                    })
                                 )
 
-    )
+    
 </div>
-
 <script>
-    function logEvent(eventName) {
-        var logList = $("#events ul"),
-            newItem = $("<li>", { text: eventName });
-        logList.prepend(newItem);
-    }
+    function customizeDisplayText(cell, info) {
+        var rowData = info.row.data;
 
-
-
-
+        if (!rowData)
+            return;
+        var texts = [];
+        if (rowData.ReferencedVersionIds && rowData.ReferencedVersionIds.length) {
+            for (var i = 0; i < rowData.ReferencedVersionIds.length; i++) {
+                var value = rowData.ReferencedVersionIds[i];
+                var displayText = info.column.lookup.calculateCellValue(value);
+                if (displayText)
+                    texts.push(displayText);
+            }
+        }
+        cell.append(texts.toString());
+    };
 </script>

@@ -16,15 +16,13 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
         public SubdomainUnitOfWork(DrcCardContext context) : base(context)
         {
             _context = context;
-
-           
             SubdomainRepository = new SubdomainRepository(_context);
             DrcCardRepository=new DrcCardRepository(_context);
-
+            SubdomainVersionRepository=new SubdomainVersionRepository(_context);
         }
      
         public ISubdomainRepository SubdomainRepository { get; private set; }
-
+        public ISubdomainVersionRepository SubdomainVersionRepository { get; private set;}
         public IDrcCardRepository DrcCardRepository { get; private set; }
     }
 }

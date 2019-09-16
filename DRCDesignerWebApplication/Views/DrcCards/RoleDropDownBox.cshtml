@@ -22,7 +22,7 @@
           .Value(new JS("data.RoleIds"))
           .ValueExpr("Id")
           .DisplayExpr("RoleName")
-          .DataSource(d => d.Mvc().LoadAction("GetAuthorizationRoles").Controller("Authorizations").Key("Id").LoadParams(new { Id = Model.SubdomainId }))
+          .DataSource(d => d.Mvc().LoadAction("GetAuthorizationRoles").Controller("Authorizations").Key("Id").LoadParams(new { Id = Model.SubdomainVersionId }))
           .Placeholder("Select a Collaboration...")
           .ShowClearButton(true)
           .OnValueChanged(@"function(args) { gridBox_valueChanged(args, setValue); }")
@@ -41,7 +41,7 @@
                       .ShowBorders(true)
                       .ShowRowLines(true)
                       .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-                      .DataSource(d => d.Mvc().LoadAction("GetAuthorizationRoles").Controller("Authorizations").Key("Id").LoadParams(new { Id = Model.SubdomainId }))
+                      .DataSource(d => d.Mvc().LoadAction("GetAuthorizationRoles").Controller("Authorizations").Key("Id").LoadParams(new { Id = Model.SubdomainVersionId }))
                       .Columns(columns =>
                       {
 

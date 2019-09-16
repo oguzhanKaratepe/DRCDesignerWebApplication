@@ -136,16 +136,16 @@ namespace DRCDesignerWebApplication.Controllers
 
             var roles = await _roleUnitOfWork.RoleRepository.GetAll();
 
-            IList<Role> rolesBag = new List<Role>();
+            //IList<Role> rolesBag = new List<Role>();
 
-            foreach (var role in roles)
-            {
-                if (role.SubdomainId == null || role.SubdomainId == Id)
-                    rolesBag.Add(role);
+            //foreach (var role in roles)
+            //{
+            //    if (role.SubdomainId == null || role.SubdomainId == Id)
+            //        rolesBag.Add(role);
 
-            }
+            //}
 
-            return DataSourceLoader.Load(rolesBag, loadOptions);
+            return DataSourceLoader.Load(roles, loadOptions);
         }
     }
 }

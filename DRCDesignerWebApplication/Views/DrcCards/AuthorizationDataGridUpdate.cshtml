@@ -31,7 +31,7 @@
              .AllowFiltering(false).CellTemplate(new JS("customizeAuthorizationDisplayText"))
               .Lookup(lookup => lookup
                   .DataSource(d => d.Mvc().Controller("Authorizations").LoadAction("GetAuthorizationRoles")
-                      .Key("Id").LoadParams(new { Id = Model.SubdomainId }))
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainVersionId}))
                   .DisplayExpr("RoleName")
                   .ValueExpr("Id")
 

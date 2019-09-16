@@ -49,16 +49,16 @@
     {
 
         @(Html.DevExtreme().SelectBox()
-                      .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainId = @Model.SubdomainId }))
+                      .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainId = @Model.SubdomainVersionId}))
                       .DataSourceOptions(o => o.Group("SubdomainName"))
                       .Grouped(true)
-              .Placeholder("Select Main Card")
+                      .Placeholder("Select Main Card")
                       .DisplayExpr("DrcCardName")
                       .SearchEnabled(true)
                       .OnValueChanged("selectBox_valueChanged")
         )
 
-        @Html.HiddenFor(m => m.SubdomainId)
+        @Html.HiddenFor(m => m.SubdomainVersionId)
     
         @(Html.DevExtreme().Form<DrcCardViewModel>()
                       .ID("form")

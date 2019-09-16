@@ -112,102 +112,110 @@ namespace DRCDesigner.Business.Concrete
             _drcUnitOfWork.Complete();
         }
 
+        public async Task<IEnumerable<DrcCard>> GetAllDrcCards(int subdomainVersionId)
+        {
+            return await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(subdomainVersionId);
+        }
+
+
         public async Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int id)
         {
-            ShadowCardSelectBoxBusinessModel selectBoxCard;
-            IList<ShadowCardSelectBoxBusinessModel> selectBoxCards = new List<ShadowCardSelectBoxBusinessModel>();
-            IEnumerable<DrcCard> cards = await _drcUnitOfWork.DrcCardRepository.GetAll();
+            //ShadowCardSelectBoxBusinessModel selectBoxCard;
+            //IList<ShadowCardSelectBoxBusinessModel> selectBoxCards = new List<ShadowCardSelectBoxBusinessModel>();
+            //IEnumerable<DrcCard> cards = await _drcUnitOfWork.DrcCardRepository.GetAll();
 
-            foreach (var drcCard in cards)
-            {
-                if (drcCard.MainCardId == null)
-                {
-                    selectBoxCard = new ShadowCardSelectBoxBusinessModel();
-                    selectBoxCard.Id = drcCard.Id;
-                    selectBoxCard.DrcCardName = drcCard.DrcCardName;
-                    selectBoxCard.SubdomainId = drcCard.SubdomainId;
-                    var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(drcCard.SubdomainId);
-                    selectBoxCard.SubdomainName = subdomain.SubdomainName;
+            //foreach (var drcCard in cards)
+            //{
+            //    if (drcCard.MainCardId == null)
+            //    {
+            //        selectBoxCard = new ShadowCardSelectBoxBusinessModel();
+            //        selectBoxCard.Id = drcCard.Id;
+            //        selectBoxCard.DrcCardName = drcCard.DrcCardName;
+            //        selectBoxCard.SubdomainId = drcCard.SubdomainId;
+            //        var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(drcCard.SubdomainId);
+            //        selectBoxCard.SubdomainName = subdomain.SubdomainName;
 
-                    if (drcCard.SubdomainId != id)
-                    {
-                        selectBoxCards.Add(selectBoxCard);
-                    }
+            //        if (drcCard.SubdomainId != id)
+            //        {
+            //            selectBoxCards.Add(selectBoxCard);
+            //        }
 
-                }
-                else
-                {
-                    //do nothing
-                }
+            //    }
+            //    else
+            //    {
+            //        //do nothing
+            //    }
 
-            }
+            //}
 
-            return selectBoxCards;
+            //return selectBoxCards;
+            throw new NotImplementedException();
         }
 
         public bool MoveCardToDestinationSubdomain(DrcCard drcCard)
         {
-          
-            if (drcCard.SubdomainId != 0 && drcCard.Id != 0)
-            {
-                var card = _drcUnitOfWork.DrcCardRepository.GetById(drcCard.Id);
-                var cardResponsibilities = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(drcCard.Id);
-                foreach (var responsibilitycollection in cardResponsibilities)
-                {
-                    var resCollaborationCollections = _drcUnitOfWork.DrcCardResponsibilityRepository.GetResponsibilityCollaborationsByResponsibilityId(
-                        responsibilitycollection.ResponsibilityId);
-                    foreach (var resCollaboration in resCollaborationCollections)
-                    {
-                        _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(resCollaboration);
-                    }
-                }
+            throw new NotImplementedException();
+            //if (drcCard.SubdomainId != 0 && drcCard.Id != 0)
+            //{
+            //    var card = _drcUnitOfWork.DrcCardRepository.GetById(drcCard.Id);
+            //    var cardResponsibilities = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(drcCard.Id);
+            //    foreach (var responsibilitycollection in cardResponsibilities)
+            //    {
+            //        var resCollaborationCollections = _drcUnitOfWork.DrcCardResponsibilityRepository.GetResponsibilityCollaborationsByResponsibilityId(
+            //            responsibilitycollection.ResponsibilityId);
+            //        foreach (var resCollaboration in resCollaborationCollections)
+            //        {
+            //            _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(resCollaboration);
+            //        }
+            //    }
 
-                var cardRelationsWithOtherCards = _drcUnitOfWork.DrcCardResponsibilityRepository
-                    .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(drcCard.Id);
-                foreach (var cardReletion in cardRelationsWithOtherCards)
-                {
-                    _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(cardReletion);
-                }
+            //    var cardRelationsWithOtherCards = _drcUnitOfWork.DrcCardResponsibilityRepository
+            //        .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(drcCard.Id);
+            //    foreach (var cardReletion in cardRelationsWithOtherCards)
+            //    {
+            //        _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(cardReletion);
+            //    }
 
-                var cardFields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(drcCard.Id);
+            //    var cardFields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(drcCard.Id);
 
-                foreach (var cardField in cardFields)
-                {
-                    var fieldCollaboration =
-                        _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(cardField.FieldId);
-                    if (fieldCollaboration != null)
-                    {
-                        _drcUnitOfWork.DrcCardFieldRepository.Remove(fieldCollaboration);
-                    }
-                }
+            //    foreach (var cardField in cardFields)
+            //    {
+            //        var fieldCollaboration =
+            //            _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(cardField.FieldId);
+            //        if (fieldCollaboration != null)
+            //        {
+            //            _drcUnitOfWork.DrcCardFieldRepository.Remove(fieldCollaboration);
+            //        }
+            //    }
 
-                card.SubdomainId = drcCard.SubdomainId;
-                card.DrcCardName = drcCard.DrcCardName;
-                _drcUnitOfWork.DrcCardRepository.Update(card);
-                _drcUnitOfWork.Complete();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            //    card.SubdomainId = drcCard.SubdomainId;
+            //    card.DrcCardName = drcCard.DrcCardName;
+            //    _drcUnitOfWork.DrcCardRepository.Update(card);
+            //    _drcUnitOfWork.Complete();
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
         }
 
         public string GetShadowCardSourcePath(int? shadowId)
         {
-            try
-            {
-                var Id = (int) shadowId;
-                var card = _drcUnitOfWork.DrcCardRepository.GetById(Id);
-                var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(card.SubdomainId);
-                string pathName = "(" + subdomain.SubdomainName + "." + card.DrcCardName + ")";
-                return pathName;
-            }
-            catch
-            {
+        //    try
+        //    {
+        //        var Id = (int) shadowId;
+        //        var card = _drcUnitOfWork.DrcCardRepository.GetById(Id);
+        //        var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(card.SubdomainId);
+        //        string pathName = "(" + subdomain.SubdomainName + "." + card.DrcCardName + ")";
+        //        return pathName;
+        //    }
+        //    catch
+        //    {
 
-            }
-            return null;
+        //    }
+        //    return null;
+            throw new NotImplementedException();
         }
     }
 }

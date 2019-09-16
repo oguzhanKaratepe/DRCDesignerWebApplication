@@ -9,8 +9,11 @@ namespace DRCDesigner.Business.Abstract
 {
    public interface IFieldService
    {
-       void Add(Field field);
-       void Update(Field field);
-       void Delete(Field field);
+       Task<IList<DrcCard>> GetCollaborations(int versionId, int cardId);
+       Task<IList<FieldBusinessModel>> GetCardFields(int cardId);
+       void Add(string values);
+       void Update(int id,string values);
+       void Delete(int id);
+       
    }
 }

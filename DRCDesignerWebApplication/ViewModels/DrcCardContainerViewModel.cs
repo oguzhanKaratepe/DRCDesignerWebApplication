@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DRCDesignerWebApplication.ViewModels
 {
@@ -13,8 +14,10 @@ namespace DRCDesignerWebApplication.ViewModels
         public DrcCardViewModel DrcCardViewModel { get; set; }
       
         public int TotalSubdomainSize { get; set; }
- 
-       
+        public string SubdomainName { get; set; }
+        public string VersionNumber { get; set; }
+
+
 
     }
 }

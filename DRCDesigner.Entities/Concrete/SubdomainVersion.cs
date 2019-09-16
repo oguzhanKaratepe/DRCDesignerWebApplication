@@ -12,6 +12,7 @@ namespace DRCDesigner.Entities.Concrete
 
         public SubdomainVersion()
         {
+            ReferencedSubdomainVersions = new List<SubdomainVersion>();
             DRCards = new List<DrcCard>();
             SubdomainVersionRoles = new List<Role>();
         }
@@ -23,9 +24,16 @@ namespace DRCDesigner.Entities.Concrete
         public virtual Subdomain Subdomain { get; set; }
 
         [DisplayName("Version number")]
-        public int VersionNumber { get; set; }
+        public string VersionNumber { get; set; }
+
+        public bool EditLock { get; set; }
+
+        public int? ReferencedSubdomainId;
+
+        public virtual SubdomainVersion ReferencedSubdomainVersion { get; set; }
 
         public virtual ICollection<DrcCard> DRCards { get; set; }
         public virtual ICollection<Role> SubdomainVersionRoles { get; set; }
+        public virtual ICollection<SubdomainVersion> ReferencedSubdomainVersions { get; set; }
     }
 }

@@ -65,6 +65,8 @@
 <body class="border-right" style="background-color: #222;" >
     <div class="bg-dark h-100 ">
         @(Html.DevExtreme().Toolbar()
+              
+              .ElementAttr(new{style="border-bottom:1px solid;"})
                                   .ID("layout-toolbar")
                                   .Items(items =>
                                   {
@@ -106,19 +108,21 @@
                                   })
         )
 
-        <div class="bg-dark text-light ">
+        <div class="bg-dark text-light">
             @(Html.DevExtreme().Drawer()
                                   .ID("layout-drawer")
                                   .MinSize(50)
                                   .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
                                   .RevealMode(DrawerRevealMode.Expand)
                                   .AnimationEnabled(true)
-                          .ActiveStateEnabled(true)
+                                 
+                                  .ActiveStateEnabled(true)
                                   .OpenedStateMode(DrawerOpenedStateMode.Shrink)
                           .ActiveStateEnabled(true)
                                   .Template(@<text>
                                     @(Html.DevExtreme().List()
                                                   .Width(200)
+                                          
                                                   //  .OnInitialized("list_onInitialized")
                                                   .Items(items =>
                                                   {

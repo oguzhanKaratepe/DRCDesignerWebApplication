@@ -63,15 +63,16 @@
                   .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
                   .Lookup(lookup => lookup
                       .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetCardCollaborationOptions")
-                      .Key("Id").LoadParams(new { Id = Model.SubdomainId, cardId=Model.Id }))
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainVersionId, cardId=Model.Id }))
                       .DisplayExpr("DrcCardName")
                       .ValueExpr("Id")
-
                   )
               .Caption("Add Collaboration")
                   .EditCellTemplate(@<text>
                 @Html.Partial("ShadowDropDownBox",Model)
             </text>);
+
+
               columns.Add().DataField("PriorityOrder").Width(110);
 
               columns.AddFor(m=>m.ResponsibilityDefinition).Visible(false).Width(0);

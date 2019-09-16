@@ -10,9 +10,9 @@ namespace DRCDesigner.Entities.Concrete
     {
     
         public int Id { get; set; }
-        public int SubdomainId { get; set; }
+        public int SubdomainVersionId { get; set; }
         [JsonIgnore]
-        public virtual Subdomain Subdomain { get; set; }
+        public virtual SubdomainVersion SubdomainVersion { get; set; }
         public int? MainCardId { get; set; }
         [Required(ErrorMessage = "Card Name is required")]
         [DisplayName("Card Name")]

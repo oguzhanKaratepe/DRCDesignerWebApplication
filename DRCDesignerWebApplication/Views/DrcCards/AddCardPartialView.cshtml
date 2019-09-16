@@ -14,7 +14,7 @@
 
     @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "addCard" }))
     {
-        @Html.HiddenFor(m => m.SubdomainId)
+        @Html.HiddenFor(m => m.SubdomainVersionId)
         @(Html.DevExtreme().Form<DrcCardViewModel>())
        
     }

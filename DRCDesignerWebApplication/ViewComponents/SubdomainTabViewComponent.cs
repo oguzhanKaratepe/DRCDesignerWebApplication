@@ -25,9 +25,9 @@ namespace DRCDesignerWebApplication.ViewComponents
         {
             var model = new SubdomainListViewModel
             {
-                 Subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll(),
+                 Subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAllWithVersions(),
 
-                CurrentSubdomain = Convert.ToInt32(HttpContext.Request.Query["id"])
+                 CurrentSubdomain = Convert.ToInt32(HttpContext.Request.Query["id"])
                
             };
             return View(model);

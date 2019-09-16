@@ -97,7 +97,7 @@ namespace DRCDesignerWebApplication.Controllers
             DrcCardViewModel drcCardViewModel;
             if (id != 0)
             {
-                var tempCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(id);
+                var tempCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(id);
 
                 foreach (var card in tempCards)
                 {
@@ -105,7 +105,7 @@ namespace DRCDesignerWebApplication.Controllers
                     drcCardViewModel = _mapper.Map<DrcCardViewModel>(FullCard);
                     drcCardViewModel.Responsibilities = getListOfResponsibilities(card.Id);
                     drcCardViewModel.Fields = getListOfFields(card.Id);
-                    drcCardViewModel.SourceDrcCardPath = _drcCardService.GetShadowCardSourcePath(FullCard.MainCardId);
+                    drcCardViewModel.SourceDrcCardPath = "coming";/*_drcCardService.GetShadowCardSourcePath(FullCard.MainCardId);*/
                     //  drcCardViewModel.CollaborationCards = getListOfCollaborations(FullCard);
                     foreach (var authorization in drcCardViewModel.Authorizations)
                     {
@@ -128,9 +128,12 @@ namespace DRCDesignerWebApplication.Controllers
             //I add TotalSubdomainSize field to drcCardViewModel because I need subdomain size to decide show Add Card Button.
             //Because if subdomain size is 0 then there is no meaning to show add card button; 
             drcCardContainerViewModel.TotalSubdomainSize = _drcUnitOfWork.SubdomainRepository.subdomainSize();
-            drcCardContainerViewModel.DrcCardViewModel.SubdomainId = id;
+            drcCardContainerViewModel.SubdomainName = "Active";
+            drcCardContainerViewModel.VersionNumber = "00.000.00";
+            drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
             _drcUnitOfWork.Complete();
             return View(drcCardContainerViewModel);
+            throw new NotImplementedException();
         }
 
         [HttpPost]
@@ -144,7 +147,7 @@ namespace DRCDesignerWebApplication.Controllers
                 return BadRequest(ModelState.GetFullErrorMessage());
             _drcCardService.Add(shadowCard);
 
-            return Redirect("/DrcCards/index?id=" + shadowCard.SubdomainId);
+            return Redirect("/DrcCards/index?id=" /*+ shadowCard.SubdomainId*/);
         }
 
         [HttpPost]
@@ -159,7 +162,7 @@ namespace DRCDesignerWebApplication.Controllers
 
             _drcCardService.Add(newDrcCard);
 
-            return Redirect("/DrcCards/index?id=" + newDrcCard.SubdomainId);
+            return Redirect("/DrcCards/index?id=" + newDrcCard.SubdomainVersionId);
         }
 
         [HttpPut]
@@ -177,7 +180,7 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetCardCollaborationOptions(int Id, int cardId, DataSourceLoadOptions loadOptions)
         {
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(Id);
+            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(Id);
             IList<DrcCard> cards = new List<DrcCard>();
             foreach (var card in drcCards)
             {
@@ -198,7 +201,7 @@ namespace DRCDesignerWebApplication.Controllers
             var cardToDelete = _mapper.Map<DrcCard>(modelContainer.DrcCardViewModel);
             _drcCardService.Delete(cardToDelete);
            
-            return Redirect("/DrcCards/index?id=" + cardToDelete.SubdomainId);
+            return Redirect("/DrcCards/index?id="+ cardToDelete.SubdomainVersionId);
         }
 
         [HttpGet]

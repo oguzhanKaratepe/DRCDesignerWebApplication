@@ -9,7 +9,8 @@ namespace DRCDesigner.Business.Abstract
     public interface ISubdomainService
     {
         Task<IEnumerable<Subdomain>> GetAll();
-        Task<IEnumerable<Subdomain>> GetMoveDropDownBoxSubdomains(int subdomainId);
+        Task<IEnumerable<SubdomainVersion>> GetAllSubdomainVersions(int subdomainId);
+      //  Task<IEnumerable<Subdomain>> GetMoveDropDownBoxSubdomains(int subdomainId);
         void Add(string values);
         void Update(string values, int id);
         Task<bool> Remove(int subdomainId);
