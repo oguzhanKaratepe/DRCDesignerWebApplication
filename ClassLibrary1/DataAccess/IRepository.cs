@@ -16,6 +16,7 @@ namespace DRCDesigner.Core.DataAccess
         void Update(TEntity entity);
 
         TEntity GetById(int id);
+  
         Task <IEnumerable<TEntity>> GetAll();
     }
 }

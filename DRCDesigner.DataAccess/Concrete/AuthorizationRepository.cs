@@ -10,6 +10,7 @@ using DRCDesigner.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using DRCDesigner.Core.DataAccess.EntityFrameworkCore;
+using Authorization = DRCDesigner.Entities.Concrete.Authorization;
 
 namespace DRCDesigner.DataAccess.Concrete
 {
@@ -22,6 +23,11 @@ namespace DRCDesigner.DataAccess.Concrete
         public async Task<IList<Entities.Concrete.Authorization>> GetAuthorizationsByDrcCardId(int Id)
         {
             return await DrcCardContext.Authorizations.Include(m => m.AuthorizationRoles).Where(m => m.DrcCardId == Id).ToListAsync();
+        }
+
+        public async Task<Authorization> GetByIdWithoutTracking(int id)
+        {
+           return await DrcCardContext.Authorizations.AsNoTracking().Where(c=>c.Id==id).SingleAsync();
         }
 
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }

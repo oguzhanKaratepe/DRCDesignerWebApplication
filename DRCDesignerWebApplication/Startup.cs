@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DRCDesigner.Business;
 using DRCDesigner.DataAccess.Concrete;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.DataAccess.UnitOfWork.Concrete;
@@ -50,8 +51,12 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IDocumentTransferUnitOfWork,DocumentTransferUnitOfWork>();
             services.AddScoped<DrcCardContext, DrcCardContext>();
             services.AddScoped<ISubdomainService, SubdomainManager>();
+            services.AddScoped<ISubdomainVersionService, SubdomainVersionManager>();
             services.AddScoped<IRoleService, RoleManager>();
             services.AddScoped<IDrcCardService, DrcCardManager>();
+            services.AddScoped<IFieldService, FieldManager>();
+            services.AddScoped<IResponsibilityService, ResponsibilityManager>();
+            services.AddScoped<IAuthorizationService, AuthorizationManager>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -61,13 +66,19 @@ namespace DRCDesignerWebApplication
 
 
             // Auto Mapper Configurations
+           
             var mappingConfig = new MapperConfiguration(mc =>
             {
+                mc.AddProfile(new BusinessAutoMapperProfiles());
                 mc.AddProfile(new AutoMapperProfiles());
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            IMapper Mapper = mappingConfig.CreateMapper();
+          
+           
+
+            services.AddSingleton(Mapper);
+        
 
             services.AddMvc();
 

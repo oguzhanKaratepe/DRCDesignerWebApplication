@@ -13,5 +13,6 @@ namespace DRCDesigner.DataAccess.Abstract
     {
         //IEnumerable<Field> getDrcCardAllFields(int id); //id: drcCard id
 
+        Task<Field> GetByIdWithoutTracking(int id);
     }
 }

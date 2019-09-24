@@ -3,6 +3,7 @@
 @using DRCDesignerWebApplication.ViewModels
 @model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
 
+
 @(Html.DevExtreme().DataGrid<FieldViewModel>()
       .ShowBorders(true)
       .Editing(editing =>
@@ -20,30 +21,36 @@
           .LoadAction("Get")
           .UpdateAction("Put")
           .InsertAction("Post")
-          .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting")
+          .DeleteAction("Delete").Key("Id").LoadParams(new { cardId =Model.Id })).OnRowInserting(@<text>
+                                                                                                 function (e) {
+                                                                                                 e.data.DrcCardId = @Model.Id;
+                                                                                                 }
+                                                                                              </text>)
       .Columns(columns => {
           columns.AddFor(m => m.AttributeName).Width(230);
           columns.AddFor(m => m.Type)
-              .SetCellValue("setTypeValue")
               .Caption("Attribute Type")
               .Width(185)
               .Lookup(lookup => {
-                                    lookup.DataSource(FieldsController.GetFieldTypeDataSource());
-                                    lookup.DisplayExpr("Name");
-                                    lookup.AllowClearing(true);
-                                    lookup.ValueExpr("Id");
+                  lookup.DataSource(FieldsController.GetFieldTypeDataSource());
+                  lookup.DisplayExpr("Name");
+                  lookup.AllowClearing(true);
+                  lookup.ValueExpr("Id");
 
               });
 
-                columns.AddFor(m => m.CollaborationId)
-                    .Caption("Collaboration")
-                    .Width(145)
-                    .Lookup(lookup => lookup.DataSource("getCollaborationCards")
-                    .DisplayExpr("DrcCardName").AllowClearing(true)
-                    .ValueExpr("Id")
-                    ).MinWidth(180);
+          columns.AddFor(m => m.CollaborationId)
+              .Caption("Collaboration")
+              .Width(145)
+              .Lookup(lookup => lookup.DataSource(m=>m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id =Model.SubdomainVersionId, cardId = Model.Id }))
+              .DisplayExpr("DrcCardName").AllowClearing(true)
+              .ValueExpr("Id")
+              ).MinWidth(180);
       })
       .Paging(p => p.PageSize(10))
       .RemoteOperations(true)
       )
       
+
+
+  

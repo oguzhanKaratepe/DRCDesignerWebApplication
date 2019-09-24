@@ -14,7 +14,7 @@ namespace DRCDesigner.DataAccess.Abstract
         DrcCard getDrcCardWithAllEntities(int id); //drcCard id
         int getDrcCardOrder(int id);
         void setDrcCardOrder(int id, int order);
-        Task<IEnumerable<DrcCard>> getAllCardsBySubdomain(int SubdomainID);
+        Task<IEnumerable<DrcCard>> getAllCardsBySubdomainVersion(int subdomainVersionId);
         //void Update(DrcCard drcCard);
         //void Remove(DrcCard drcCard);
         IList<DrcCardResponsibility> GetDrcResponsibilities(int id); //drcCard id

@@ -23,7 +23,17 @@ namespace DRCDesigner.DataAccess.Concrete
             return DrcCardContext.Subdomains.Count();
         }
 
-   
+        public async Task<IEnumerable<Subdomain>> GetAllWithVersions()
+        {
+
+            return await DrcCardContext.Subdomains.Include(m => m.SubdomainVersions).ToListAsync();
+        }
+
+        public string GetSubdomainName(int subdomainId)
+        {
+            return DrcCardContext.Subdomains.Where(m => m.Id == subdomainId).Select(m => m.SubdomainName).SingleOrDefault();
+        }
+
 
         //public void Remove(Subdomain subdomain)
         //{

@@ -14,7 +14,10 @@ namespace DRCDesignerWebApplication.Controllers
         {
             return View();
         }
+        public IActionResult HelpPage()
+        {
+            return View();
+        }
 
-    
     }
 }

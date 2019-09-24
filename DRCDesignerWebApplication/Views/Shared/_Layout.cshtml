@@ -57,70 +57,114 @@
         [contenteditable].form-control {
             -webkit-box-shadow: inset 0 0px 0 #ddd !important;
             box-shadow: inset 0 0px 0 #ddd !important;
-   
+  
         }
+     
     </style>
 </head>
-<body style="background-color: #222;" >
-<div class="bg-dark h-100">
+<body class="" style="background-color: #222;" >
+    <div class="bg-dark h-100 ">
         @(Html.DevExtreme().Toolbar()
-                          .ID("layout-toolbar")
-                          .Items(items =>
-                          {
-                              items.Add().Widget(w => w.Button()
-                                  .Icon("menu")
-                                  .OnClick("button_clickHandler")
-                                  ).Location(ToolbarItemLocation.Before);
-                          })
+              
+              .ElementAttr(new{style="border-bottom:1px solid;"})
+                                  .ID("layout-toolbar")
+                                  .Items(items =>
+                                  {
+                                      items.Add().Widget(w => w.Button()
+                                          .Icon("menu")
+                                          .OnClick("button_clickHandler")
+                                          ).Location(ToolbarItemLocation.Before);
+
+                                      items.Add()
+                                          .Widget(w => w
+                                              .Button()
+                                              .Text("Help")
+                                              .OnClick("helpButton_click")
+                                      )
+                                          .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+
+                                    items.Add()
+                                        .Widget(w => w
+                                            .Button()
+                                            .Text("..")
+                                            .OnClick("printButton_click")
+
+                                        )
+                                        .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+
+                                   
+                                 
+
+                                      items.Add()
+                                          .Template(@<text><div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
+                                                             .LocateInMenu(ToolbarItemLocateInMenuMode.Never)
+                                          .Location(ToolbarItemLocation.Center);
+
+                                  })
         )
 
         <div class="bg-dark text-light">
             @(Html.DevExtreme().Drawer()
-                          .ID("layout-drawer")
-                          .MinSize(50)
-                          .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
-                          .RevealMode(DrawerRevealMode.Expand)
-                          .AnimationEnabled(true)
-                  .ActiveStateEnabled(true)
-                          .OpenedStateMode(DrawerOpenedStateMode.Shrink)
-                  .ActiveStateEnabled(true)
-                          .Template(@<text>
-                            @(Html.DevExtreme().List()
-                                      .Width(200)
-                                      //  .OnInitialized("list_onInitialized")
-                                      .Items(items =>
-                                      {
-                                                        items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
-                                                        items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
-                                                        items.Add().Text("Roles").Icon("card").Option("path", @Url.Action("Index", "Roles"));
-                                                        items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
+                                  .ID("layout-drawer")
+                                  .MinSize(50)
+                                  .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
+                                  .RevealMode(DrawerRevealMode.Expand)
+                                  .AnimationEnabled(true)
+                                 
+                                  .ActiveStateEnabled(true)
+                                  .OpenedStateMode(DrawerOpenedStateMode.Shrink)
+                          .ActiveStateEnabled(true)
+                                  .Template(@<text>
+                                    @(Html.DevExtreme().List()
+                                                  .Width(200)
+                                          
+                                                  //  .OnInitialized("list_onInitialized")
+                                                  .Items(items =>
+                                                  {
+                                                    items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
+                                                    items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
+                                                    items.Add().Text("Roles").Icon("card").Option("path", @Url.Action("Index", "Roles"));
+                                                    items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
 
 
-                                                    })
-                                      .KeyExpr("path")
-                                      .SelectionMode(ListSelectionMode.Single)
-                                      .OnSelectionChanged("list_onSelectionChanged")
-                            )
-                        </text>)
-                                      .Content(@<text>
-                                        @RenderBody()</text>)
+                                                })
+                                                  .KeyExpr("path")
+                                                  .SelectionMode(ListSelectionMode.Single)
+                                                  .OnSelectionChanged("list_onSelectionChanged")
+                                    )
+                                </text>)
+                                                                      .Content(@<text>
+                                                                        @RenderBody()</text>)
             )
 
         </div>
-    
-    <script type="text/javascript">
-        function button_clickHandler() {
 
-        var drawer = $("#layout-drawer").dxDrawer("instance");
-        drawer.toggle();
-        sessionStorage.setItem("drawerOpened", JSON.stringify(drawer.option("opened")));
-    }
+        <script type="text/javascript">
 
-    function list_onSelectionChanged(e) {
-        document.location = e.addedItems[0].path;
-    }
+            function button_clickHandler() {
 
-    </script>
-</div>
+                var drawer = $("#layout-drawer").dxDrawer("instance");
+                drawer.toggle();
+                sessionStorage.setItem("drawerOpened", JSON.stringify(drawer.option("opened")));
+            }
+
+            function list_onSelectionChanged(e) {
+
+                document.location = e.addedItems[0].path;
+
+            }
+            function helpButton_click() {
+                window.location.href = "/Home/HelpPage";
+               
+            }
+
+
+            function printButton_click() {
+                DevExpress.ui.notify("... option has been clicked!");
+            }
+
+         
+        </script>
+    </div>
 </body>
 </html>

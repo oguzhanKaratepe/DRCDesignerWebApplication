@@ -17,6 +17,7 @@ namespace DRCDesignerWebApplication.ViewModels
         public virtual DrcCard DrcCard { get; set; }
         public string OperationName { get; set; }
         public int[] RoleIds { get; set; }
+        [JsonIgnore]
         public IList<Role> Roles { get; set; }
 
     }

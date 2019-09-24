@@ -31,7 +31,7 @@
              .AllowFiltering(false).CellTemplate(new JS("customizeAuthorizationDisplayText"))
               .Lookup(lookup => lookup
                   .DataSource(d => d.Mvc().Controller("Authorizations").LoadAction("GetAuthorizationRoles")
-                      .Key("Id").LoadParams(new { Id = Model.SubdomainId }))
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainVersionId}))
                   .DisplayExpr("RoleName")
                   .ValueExpr("Id")
 
@@ -46,6 +46,10 @@
           .LoadAction("Get")
           .UpdateAction("Put")
           .InsertAction("Post")
-          .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting"))
+          .DeleteAction("Delete").Key("Id").LoadParams(new { Id = Model.Id })).OnRowInserting(@<text>
+                                                                                                  function (e) {
+                                                                                                  e.data.DrcCardId = @Model.Id;
+                                                                                                  }
+                                                                                               </text>))
 
 

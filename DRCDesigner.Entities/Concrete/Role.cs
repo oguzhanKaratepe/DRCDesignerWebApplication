@@ -18,9 +18,10 @@ namespace DRCDesigner.Entities.Concrete
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "RoleName")]
         public string RoleName{ get; set; }
 
-        public int? SubdomainId{ get; set; }
+        public int? SubdomainVersionId{ get; set; }
         [JsonIgnore]
-        public virtual Subdomain Subdomain { get; set; }
+        public virtual SubdomainVersion SubdomainVersion { get; set; }
+        [JsonIgnore]
         public virtual IList<AuthorizationRole> AuthorizationRoles { get; set; }
     }
 }

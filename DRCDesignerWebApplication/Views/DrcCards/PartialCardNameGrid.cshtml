@@ -22,7 +22,7 @@
               .DataSource(a => a.Mvc().Controller("DrcCards")
                   .LoadAction("GetCard")
                   .UpdateAction("Put")
-                  .Key("Id").LoadParams(new { Id = new JS("getDrcId") }))
+                  .Key("Id").LoadParams(new { Id = Model.Id }))
               .Columns(columns => {
                                       columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate(@<text>ewa</text>);
                                   

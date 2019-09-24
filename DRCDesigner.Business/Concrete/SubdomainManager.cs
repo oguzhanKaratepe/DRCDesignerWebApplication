@@ -24,11 +24,11 @@ namespace DRCDesigner.Business.Concrete
             return await _subdomainUnitOfWork.SubdomainRepository.GetAll();
         }
 
- 
         public void Add(string values)
         {
             var newSubdomain = new Subdomain();
             JsonConvert.PopulateObject(values, newSubdomain);
+           
             _subdomainUnitOfWork.SubdomainRepository.Add(newSubdomain);
             _subdomainUnitOfWork.Complete();
         }
@@ -45,11 +45,13 @@ namespace DRCDesigner.Business.Concrete
             if (subdomainId > 0)
             {
                 var subdomain = _subdomainUnitOfWork.SubdomainRepository.GetById(subdomainId);
-                var cards = await _subdomainUnitOfWork.DrcCardRepository.getAllCardsBySubdomain(subdomainId);
+                var subdomainVersions =
+                    await _subdomainUnitOfWork.SubdomainVersionRepository.GetAllSubdomainVersionsBySubdomainId(
+                        subdomainId);
 
-                foreach (var drcCard in cards)
+                foreach (var version in subdomainVersions)
                 {
-                    _subdomainUnitOfWork.DrcCardRepository.Remove(drcCard);
+                    _subdomainUnitOfWork.SubdomainVersionRepository.Remove(version);
                 }
 
                 _subdomainUnitOfWork.SubdomainRepository.Remove(subdomain);
@@ -66,22 +68,28 @@ namespace DRCDesigner.Business.Concrete
         public async Task<IEnumerable<Subdomain>> GetMoveDropDownBoxSubdomains(int subdomainId)
         {
 
-            var subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
-           var subdomainCollection = new List<Subdomain>();
+           // var subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
+           //var subdomainCollection = new List<Subdomain>();
 
-            foreach (var subdomain in subdomains)
-            {
-                if (subdomain.Id != subdomainId)
-                {
-                    subdomainCollection.Add(subdomain);
-                }
-                else
-                {
-                    //do not add current subdomain
-                }
-            }
+           // foreach (var subdomain in subdomains)
+           // {
+           //     if (subdomain.Id != subdomainId)
+           //     {
+           //         subdomainCollection.Add(subdomain);
+           //     }
+           //     else
+           //     {
+           //         //do not add current subdomain
+           //     }
+           // }
 
-            return subdomainCollection;
+           // return subdomainCollection;
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<SubdomainVersion>> GetAllSubdomainVersions(int subdomainId)
+        {
+           return await _subdomainUnitOfWork.SubdomainVersionRepository.GetAllSubdomainVersionsBySubdomainId(subdomainId);
         }
     }
 }

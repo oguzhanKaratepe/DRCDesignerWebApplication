@@ -18,19 +18,20 @@ namespace DRCDesigner.DataAccess.Concrete
 
         public IEnumerable<Role> getGlobalRoles()
         {
-
-            return DrcCardContext.Roles.Where(s => s.SubdomainId ==null).ToList();
+            throw new NotImplementedException();
+           // return DrcCardContext.Roles.Where(s => s.SubdomainVersionId==null).ToList();
         }
 
         public IEnumerable<Role> getRolesBySubdomain(int id)
         {
-            return DrcCardContext.Roles.Where(s => s.SubdomainId == id).ToList();
+            //    return DrcCardContext.Roles.Where(s => s.SubdomainId == id).ToList();
+            throw new NotImplementedException();
         }
  
 
         public async Task<IEnumerable<Role>> getRoles()
         {
-            return await DrcCardContext.Roles.Include(s => s.Subdomain).ToListAsync();
+            return await DrcCardContext.Roles.Include(s => s.SubdomainVersion).ToListAsync();
         }
 
         public async Task<ICollection<Role>> searchRoleName(string searchString)

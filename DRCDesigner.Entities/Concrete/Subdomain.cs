@@ -13,17 +13,17 @@ namespace DRCDesigner.Entities.Concrete
 
         public Subdomain()
         {
-            DRCards = new List<DrcCard>();
-            SubdomainRoles = new List<Role>();
+            SubdomainVersions=new List<SubdomainVersion>();
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "SubdomainName")]
         [DisplayName("Subdomain Name")]
+        [Required(ErrorMessage = "Subdomain Name is required!")]
         public string SubdomainName { get; set; }
 
-        public virtual ICollection<DrcCard> DRCards { get; set; }
-        public virtual ICollection<Role> SubdomainRoles { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<SubdomainVersion> SubdomainVersions {get; set;}
+
     }
 }

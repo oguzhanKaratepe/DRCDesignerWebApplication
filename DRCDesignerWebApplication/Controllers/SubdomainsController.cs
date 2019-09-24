@@ -31,16 +31,25 @@ namespace DRCDesignerWebApplication.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var newSubdomainViewModel=new SubdomainViewModel();
+            return View(newSubdomainViewModel);
         }
 
         [HttpGet]
         public async Task<object> Get(DataSourceLoadOptions loadOptions)
         {
+            //IList<SubdomainViewModel> subdomainViewModels = new List<SubdomainViewModel>();
+            //var subdomains = await _subdomainService.GetAll();
+            //foreach (var subdomain in subdomains)
+            //{
+            //    var SubdomainViewModel = _mapper.Map<SubdomainViewModel>(subdomain);
+            //     subdomainViewModels.Add(SubdomainViewModel);
+            //}
+
             SubdomainListViewModel subdomainListViewModel=new SubdomainListViewModel
             {
-                Subdomains= await _subdomainService.GetAll()
-        };
+                Subdomains=await _subdomainService.GetAll()
+             };
 
             return DataSourceLoader.Load(subdomainListViewModel.Subdomains, loadOptions);
         }
@@ -49,11 +58,12 @@ namespace DRCDesignerWebApplication.Controllers
         public IActionResult Post(string values)
         {
             if (ModelState.IsValid)
+            {
                 _subdomainService.Add(values);
-            
+            }
             else
-                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
-            
+                return BadRequest(ModelState.GetFullErrorMessage());
+
             return Ok();
         }
 
@@ -82,8 +92,9 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
         {
-            var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
-            return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
+            //var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
+            //return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
+            throw new NotImplementedException();
         }
 
 

@@ -8,6 +8,7 @@
 
 @(Html.DevExtreme().DataGrid<Responsibility>()
           .ID("gridContainer")
+      
           .Editing(editing =>
           {
               editing.Mode(GridEditMode.Popup).Popup(p => p
@@ -61,16 +62,17 @@
                   .DataField("ShadowCardIds").Width(172)
                   .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
                   .Lookup(lookup => lookup
-                      .DataSource(d => d.Mvc().Controller("Responsibilities").LoadAction("GetResponsibilityShadows")
-                      .Key("Id").LoadParams(new { Id = Model.SubdomainId, cardId=new JS("getDrcId") }))
+                      .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetCardCollaborationOptions")
+                      .Key("Id").LoadParams(new { Id = Model.SubdomainVersionId, cardId=Model.Id }))
                       .DisplayExpr("DrcCardName")
                       .ValueExpr("Id")
-
                   )
               .Caption("Add Collaboration")
                   .EditCellTemplate(@<text>
                 @Html.Partial("ShadowDropDownBox",Model)
             </text>);
+
+
               columns.Add().DataField("PriorityOrder").Width(110);
 
               columns.AddFor(m=>m.ResponsibilityDefinition).Visible(false).Width(0);
@@ -78,7 +80,11 @@
           }).DataSource(a => a.Mvc().Controller("Responsibilities").LoadAction("Get")
                       .UpdateAction("Put")
                       .InsertAction("Post")
-                      .DeleteAction("Delete").Key("Id").LoadParams(new { Id = new JS("getDrcId") })).OnRowInserting("onRowInserting")
+                      .DeleteAction("Delete").Key("Id").LoadParams(new { Id = Model.Id })).OnRowInserting(@<text>
+                                                                                                              function(e) {
+                                                                                                              e.data.DrcCardId = @Model.Id;
+                                                                                                              }
+                                                                                                           </text>)
    
       )
 
