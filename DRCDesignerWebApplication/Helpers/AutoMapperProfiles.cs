@@ -14,19 +14,32 @@ namespace DRCDesignerWebApplication.Helpers
         public AutoMapperProfiles()
         {
             // Add as many of these lines as you need to map your objects
-            CreateMap<Responsibility, ResponsibilityViewModel>();
-            CreateMap<ResponsibilityViewModel, Responsibility>();
-            CreateMap<DrcCard,DrcCardViewModel>();
-            CreateMap<DrcCardViewModel,DrcCard>();
-            CreateMap<Authorization, AuthorizationViewModel>();
-            CreateMap<AuthorizationViewModel, Authorization>();
-            CreateMap<Field, FieldViewModel>();
-            CreateMap<FieldViewModel, Field>();
+            CreateMap<Subdomain, SubdomainViewModel>();
+            CreateMap<SubdomainViewModel, Subdomain>();
+
+            CreateMap<SubdomainVersion, SubdomainViewModel>();
+            CreateMap<SubdomainViewModel, Subdomain>();
+
+            CreateMap<DrcCardBusinessModel, DrcCardViewModel>();
+            CreateMap<DrcCardViewModel, DrcCardBusinessModel>();
+
+            CreateMap<DrcCard, DrcCardViewModel>(); 
+            CreateMap< DrcCardViewModel, DrcCard>();
+
+            CreateMap<ResponsibilityBusinessModel, ResponsibilityViewModel>();
+            CreateMap<ResponsibilityViewModel, ResponsibilityBusinessModel>();
+
+            CreateMap<AuthorizationBusinessModel, AuthorizationViewModel>();
+            CreateMap<AuthorizationViewModel, AuthorizationBusinessModel>();
+
+            CreateMap<FieldBusinessModel, FieldViewModel>();
+            CreateMap<FieldViewModel, FieldBusinessModel>();
+
             CreateMap<ShadowCardSelectBoxBusinessModel, ShadowCardSelectBoxViewModel>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dto => dto.DrcCardName, opt => opt.MapFrom(src => src.DrcCardName))
-                .ForMember(dto => dto.SubdomainId, opt => opt.MapFrom(src => src.SubdomainId))
-                .ForMember(dto => dto.SubdomainName, opt => opt.MapFrom(src => src.SubdomainName));
+                .ForMember(dto => dto.SubdomainVersionId, opt => opt.MapFrom(src => src.SubdomainVersionId))
+                .ForMember(dto => dto.CardSourcePath, opt => opt.MapFrom(src => src.CardSourcePath));
 
             CreateMap<FieldBusinessModel, FieldViewModel>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
@@ -36,6 +49,8 @@ namespace DRCDesignerWebApplication.Helpers
                 .ForMember(dto => dto.DrcCardId, opt => opt.MapFrom(src => src.DrcCardId))
                 .ForMember(dto => dto.DrcCard, opt => opt.MapFrom(src => src.DrcCard))
                 .ForMember(dto => dto.Type, opt => opt.MapFrom(src => src.Type));
+
+          
 
             CreateMap<SubdomainVersionViewModel, SubdomainVersionBusinessModel>();
             CreateMap<SubdomainVersionBusinessModel, SubdomainVersionViewModel>();

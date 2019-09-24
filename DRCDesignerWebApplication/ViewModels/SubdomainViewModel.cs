@@ -1,19 +1,18 @@
-﻿
-using Newtonsoft.Json;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using DRCDesigner.Core.Entities;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-namespace DRCDesigner.Entities.Concrete
+namespace DRCDesignerWebApplication.ViewModels
 {
-    public class Subdomain : IEntity
+    public class SubdomainViewModel
     {
-
-
-        public Subdomain()
+        public SubdomainViewModel()
         {
-            SubdomainVersions=new List<SubdomainVersion>();
+            SubdomainVersions = new List<SubdomainVersionViewModel>();
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id { get; set; }
@@ -23,7 +22,6 @@ namespace DRCDesigner.Entities.Concrete
         public string SubdomainName { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<SubdomainVersion> SubdomainVersions {get; set;}
-
+        public virtual ICollection<SubdomainVersionViewModel> SubdomainVersions { get; set; }
     }
 }

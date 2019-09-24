@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string DrcCardName { get; set; }
-        public string SubdomainName { get; set; }
-        public int SubdomainId { get; set; }
+        public string CardSourcePath { get; set; }
+        public int SubdomainVersionId { get; set; }
     }
 }

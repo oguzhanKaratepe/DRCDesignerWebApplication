@@ -11,6 +11,7 @@ namespace DRCDesigner.DataAccess.Abstract
 {
     public interface IResponsibilityRepository:IRepository<Responsibility>
     {
-     IEnumerable<Responsibility> GetDrcAllResponsibilities(int id); 
+     IEnumerable<Responsibility> GetDrcAllResponsibilities(int id);
+     Task<Responsibility> GetByIdWithoutTracking(int id);
     }
 }

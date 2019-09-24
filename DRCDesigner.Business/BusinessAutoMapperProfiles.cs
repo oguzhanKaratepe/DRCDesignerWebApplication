@@ -18,6 +18,13 @@ namespace DRCDesigner.Business
             CreateMap<SubdomainVersionBusinessModel, SubdomainVersion>();
             CreateMap<FieldBusinessModel, Field>();
             CreateMap<Field, FieldBusinessModel>();
+            CreateMap<ResponsibilityBusinessModel, Responsibility>();
+            CreateMap<Responsibility, ResponsibilityBusinessModel>();
+            CreateMap<AuthorizationBusinessModel, Authorization>();
+            CreateMap<Authorization, AuthorizationBusinessModel>();
+            CreateMap<DrcCardBusinessModel, DrcCard>();
+            CreateMap<DrcCard, DrcCardBusinessModel>();
+            CreateMap<SubdomainVersion, SubdomainVersion>();
 
         }
     }

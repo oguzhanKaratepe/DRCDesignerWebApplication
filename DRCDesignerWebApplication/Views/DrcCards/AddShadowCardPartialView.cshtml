@@ -47,10 +47,10 @@
  
     @using (Html.BeginForm("PostShadow", "DrcCards", FormMethod.Post, new { id = "AddShadow" }))
     {
-
+        
         @(Html.DevExtreme().SelectBox()
-                      .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainId = @Model.SubdomainVersionId}))
-                      .DataSourceOptions(o => o.Group("SubdomainName"))
+              .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainVersionId = @Model.SubdomainVersionId}))
+                      .DataSourceOptions(o => o.Group("CardSourcePath"))
                       .Grouped(true)
                       .Placeholder("Select Main Card")
                       .DisplayExpr("DrcCardName")
@@ -63,7 +63,7 @@
         @(Html.DevExtreme().Form<DrcCardViewModel>()
                       .ID("form")
                       .ValidationGroup("ShadowDrcCard")
-              .LabelLocation(FormLabelLocation.Top)
+                       .LabelLocation(FormLabelLocation.Top)
                       .ReadOnly(false)
                       .ShowColonAfterLabel(true)
                       .Items(formItems =>
@@ -75,10 +75,10 @@
                                                                                                        
                                                   )
 
-        <div class="submitButton">
+        <div>
             @(Html.DevExtreme().Button()
                           .Text("Add Card")
-                  .ValidationGroup("ShadowDrcCard")
+                          .ValidationGroup("ShadowDrcCard")
                           .OnClick("addShadowClickHandler")
                           .UseSubmitBehavior(false)
                   
@@ -91,12 +91,12 @@
 }
 
 <script>
-    function getFormInstance() {
+    function getShadowFormInstance() {
         return $("#form").dxForm("instance");
     }
 
     function selectBox_valueChanged(data) {
-        getFormInstance().option("formData", data.value);
+        getShadowFormInstance().option("formData", data.value);
     }
 
     function closeShadowAddButton() {

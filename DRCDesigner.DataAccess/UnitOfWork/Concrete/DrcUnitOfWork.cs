@@ -19,7 +19,8 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
             DrcCardRepository = new DrcCardRepository(_context);
             FieldRepository = new FieldRepository(_context);
             SubdomainRepository = new SubdomainRepository(_context);
-            ResponsibilityRepository=new ResponsibilityRepository(_context);
+            SubdomainVersionRepository= new SubdomainVersionRepository(_context);
+            ResponsibilityRepository =new ResponsibilityRepository(_context);
             AuthorizationRepository=new AuthorizationRepository(_context);
             DrcCardResponsibilityRepository=new DrcCardResponsibilityRepository(_context);
             RoleRepository=new RoleRepository(_context);
@@ -27,6 +28,7 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
             DrcCardFieldRepository=new DrcCardFieldRepository(_context);
         }
 
+        public ISubdomainVersionRepository SubdomainVersionRepository { get; private set; }
         public IDrcCardRepository DrcCardRepository { get; private set; }
         
         public IFieldRepository FieldRepository { get; private set; }

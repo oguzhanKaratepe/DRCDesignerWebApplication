@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using DRCDesigner.Entities.Concrete;
 using Newtonsoft.Json;
 
-namespace DRCDesignerWebApplication.ViewModels
+namespace DRCDesigner.Business.BusinessModels
 {
-    public class AuthorizationViewModel
+    public class AuthorizationBusinessModel
     {
-        public AuthorizationViewModel()
+        public AuthorizationBusinessModel()
         {
-            RoleIds =new int[0];
-            Roles=new List<Role>();
+            RoleIds = new int[0];
+            Roles = new List<Role>();
         }
         public int Id { get; set; }
         public int DrcCardId { get; set; }
@@ -17,8 +19,6 @@ namespace DRCDesignerWebApplication.ViewModels
         public virtual DrcCard DrcCard { get; set; }
         public string OperationName { get; set; }
         public int[] RoleIds { get; set; }
-        [JsonIgnore]
         public IList<Role> Roles { get; set; }
-
     }
 }

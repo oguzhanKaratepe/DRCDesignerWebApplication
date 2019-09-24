@@ -11,7 +11,8 @@ namespace DRCDesigner.Business.BusinessModels
     {
         public SubdomainVersionBusinessModel()
         {
-            ReferencedSubdomainVersions =new List<SubdomainVersion>();
+       
+            ReferencedVersionIds= new int[0];
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id { get; set; }
@@ -20,6 +21,8 @@ namespace DRCDesigner.Business.BusinessModels
         public int SubdomainId { get; set; }
         [JsonIgnore]
         public virtual Subdomain Subdomain { get; set; }
+        public int? SourceVersionId { get; set; }
+        public string SourceVersionName { get; set; }
 
         [DisplayName("Version number")]
         public string VersionNumber { get; set; }
@@ -27,6 +30,6 @@ namespace DRCDesigner.Business.BusinessModels
         public bool EditLock { get; set; }
 
         public int[] ReferencedVersionIds { get; set; }
-        public virtual ICollection<SubdomainVersion> ReferencedSubdomainVersions { get; set; }
+        
     }
 }

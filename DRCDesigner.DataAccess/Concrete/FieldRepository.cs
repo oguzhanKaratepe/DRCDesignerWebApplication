@@ -24,5 +24,10 @@ namespace DRCDesigner.DataAccess.Concrete
         //{
         //    return DrcCardContext.Fields.Where(m => m.DrcCardId == id).ToList();
         //}
+        public async Task<Field> GetByIdWithoutTracking(int id)
+        {
+            return await DrcCardContext.Fields.AsNoTracking().Where(c => c.Id == id).SingleAsync();
+        }
     }
+
 }

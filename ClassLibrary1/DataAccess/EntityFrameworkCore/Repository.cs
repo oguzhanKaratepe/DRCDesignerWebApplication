@@ -29,6 +29,8 @@ namespace DRCDesigner.Core.DataAccess.EntityFrameworkCore
            return _context.Set<TEntity>().Find(id);
         }
 
+    
+
         public void Remove(int id)
         {
             _context.Set<TEntity>().Remove(GetById(id));

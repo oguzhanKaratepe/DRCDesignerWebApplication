@@ -1,7 +1,8 @@
 ﻿
 @using DevExtreme.AspNet.Mvc.Builders
-@using DRCDesigner.Entities.Concrete
+@using DRCDesignerWebApplication.ViewModels
 
+@model SubdomainViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -14,56 +15,150 @@
 <style>
     #gridContainer {
         margin-left: 2%
-  
     }
-
 </style>
 <div class="d-flex align-content-center m-5">
-
     @(Html.DevExtreme().DataGrid<Subdomain>().ID("gridContainer")
-                                                        .ShowBorders(true)
-                                                        .Paging(paging => paging.PageSize(9))
-                                                        .Width(1700).Height(600).SearchPanel(searchPanel => searchPanel
-                                                            .Visible(true)
-                                                            .Width(300)
-                                                            
-                                                            .Placeholder("Search..."))
-                                                         .Editing(editing =>
-                                                         {
+               .ShowBorders(true)
+               .Paging(paging => paging.PageSize(9))
+               .Width(1700).Height(600).SearchPanel(searchPanel => searchPanel
+                   .Visible(true)
+                   .Width(300)
+                   .Placeholder("Search..."))
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Cell);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                    editing.AllowUpdating(true);
+                    editing.UseIcons(true);
 
-                                                             editing.Mode(GridEditMode.Cell);
-                                                            editing.AllowAdding(true);
-                                                            editing.AllowDeleting(true);
-                                                            editing.AllowUpdating(true);
-                                                            editing.UseIcons(true);
+                })
+               .Columns(columns =>
+               {
+                   columns.AddFor(m => m.SubdomainName);
+               })
+                 .DataSource(d => d.Mvc()
+               .Controller("Subdomains")
+               .LoadAction("Get")
+               .UpdateAction("Put")
+               .InsertAction("Post")
+               .DeleteAction("Delete")
+               .Key("Id")
+           ).MasterDetail(md =>
+           {
+               md.Enabled(true);
+               md.Template(@<text>
 
-                                                        })
-                                                        .Columns(columns =>
-                                                        {
-                                                            columns.AddFor(m => m.SubdomainName);
-                                                        })
-                                                          .DataSource(d => d.Mvc()
-                                                        .Controller("Subdomains")
-                                                        .LoadAction("Get")
-                                                        .UpdateAction("Put")
-                                                        .InsertAction("Post")
-                                                        .DeleteAction("Delete")
-                                                        .Key("Id")
-                                                    ).MasterDetail(md => {
-                                                                              md.Enabled(true);
-                                                                              md.Template(@<text>
-                                                                                              @Html.Partial("MasterDetailPartialView")
-                                                                                           </text>);
-                                                                             
+                   <div class="master-detail-caption  m-2"><%- data.SubdomainName %> Versions:</div>
+
+                   @(Html.DevExtreme().DataGrid<SubdomainVersionViewModel>()
+                                                     .ColumnAutoWidth(true)
+                                                     .ShowBorders(true)
+                                                    .Editing(editing =>
+                                                    {
+                                                        editing.Mode(GridEditMode.Popup)
+                                                .AllowUpdating(true)
+                                                .AllowAdding(true)
+                                                .AllowDeleting(true)
+
+                                                .Popup(p => p
+                                          .Title("Version Details")
+                                          .ShowTitle(true)
+
+                                          .Width(700)
+                                          .Height(415)
+                                                .Position(pos => pos
+                                              .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                                              .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                                              .Of(new JS("window"))
+                                          )
+                                          ).Form(f => f.Items(items =>
+                                          {
+                                              items.AddGroup()
+
+                                                          .ColCount(2)
+                                                          .ColSpan(2)
+                                                          .Items(groupItems =>
+                                                          {
+
+                                                              groupItems.AddSimple().DataField("VersionNumber");
+                                                              groupItems.AddSimple().DataField("SourceVersionId");
+                                                              groupItems.AddSimple().DataField("EditLock").Editor(editor => editor.CheckBox());
+                                                              groupItems.AddSimple().DataField("ReferencedVersionIds").Editor(editor => editor.TagBox().DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
+                                                                  .Key("Id").LoadParams(new { id = new JS("data.Id") }))
+                                                                  .DisplayExpr("VersionNumber")
+                                                                  .ValueExpr("Id").DataSourceOptions(o => o.Group("SubdomainName")).Grouped(true).ElementAttr(new { style = "border-bottom:0.5px solid;" }));
+
+                                                          });
+
+
+                                          }));
+                                                        editing.UseIcons(true);
+
                                                     })
-                                )
+                                                     .Columns(columns =>
+                                                     {
+                                                         columns.AddFor(m => m.VersionNumber);
+                                                         columns.AddFor(m => m.SourceVersionName);
+                                                         columns.AddFor(m => m.SourceVersionId).Visible(false)
+                                                             .Lookup(lookup => lookup.DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetSourceOptions")
+                                                                 .Key("Id").LoadParams(new { id = new JS("data.Id") }))
+                                                                 .AllowClearing(true)
+                                                       .DisplayExpr("VersionNumber")
+                                                     .ValueExpr("Id")
+                                                 );
+                                                         columns.AddFor(m => m.EditLock).Caption("Lock");
+                                                         columns.AddFor(m => m.ReferencedVersionIds)
+                                                             .CellTemplate(new JS("customizeRefDisplayText"))
+                                                 .Lookup(lookup => lookup
+                                                     .DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
+                                                         .Key("Id").LoadParams(new { id = new JS("data.Id") }))
+                                                     .DisplayExpr("VersionNumber")
+                                                     .ValueExpr("Id")
+                                                 ).Caption("Add Reference");
+                                                     })
+                                                           .DataSource(d => d.Mvc()
+                                                               .Controller("SubdomainVersions")
+                                                               .LoadAction("Get")
+                                                               .UpdateAction("Put")
+                                                               .InsertAction("Post")
+                                                               .DeleteAction("Delete")
+                                                               .Key("Id")
+                                                               .LoadParams(new { id = new JS("data.Id") })
+                                                           ).OnRowInserting("function(e) {  e.data.SubdomainId = data.Id;}")
+                   )
+               </text>);
 
-    
+                                                                                                                                    })
+    )
+
+
 </div>
 <script>
-    function customizeDisplayText(cell, info) {
-        var rowData = info.row.data;
+    //function getCities(options) {
 
+    //    //options.data is null when the grid is loaded for the first time, thus City lookup's cannot has a data source and the cell looks empty.
+    //    //But when I click 'Edit' a row, this function is called again with the correct arguments.
+    //    //But for the first time when the grid is loaded, argument is null, why?
+
+    //    if (!options.data) return null;
+
+    //        var store = {
+    //            store: DevExpress.data.AspNet.createStore({
+    //                key: "Id",
+    //                loadUrl: '/SubdomainVersions/GetSourceOptions?id=' + options.data.Id +'&'+'subdomainId='+ options.data.SubdomainId
+                  
+    //            })
+    //        };
+        
+    
+      
+    //    return store;
+    //}
+    function customizeRefDisplayText(cell, info) {
+        var rowData = info.row.data;
+     
         if (!rowData)
             return;
         var texts = [];
@@ -77,4 +172,5 @@
         }
         cell.append(texts.toString());
     };
+
 </script>

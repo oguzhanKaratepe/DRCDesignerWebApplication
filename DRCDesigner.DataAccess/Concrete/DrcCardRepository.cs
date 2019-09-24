@@ -40,7 +40,7 @@ namespace DRCDesigner.DataAccess.Concrete
 
         public async Task<IEnumerable<DrcCard>> getAllCardsBySubdomainVersion(int subdomainVersionId)
         {
-            return await DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).ToListAsync();
+            return await DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).AsNoTracking().ToListAsync();
         }
 
         //public void Remove(DrcCard drcCard)

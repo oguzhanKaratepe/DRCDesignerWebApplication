@@ -24,12 +24,12 @@ namespace DRCDesigner.DataAccess.Concrete
         public IList<DrcCardResponsibility> GetAllDrcCardResponsibilitiesByDrcCardId(int id)
         {
 
-            return DrcCardContext.DrcCardResponsibilities
+            return DrcCardContext.DrcCardResponsibilities.AsNoTracking()
                 .Where(a => a.DrcCardId == id).ToList();
         }
         public IList<DrcCardResponsibility> GetDrcCardResponsibilitiesByDrcCardId(int id)
         {
-            return DrcCardContext.DrcCardResponsibilities
+            return DrcCardContext.DrcCardResponsibilities.AsNoTracking()
                 .Where(a => a.DrcCardId == id && !a.IsRelationCollaboration).ToList();
         }
 

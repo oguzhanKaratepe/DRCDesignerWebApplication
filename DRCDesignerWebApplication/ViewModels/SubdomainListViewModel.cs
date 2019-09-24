@@ -1,5 +1,6 @@
 ﻿using DRCDesigner.Entities.Concrete;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DRCDesignerWebApplication.ViewModels
 {
@@ -9,7 +10,10 @@ namespace DRCDesignerWebApplication.ViewModels
         {
             Subdomains=new List<Subdomain>();
         }
+
+        [JsonIgnore]
         public IEnumerable<Subdomain> Subdomains{ get; set; }
+
         public int CurrentSubdomain { get; set; }
     }
 }

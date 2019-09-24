@@ -28,6 +28,7 @@ namespace DRCDesigner.Business.Concrete
         {
             var newSubdomain = new Subdomain();
             JsonConvert.PopulateObject(values, newSubdomain);
+           
             _subdomainUnitOfWork.SubdomainRepository.Add(newSubdomain);
             _subdomainUnitOfWork.Complete();
         }

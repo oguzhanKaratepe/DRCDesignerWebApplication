@@ -62,7 +62,7 @@
      
     </style>
 </head>
-<body class="border-right" style="background-color: #222;" >
+<body class="" style="background-color: #222;" >
     <div class="bg-dark h-100 ">
         @(Html.DevExtreme().Toolbar()
               
@@ -92,13 +92,8 @@
                                         )
                                         .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
-                                    items.Add()
-                                        .Widget(w => w
-                                            .Button()
-                                            .Text("...")
-                                            .OnClick("settingsButton_click")
-                                      )
-                                        .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                                   
+                                 
 
                                       items.Add()
                                           .Template(@<text><div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
@@ -168,10 +163,7 @@
                 DevExpress.ui.notify("... option has been clicked!");
             }
 
-            function settingsButton_click() {
-                DevExpress.ui.notify(".. option has been clicked!");
-            }
-
+         
         </script>
     </div>
 </body>

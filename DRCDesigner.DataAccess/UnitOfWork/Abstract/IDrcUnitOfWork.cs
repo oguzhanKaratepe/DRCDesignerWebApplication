@@ -12,6 +12,7 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Abstract
    public interface IDrcUnitOfWork:IUnitOfWork
     {
         ISubdomainRepository SubdomainRepository { get; }
+        ISubdomainVersionRepository SubdomainVersionRepository { get; }
         IDrcCardRepository DrcCardRepository { get;  }
         IFieldRepository FieldRepository { get;}
         IResponsibilityRepository ResponsibilityRepository { get; }
@@ -20,6 +21,7 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Abstract
         IAuthorizationRoleRepository AuthorizationRoleRepository { get; }
         IDrcCardResponsibilityRepository DrcCardResponsibilityRepository { get; }
         IDrcCardFieldRepository DrcCardFieldRepository { get; }
+
 
     }
 }

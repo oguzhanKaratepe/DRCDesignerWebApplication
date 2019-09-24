@@ -9,13 +9,21 @@ namespace DRCDesigner.Business.Abstract
 {
    public interface IDrcCardService
    {
-       void Add(DrcCard drcCard);
-       void Update(DrcCard drcCard);
+       void Add(DrcCardBusinessModel drcCard);
+       void AddShadowCard(DrcCard drcCard);
+       void Update(int id,string values);
        void Delete(DrcCard drcCard);
-       Task<IEnumerable<DrcCard>> GetAllDrcCards(int subdomainVersionId);
+       Task<IList<ResponsibilityBusinessModel>> getListOfDrcCardResponsibilities(int cardId);
+       Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId);
+       Task<IList<AuthorizationBusinessModel>> getListOfDrcCardAuthorizations(int cardId);
+        Task<IList<DrcCardBusinessModel>> GetAllDrcCards(int subdomainVersionId);
       
-        Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int id);
+        Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int subdomainVersionId);
        bool MoveCardToDestinationSubdomain(DrcCard drcCard);
-       string GetShadowCardSourcePath(int? shadowId);
+       string GetShadowCardSourcePath(int? shadowCardId);
+       DrcCardBusinessModel GetCard(int id);
+       int TotalSubdomainSize();
+       string activeStatePath(int versionId);
+       Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId);
    }
 }

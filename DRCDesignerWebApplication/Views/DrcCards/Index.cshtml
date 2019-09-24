@@ -183,9 +183,6 @@
         <div class="sticky-top w-100 ml-4">
             @await Component.InvokeAsync("SubdomainTab")
         </div>
-
-        <div class="justify-content-end mr-4">@Model.SubdomainName:@Model.VersionNumber </div>
-
     </div>
     <div class="d-flex flex-column align-items-start bg-dark w-100 ml-3">
         @{
@@ -193,20 +190,24 @@
             <div>@Html.Partial("AddShadowCardPartialView", Model.DrcCardViewModel)</div>
 
         }
-
+    
         @if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainVersionId != 0)
         {
-           
-            <div role="group">
-                <button id="btnGroupDrop1" class="btn btn-secondary btn-circle btn-circle-sm m-1 dx-icon-plus m-2" data-toggle="dropdown"></button>
-                <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" onclick="AddClickHandler();">Drc Document</a>
-                    <a class="dropdown-item" onclick="shadowCardPopUp();">Shadow Document</a>
+            <div class="d-flex justify-content-between w-100">
+                <div role="group">
+                    <button id="btnGroupDrop1" class="btn btn-secondary btn-circle btn-circle-sm m-1 dx-icon-plus m-2" data-toggle="dropdown"></button>
+                    <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
+                        <a class="dropdown-item" onclick="AddClickHandler();">Drc Document</a>
+                        <a class="dropdown-item" onclick="shadowCardPopUp();">Shadow Document</a>
+                    </div>
                 </div>
-            </div>
-            
-        }
 
+                <div  class=" justify-content-end pr-4 mr-4"><a class="mt-4 text-light p-2 border-secondary rounded">@Model.ActiveState</a>
+                 
+                    </div>
+
+            </div>
+        }
         else if (Model.TotalSubdomainSize < 1)
         {
             <p class=" text-lg-center align-content-center" id="addSubdomainAlert">To be able start design, you must start by adding a new subdomain to your project.. </p>
@@ -216,6 +217,7 @@
 
             @foreach (var property in Model.DrcCardViewModes)
             {
+              
 
                 Model.DrcCardViewModel = property;
 
@@ -571,8 +573,22 @@
         $("#addCard").submit();
     }
     function addShadowClickHandler(e) {
+        var a = $("#form").dxForm("instance");
+        var form = a.option();
+        if (form.formData.DrcCardName != null)
+        {
+            if (form.formData.DrcCardName.length > 0) {
+                $("#AddShadow").submit();
+            } else {
+                DevExpress.ui.notify("You can not leave document name empty!!", "error", 1500);
+            }
+            
+        } else {
 
-        $("#AddShadow").submit();
+            DevExpress.ui.notify("You must select a source document!!", "error", 1500);
+        }
+     
+        
     }
 
     function moveCardClickHandler(e) {
@@ -592,7 +608,7 @@
             visible: false
 
         });
-        location.reload();
+        window.location.href = "/DrcCards/index?id=" + @Model.DrcCardViewModel.SubdomainVersionId;
     }
 
     function customizeAuthorizationDisplayText(cell, info) {

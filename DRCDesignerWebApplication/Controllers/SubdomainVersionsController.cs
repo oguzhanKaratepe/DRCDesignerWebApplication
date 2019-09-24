@@ -14,7 +14,7 @@ using DevExtreme.AspNet.Mvc;
 using DevExtreme.AspNet.Data;
 using DRCDesigner.Business.Abstract;
 using DRCDesignerWebApplication.ViewModels;
-using   DRCDesigner.Entities.Concrete;
+using DRCDesigner.Entities.Concrete;
 
 namespace DRCDesignerWebApplication.Controllers
 {
@@ -23,17 +23,29 @@ namespace DRCDesignerWebApplication.Controllers
 
         private readonly ISubdomainVersionService _subdomainVersionService;
         private readonly IMapper _mapper;
-        public SubdomainVersionsController(ISubdomainVersionService subdomainVersionService,IMapper mapper)
+        public SubdomainVersionsController(ISubdomainVersionService subdomainVersionService, IMapper mapper)
         {
             _subdomainVersionService = subdomainVersionService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<object> Get(int id,DataSourceLoadOptions loadOptions)
+        public async Task<object> Get(int id, DataSourceLoadOptions loadOptions)
         {
-            IList<SubdomainVersionViewModel> viewModels=new List<SubdomainVersionViewModel>();
+            IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
             var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersions(id);
+            foreach (var BModelVersion in subdomainVersions)
+            {
+                var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
+                viewModels.Add(viewmodel);
+            }
+            return DataSourceLoader.Load(viewModels, loadOptions);
+        }
+        [HttpGet]
+        public async Task<object> GetSourceOptions(int id, int subdomainId, DataSourceLoadOptions loadOptions)
+        {
+            IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
+            var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersionSourceOptions(subdomainId,id);
             foreach (var BModelVersion in subdomainVersions)
             {
                 var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
@@ -47,26 +59,38 @@ namespace DRCDesignerWebApplication.Controllers
             var refenceOptions = await _subdomainVersionService.GetReferenceOptions(id);
             return DataSourceLoader.Load(refenceOptions, loadOptions);
         }
-       
-        [HttpPost]
-        public IActionResult Post(string values)
-        {
-        
-            if (ModelState.IsValid)
-                _subdomainVersionService.Add(values);
 
+        [HttpPost]
+        public async Task<IActionResult> Post(string values)
+        {
+            if (ModelState.IsValid)
+            {
+                var CheckSourceLocked = _subdomainVersionService.Add(values);
+
+                if (!await CheckSourceLocked)
+                {
+                    return BadRequest("Your source version locked. Please unlock source before create new one!");
+                }
+            }
             else
-                return BadRequest("I will add error to here");// örnek var bununla ilgili dev extreme "ModelState.GetFullErrorMessage()"
+                return BadRequest(ModelState.GetFullErrorMessage());
 
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult Put(int key, string values)
+        public async Task<IActionResult> Put(int key, string values)
         {
             if (ModelState.IsValid)
-                _subdomainVersionService.Update(values, key);
+            {
+                var SourceChange= await _subdomainVersionService.LookForSourceChange(key,values);
 
+                if (!SourceChange)
+                {
+                    return BadRequest("You are not allowed to change source version!!");
+                }
+                _subdomainVersionService.Update(values, key);
+            }
             else
                 return BadRequest("I will add error to here");
 
@@ -82,6 +106,18 @@ namespace DRCDesignerWebApplication.Controllers
             }
 
             return Ok();
+        }
+        [HttpGet]
+        public async Task<object> GetAllVersionWithSubdomainNames(DataSourceLoadOptions loadOptions)
+        {
+            IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
+            var subdomainVersions = await _subdomainVersionService.GetAllVersions();
+            foreach (var BModelVersion in subdomainVersions)
+            {
+                var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
+                viewModels.Add(viewmodel);
+            }
+            return DataSourceLoader.Load(viewModels, loadOptions);
         }
     }
 }

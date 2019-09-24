@@ -9,8 +9,10 @@ namespace DRCDesigner.Business.Abstract
 {
    public interface IResponsibilityService
    {
-       void Add(Responsibility responsibility);
-       void Update(Responsibility responsibility);
-       void Delete(Responsibility responsibility);
+       Task<IList<DrcCard>> GetResponsibilityShadows(int versionId, int cardId);
+        Task<IList<ResponsibilityBusinessModel>> GetCardResponsibilities(int cardId);
+        void Add(string values);
+       void Update(int id,string values);
+       void Delete(int id);
    }
 }

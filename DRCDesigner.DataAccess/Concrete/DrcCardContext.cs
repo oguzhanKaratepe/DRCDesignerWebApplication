@@ -18,6 +18,41 @@ namespace DRCDesigner.DataAccess.Concrete
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Subdomain>()
+                .HasMany(c => c.SubdomainVersions)
+                .WithOne(s => s.Subdomain)
+                .HasForeignKey(pt => pt.SubdomainId)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+            modelBuilder.Entity<SubdomainVersionReference>()
+                .HasKey(pt => new { VersionId = pt.SubdomainVersionId, pt.ReferencedVersionId});
+
+            modelBuilder.Entity<SubdomainVersionReference>()
+                .HasOne(pt => pt.SubdomainVersion)
+                .WithMany(p => p.ReferencedSubdomainVersions)
+                .HasForeignKey(pt => pt.SubdomainVersionId);
+
+
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasOne(pt => pt.SourceSubdomainVersion)
+                .WithMany()
+                .HasForeignKey(pt => pt.SourceVersionId);
+
+
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasMany(c => c.SubdomainVersionRoles)
+                .WithOne(s => s.SubdomainVersion)
+                .HasForeignKey(pt => pt.SubdomainVersionId)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+            
+            modelBuilder.Entity<SubdomainVersion>()
+                .HasMany(c => c.DRCards)
+                .WithOne(s => s.SubdomainVersion)
+                .HasForeignKey(pt => pt.SubdomainVersionId)
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
 
             modelBuilder.Entity<DrcCardResponsibility>()
                 .HasKey(pt => new { pt.DrcCardId, pt.ResponsibilityId });
@@ -63,34 +98,16 @@ namespace DRCDesigner.DataAccess.Concrete
                 .HasMany(c => c.Authorizations)
                 .WithOne(s => s.DrcCard)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
+
             
-            modelBuilder.Entity<SubdomainVersion>()
-                .HasMany(c => c.SubdomainVersionRoles)
-                .WithOne(s => s.SubdomainVersion)
-                .HasForeignKey(pt => pt.SubdomainVersionId)
-                .OnDelete(DeleteBehavior.Cascade).IsRequired();
 
-            modelBuilder.Entity<SubdomainVersion>()
-                .HasMany(c => c.SubdomainVersionRoles)
-                .WithOne(s => s.SubdomainVersion)
-                .HasForeignKey(pt => pt.SubdomainVersionId);
-
-            modelBuilder.Entity<SubdomainVersion>()
-                .HasMany(c => c.DRCards)
-                .WithOne(s => s.SubdomainVersion)
-                .HasForeignKey(pt => pt.SubdomainVersionId)
-                .OnDelete(DeleteBehavior.Cascade).IsRequired();
-
-            modelBuilder.Entity<Subdomain>()
-                .HasMany(c => c.SubdomainVersions)
-                .WithOne(s => s.Subdomain)
-                .HasForeignKey(pt => pt.SubdomainId)
-                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+           
         }
 
 
         public DbSet<Subdomain> Subdomains { get; set; }
         public DbSet<SubdomainVersion> SubdomainVersions { get; set; }
+        public DbSet<SubdomainVersionReference> SubdomainVersionReferences { get; set; }
         public DbSet<DrcCard> DrcCards { get; set; }
         public  DbSet<Responsibility> Responsibilities { get; set; }
         public DbSet<Field> Fields { get; set; }

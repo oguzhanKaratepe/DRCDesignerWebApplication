@@ -21,6 +21,7 @@ namespace DRCDesigner.Entities.Concrete
         public int? SubdomainVersionId{ get; set; }
         [JsonIgnore]
         public virtual SubdomainVersion SubdomainVersion { get; set; }
+        [JsonIgnore]
         public virtual IList<AuthorizationRole> AuthorizationRoles { get; set; }
     }
 }
