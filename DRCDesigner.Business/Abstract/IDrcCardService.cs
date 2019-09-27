@@ -17,13 +17,12 @@ namespace DRCDesigner.Business.Abstract
        Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId);
        Task<IList<AuthorizationBusinessModel>> getListOfDrcCardAuthorizations(int cardId);
         Task<IList<DrcCardBusinessModel>> GetAllDrcCards(int subdomainVersionId);
-      
+        Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId);
         Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int subdomainVersionId);
        bool MoveCardToDestinationSubdomain(DrcCard drcCard);
        string GetShadowCardSourcePath(int? shadowCardId);
        DrcCardBusinessModel GetCard(int id);
        int TotalSubdomainSize();
-       string activeStatePath(int versionId);
        Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId);
    }
 }

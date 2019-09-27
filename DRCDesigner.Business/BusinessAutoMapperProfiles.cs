@@ -25,6 +25,8 @@ namespace DRCDesigner.Business
             CreateMap<DrcCardBusinessModel, DrcCard>();
             CreateMap<DrcCard, DrcCardBusinessModel>();
             CreateMap<SubdomainVersion, SubdomainVersion>();
+            CreateMap<Role, RoleBusinessModel>();
+            CreateMap<RoleBusinessModel, Role>();
 
         }
     }

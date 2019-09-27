@@ -110,6 +110,7 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetAllVersionWithSubdomainNames(DataSourceLoadOptions loadOptions)
         {
+
             IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
             var subdomainVersions = await _subdomainVersionService.GetAllVersions();
             foreach (var BModelVersion in subdomainVersions)
@@ -118,6 +119,8 @@ namespace DRCDesignerWebApplication.Controllers
                 viewModels.Add(viewmodel);
             }
             return DataSourceLoader.Load(viewModels, loadOptions);
+        
         }
+
     }
 }

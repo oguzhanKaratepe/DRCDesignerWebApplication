@@ -12,6 +12,7 @@ namespace DRCDesigner.DataAccess.Abstract
     {
         Task<IEnumerable<SubdomainVersion>> GetAllSubdomainVersionsBySubdomainId(int subdomainId);
         Task<SubdomainVersion> GetVersionWithReferencesById(int versionId);
+        Task<SubdomainVersion> GetSubdomainVersionCardsWithId(int versionId);
 
     }
 }

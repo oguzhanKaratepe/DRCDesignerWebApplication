@@ -84,7 +84,7 @@
 
                                                               groupItems.AddSimple().DataField("VersionNumber");
                                                               groupItems.AddSimple().DataField("SourceVersionId");
-                                                              groupItems.AddSimple().DataField("EditLock").Editor(editor => editor.CheckBox());
+                                                              groupItems.AddSimple().DataField("EditLock").Editor(editor => editor.Switch()).CssClass("ml-3");
                                                               groupItems.AddSimple().DataField("ReferencedVersionIds").Editor(editor => editor.TagBox().DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
                                                                   .Key("Id").LoadParams(new { id = new JS("data.Id") }))
                                                                   .DisplayExpr("VersionNumber")

@@ -1,7 +1,8 @@
 ﻿@using DRCDesigner.Entities.Concrete
+@using DRCDesignerWebApplication.ViewModels
 
+@model RoleViewModel;
 
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "index";
 }
@@ -14,10 +15,15 @@
         margin-left: 2%
     }
 </style>
-<div class="d-flex align-content-center m-5">
-    @(Html.DevExtreme().DataGrid<Role>().ID("gridContainer")
+
+
+
+
+@*<div class="d-flex align-content-center m-5">
+    @(Html.DevExtreme().DataGrid().ID("gridContainer")
                                                                     .ShowBorders(true)
                                                                     .Paging(paging => paging.PageSize(6))
+                                                                      .Width(1700).Height(600)
                                                                     .Editing(editing =>
                                                                     {
                                                                         editing.Mode(GridEditMode.Cell);
@@ -28,38 +34,75 @@
                                                                     })
                                                                     .Columns(columns =>
                                                                     {
-                                                                        columns.AddFor(m => m.RoleName);
-                                                                        columns.AddFor(m => m.SubdomainVersionId).Lookup(l=>l.DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetAllVersionWithSubdomainNames").Key("Id")).DisplayExpr("VersionNumber").ValueExpr("Id"))
-                                                                            .EditCellTemplate(@<text>
-                                                                            @Html.DevExtreme().SelectBox().OnValueChanged(@"function(args) { gridBox_valueChanged(args, setValue); }").DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetAllVersionWithSubdomainNames").Key("Id")).DisplayExpr("VersionNumber").ValueExpr("Id").DataSourceOptions(o => o.Group("SubdomainName")).Grouped(true)
-                                                                        </text>);
-                                                                                                                                    })
+                                                                        columns.Add().DataField("RoleName");
+                                                                   
+                                                                        columns.Add().DataField("SubdomainVersionRoleIds")
+                                                                            .AllowFiltering(false).CellTemplate(new JS("customizeDisplayText"))
+                                                                            .Lookup(lookup => lookup
+                                                                                .DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetAllVersionWithSubdomainNames")
+                                                                                    .Key("Id"))
+                                                                                .DisplayExpr("VersionNumber")
+                                                                                .ValueExpr("Id")
 
-                                                                                                                                                                                                    .DataSource(d => d.Mvc()
-                                                                                                                                                                                                        .Controller("Roles")
-                                                                                                                                                                                                        .LoadAction("Get")
-                                                                                                                                                                                                        .UpdateAction("Put")
-                                                                                                                                                                                                        .InsertAction("Post")
-                                                                                                                                                                                                        .DeleteAction("Delete")
-                                                                                                                                                                                                        .Key("Id")
-                                                                                                                                                                                                    ).SearchPanel(searchPanel => searchPanel
-                                                                                                                                                                                   .Visible(true)
-                                                                                                                                                                                   .Width(240)
-                                                                                                                                                                                   .Placeholder("Search...")
-                                                                                                                                                                                )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        .OnRowRemoved(@<text> function(e) { logEvent("RowRemoved"); } </text>)
+                                                                            )
+                                                                            .Caption("Add Role Areas")
+                                                                            .EditCellTemplate(@<text>
+                                                                                                  @Html.Partial("SelectVersionDropDownBox")
+                                                                                               </text>);
+
+
+                                                                    })
+
+                                                                     .DataSource(d => d.Mvc()
+                                                                         .Controller("Roles")
+                                                                         .LoadAction("Get")
+                                                                         .UpdateAction("Put")
+                                                                         .InsertAction("Post")
+                                                                         .DeleteAction("Delete")
+                                                                         .Key("Id")
+                                                                     ).SearchPanel(searchPanel => searchPanel
+                                                    .Visible(true)
+                                                    .Width(240)
+                                                    .Placeholder("Search...")
+                                                 )
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         .OnRowRemoved(@<text> function(e) { logEvent("RowRemoved"); } </text>)
     )
 
 </div>
 <script>
-    function gridBox_valueChanged(args, setValueMethod) {
-        var $dataGrid = $("#gridContainer");
+    //function gridBox_valueChanged(args, setValueMethod) {
+    //    var $dataGrid = $("#gridContainer");
 
-        if ($dataGrid.length) {
-            var dataGrid = $dataGrid.dxDataGrid("instance");
-            dataGrid.selectRows(args.value, false);
-            console.warn(args);
+    //    if ($dataGrid.length) {
+    //        var dataGrid = $dataGrid.dxDataGrid("instance");
+    //        dataGrid.selectRows(args.value, false);
+    //        console.warn(args);
+    //    }
+    //    setValueMethod(args.value);
+    //}
+
+    function customizeDisplayText(cell, info) {
+        var rowData = info.row.data;
+     
+        if (!rowData)
+            return;
+     
+        var texts = [];
+        if (rowData.SubdomainVersionRoleIds && rowData.SubdomainVersionRoleIds.length) {
+            
+            for (var i = 0; i < rowData.SubdomainVersionRoleIds.length; i++) {
+                
+                var value = rowData.SubdomainVersionRoleIds[i];
+                var displayText = info.column.lookup.calculateCellValue(value);
+             
+                if (displayText)
+                    texts.push(displayText);
+            }
         }
-        setValueMethod(args.value);
-    }
-</script>
+        cell.append(texts.toString());
+
+    };
+
+
+</script>*@
+

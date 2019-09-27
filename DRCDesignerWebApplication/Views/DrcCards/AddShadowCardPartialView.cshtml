@@ -49,7 +49,7 @@
     {
         
         @(Html.DevExtreme().SelectBox()
-              .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { SubdomainVersionId = @Model.SubdomainVersionId}))
+              .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { subdomainVersionId = @Model.SubdomainVersionId}))
                       .DataSourceOptions(o => o.Group("CardSourcePath"))
                       .Grouped(true)
                       .Placeholder("Select Main Card")

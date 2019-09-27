@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DRCDesigner.Business.BusinessModels;
 
 namespace DRCDesignerWebApplication.ViewModels
 {
@@ -8,13 +9,14 @@ namespace DRCDesignerWebApplication.ViewModels
         public DrcCardContainerViewModel()
         {
             DrcCardViewModes = new List<DrcCardViewModel>();
-            DrcCardViewModel=new DrcCardViewModel();
+            DrcCardViewModel = new DrcCardViewModel();
+            SubdomainMenuItems=new List<SubdomainMenuItemBusinessModel>();
         }
-        public  IList<DrcCardViewModel> DrcCardViewModes { get; set; }
+        public IList<DrcCardViewModel> DrcCardViewModes { get; set; }
         public DrcCardViewModel DrcCardViewModel { get; set; }
-      
+        public IEnumerable<SubdomainMenuItemBusinessModel> SubdomainMenuItems { get; set; }
         public int TotalSubdomainSize { get; set; }
-        public string ActiveState { get; set; }
+     
 
 
 

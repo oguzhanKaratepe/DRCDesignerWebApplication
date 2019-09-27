@@ -27,39 +27,8 @@ namespace DRCDesigner.Business.Concrete
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateNewVersionWithSourceVersion(SubdomainVersion newVersion)
-        {
-            if (newVersion.SourceVersionId != null)
-            {
-                var sourveVersionId = (int)newVersion.SourceVersionId;
 
-                var sourceVersion =
-                    await _subdomainUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(sourveVersionId);
 
-                foreach (var reference in sourceVersion.ReferencedSubdomainVersions)
-                {
-                    newVersion.ReferencedSubdomainVersions.Add(reference);
-                }
-
-                _subdomainUnitOfWork.SubdomainVersionRepository.Update(newVersion);
-
-                //var sourceVersionDrcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(sourveVersionId);
-                //foreach (var drcCard in sourceVersionDrcCards)
-                //{
-                //    DrcCard newDrcCard = new DrcCard();
-                //    newDrcCard = drcCard;
-
-                //    newDrcCard.SubdomainVersion = newVersion;
-                //}
-            }
-            else
-            {
-
-            }
-
-            _subdomainUnitOfWork.Complete();
-            return true;
-        }
 
         public async Task<bool> Add(string values)
         {
@@ -86,6 +55,17 @@ namespace DRCDesigner.Business.Concrete
                         newReference.ReferencedVersionId = sourceReference.ReferencedVersionId;
                         subdomainVersionModel.ReferencedSubdomainVersions.Add(newReference);
                     }
+
+                    var sourceSubdomainVersionRoles =
+                        await _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(sourceId);
+
+                    foreach (var sourceSubdomainVersin in sourceSubdomainVersionRoles)
+                    {
+                        var newSubdomainVersionRole=new SubdomainVersionRole();
+                        newSubdomainVersionRole.SubdomainVersion = subdomainVersionModel;
+                        newSubdomainVersionRole.RoleId = sourceSubdomainVersin.RoleId;
+                        _subdomainUnitOfWork.SubdomainVersionRoleRepository.Add(newSubdomainVersionRole);
+                    }
                 }
 
             }
@@ -101,6 +81,7 @@ namespace DRCDesigner.Business.Concrete
                 }
             }
 
+           
             _subdomainUnitOfWork.SubdomainVersionRepository.Add(subdomainVersionModel);
             _subdomainUnitOfWork.Complete();
 
@@ -115,7 +96,9 @@ namespace DRCDesigner.Business.Concrete
         public async void CloneSourceVersionToNewVersion(SubdomainVersion subdomainVersion)
         {
             var sourceId = (int)subdomainVersion.SourceVersionId;
+          
             var sourceVersionCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(sourceId);
+
 
             IList<SourceNewDrcCardMap> sourceNewDrcCardMaps = new List<SourceNewDrcCardMap>();
             foreach (var sourceVersionCard in sourceVersionCards)

@@ -22,7 +22,55 @@ namespace DRCDesigner.Business.Concrete
             _documentTransferUnitOfWork = documentTransferUnitOfWork;
             _mapper = mapper;
         }
+        public async Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId)
+        {
+            string pathName = "Subdomains";
+            
+            var subdomainsWithVersions = await _drcUnitOfWork.SubdomainRepository.GetAllWithVersions();
+            IList<SubdomainMenuItemBusinessModel> subdomainMenuItems = new List<SubdomainMenuItemBusinessModel>();
 
+            var menuRootItem = new SubdomainMenuItemBusinessModel();
+            
+            IList<SubdomainMenuItemBusinessModel> subdomains = new List<SubdomainMenuItemBusinessModel>();
+            foreach (var subdomain in subdomainsWithVersions)
+            {
+                SubdomainMenuItemBusinessModel root = new SubdomainMenuItemBusinessModel();
+                root.text = subdomain.SubdomainName;
+                root.type = 0;
+                root.disabled = false;
+
+                IList<SubdomainMenuItemBusinessModel> versions = new List<SubdomainMenuItemBusinessModel>();
+                foreach (var subdomainVersion in subdomain.SubdomainVersions)
+                {
+                    SubdomainMenuItemBusinessModel b = new SubdomainMenuItemBusinessModel();
+                    b.Id = subdomainVersion.Id;
+                    b.text = subdomainVersion.VersionNumber;
+                    b.type = 1;
+                    b.EditLock = subdomainVersion.EditLock;
+                    versions.Add(b);
+                    if (subdomainVersion.Id == versionId)
+                    {
+                        pathName= subdomain.SubdomainName + ":" + subdomainVersion.VersionNumber;
+                        b.disabled = true;
+                    }
+
+                }
+
+                root.items = versions;
+                if (versions.Count < 1)
+                {
+                    root.disabled = true;
+                }
+
+                subdomains.Add(root);
+            }
+
+            menuRootItem.items = subdomains;
+            subdomainMenuItems.Add(menuRootItem);
+            menuRootItem.text = pathName;
+            menuRootItem.type = 0;
+            return subdomainMenuItems;
+        }
         public void Add(DrcCardBusinessModel businessModeldrcCard)
         {
             var drcCard = _mapper.Map<DrcCard>(businessModeldrcCard);
@@ -215,35 +263,37 @@ namespace DRCDesigner.Business.Concrete
             ShadowCardSelectBoxBusinessModel selectBoxCard;
             IList<ShadowCardSelectBoxBusinessModel> selectBoxCards = new List<ShadowCardSelectBoxBusinessModel>();
 
-            //var Version = await _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
+            var Version =
+                await _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
 
-            //foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
-            //{
-            //    var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(referencedVersion.SubdomainId);
-            //    var cards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(referencedVersion.Id);
+            foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
+            {
+            
+                var referencedSubdomainVersionWithCards = await _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(referencedVersion.ReferencedVersionId);
+                var referencedVersionSubdomain = _drcUnitOfWork.SubdomainRepository.GetById(referencedSubdomainVersionWithCards.SubdomainId);
 
-            //    foreach (var drcCard in cards)
-            //    {
-            //        if (drcCard.MainCardId == null)
-            //        {
-            //            selectBoxCard = new ShadowCardSelectBoxBusinessModel();
-            //            selectBoxCard.Id = drcCard.Id;
-            //            selectBoxCard.DrcCardName = drcCard.DrcCardName;
-            //            selectBoxCard.SubdomainVersionId = drcCard.SubdomainVersionId;
-            //            selectBoxCard.CardSourcePath = subdomain.SubdomainName + ":>" + referencedVersion.VersionNumber;
-            //            if (drcCard.SubdomainVersionId != subdomainVersionId)
-            //            {
-            //                selectBoxCards.Add(selectBoxCard);
-            //            }
+                foreach (var drcCard in referencedSubdomainVersionWithCards.DRCards)
+                {
+                    if (drcCard.MainCardId == null)
+                    {
+                        selectBoxCard = new ShadowCardSelectBoxBusinessModel();
+                        selectBoxCard.Id = drcCard.Id;
+                        selectBoxCard.DrcCardName = drcCard.DrcCardName;
+                        selectBoxCard.SubdomainVersionId = drcCard.SubdomainVersionId;
+                        selectBoxCard.CardSourcePath = referencedVersionSubdomain.SubdomainName + ":" + referencedSubdomainVersionWithCards.VersionNumber;
+                        if (drcCard.SubdomainVersionId != subdomainVersionId)
+                        {
+                            selectBoxCards.Add(selectBoxCard);
+                        }
 
-            //        }
-            //        else
-            //        {
-            //            //do nothing
-            //        }
+                    }
+                    else
+                    {
+                        //do nothing
+                    }
 
-            //    }
-            //}
+                }
+            }
             return selectBoxCards;
 
         }
@@ -327,14 +377,6 @@ namespace DRCDesigner.Business.Concrete
             return _drcUnitOfWork.SubdomainRepository.subdomainSize();
         }
 
-        public string activeStatePath(int versionId)
-        {
-            var version = _drcUnitOfWork.SubdomainVersionRepository.GetById(versionId);
-            var subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
-            string activePath = subdomainName + " > " + version.VersionNumber;
-
-            return activePath;
-        }
 
         public async Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId)
         {

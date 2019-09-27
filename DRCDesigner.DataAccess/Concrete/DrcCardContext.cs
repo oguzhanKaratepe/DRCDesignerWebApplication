@@ -26,6 +26,20 @@ namespace DRCDesigner.DataAccess.Concrete
                 .HasForeignKey(pt => pt.SubdomainId)
                 .OnDelete(DeleteBehavior.Cascade).IsRequired();
 
+            modelBuilder.Entity<SubdomainVersionRole>()
+                .HasKey(pt => new { VersionId = pt.SubdomainVersionId, pt.RoleId });
+
+            modelBuilder.Entity<SubdomainVersionRole>()
+                .HasOne(pt => pt.SubdomainVersion)
+                .WithMany(p => p.SubdomainVersionRoles)
+                .HasForeignKey(pt => pt.SubdomainVersionId);
+
+            modelBuilder.Entity<SubdomainVersionRole>()
+                .HasOne(pt => pt.Role)
+                .WithMany(p => p.SubdomainVersionRoles)
+                .HasForeignKey(pt => pt.RoleId);
+                
+
             modelBuilder.Entity<SubdomainVersionReference>()
                 .HasKey(pt => new { VersionId = pt.SubdomainVersionId, pt.ReferencedVersionId});
 
@@ -108,6 +122,7 @@ namespace DRCDesigner.DataAccess.Concrete
         public DbSet<Subdomain> Subdomains { get; set; }
         public DbSet<SubdomainVersion> SubdomainVersions { get; set; }
         public DbSet<SubdomainVersionReference> SubdomainVersionReferences { get; set; }
+        public DbSet<SubdomainVersionRole> SubdomainVersionRoles { get; set; }
         public DbSet<DrcCard> DrcCards { get; set; }
         public  DbSet<Responsibility> Responsibilities { get; set; }
         public DbSet<Field> Fields { get; set; }

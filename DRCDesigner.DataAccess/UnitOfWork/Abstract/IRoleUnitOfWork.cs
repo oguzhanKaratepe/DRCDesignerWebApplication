@@ -11,6 +11,8 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Abstract
     {
         ISubdomainRepository SubdomainRepository { get;  }
         IRoleRepository RoleRepository { get;  }
+
+        ISubdomainVersionRoleRepository SubdomainVersionRoleRepository { get; }
         IAuthorizationRepository AuthorizationRepository { get; }
         IAuthorizationRoleRepository AuthorizationRoleRepository { get; }
     }

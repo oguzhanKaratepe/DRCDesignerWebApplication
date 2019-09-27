@@ -113,21 +113,21 @@
                                  
                                   .ActiveStateEnabled(true)
                                   .OpenedStateMode(DrawerOpenedStateMode.Shrink)
-                          .ActiveStateEnabled(true)
-                                  .Template(@<text>
+                                  .ActiveStateEnabled(true)
+                                   .Template(@<text>
                                     @(Html.DevExtreme().List()
                                                   .Width(200)
                                           
                                                   //  .OnInitialized("list_onInitialized")
                                                   .Items(items =>
                                                   {
+                                                     
                                                     items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
                                                     items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
                                                     items.Add().Text("Roles").Icon("card").Option("path", @Url.Action("Index", "Roles"));
-                                                    items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
-
-
-                                                })
+                                                      items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
+                                                      
+                                                  })
                                                   .KeyExpr("path")
                                                   .SelectionMode(ListSelectionMode.Single)
                                                   .OnSelectionChanged("list_onSelectionChanged")

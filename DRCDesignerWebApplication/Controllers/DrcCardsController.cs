@@ -70,9 +70,10 @@ namespace DRCDesignerWebApplication.Controllers
 
                 }
              
-                drcCardContainerViewModel.ActiveState = _drcCardService.activeStatePath(id);
+                
                 drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
             }
+            drcCardContainerViewModel.SubdomainMenuItems = await _drcCardService.GetAllSubdomainMenuItems(id);
             drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
             return View(drcCardContainerViewModel);
             
@@ -139,9 +140,9 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<object> GetShadowCardsSelectBox(int SubdomainVersionId, DataSourceLoadOptions loadOptions)
+        public async Task<object> GetShadowCardsSelectBox(int subdomainVersionId, DataSourceLoadOptions loadOptions)
         {
-            var shadowCardSelectBoxOptions = await _drcCardService.GetShadowSelectBoxOptions(SubdomainVersionId);
+            var shadowCardSelectBoxOptions = await _drcCardService.GetShadowSelectBoxOptions(subdomainVersionId);
          var dropBoxSelectOptions = _mapper.Map<IList<ShadowCardSelectBoxBusinessModel>, IList<ShadowCardSelectBoxViewModel>>(shadowCardSelectBoxOptions);
          return DataSourceLoader.Load(dropBoxSelectOptions, loadOptions);
         }
