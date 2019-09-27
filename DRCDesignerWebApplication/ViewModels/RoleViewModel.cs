@@ -21,7 +21,6 @@ namespace DRCDesignerWebApplication.ViewModels
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "RoleName")]
         public string RoleName { get; set; }
 
-     
         [DisplayName("Role Version Areas")]
         public int[] SubdomainVersionRoleIds { get; set; }
 

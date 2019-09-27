@@ -19,7 +19,7 @@
 
 
 
-@*<div class="d-flex align-content-center m-5">
+<div class="d-flex align-content-center m-5">
     @(Html.DevExtreme().DataGrid().ID("gridContainer")
                                                                     .ShowBorders(true)
                                                                     .Paging(paging => paging.PageSize(6))
@@ -47,7 +47,7 @@
                                                                             )
                                                                             .Caption("Add Role Areas")
                                                                             .EditCellTemplate(@<text>
-                                                                                                  @Html.Partial("SelectVersionDropDownBox")
+                                                                                                  @*@Html.Partial("SelectVersionDropDownBox")*@
                                                                                                </text>);
 
 
@@ -104,5 +104,5 @@
     };
 
 
-</script>*@
+</script>
 
