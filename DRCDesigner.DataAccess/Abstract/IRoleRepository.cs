@@ -10,8 +10,9 @@ using DRCDesigner.Entities.Concrete;
 namespace DRCDesigner.DataAccess.Abstract
 {
    public interface IRoleRepository:IRepository<Role>
-    {
-   
-     
-    }
+   {
+
+       Task<IEnumerable<Role>> getGlobalRoles();
+
+   }
 }

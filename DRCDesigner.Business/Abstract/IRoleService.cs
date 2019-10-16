@@ -10,7 +10,7 @@ namespace DRCDesigner.Business.Abstract
 {
     public interface IRoleService
     {
-        Task<IEnumerable<RoleBusinessModel>> GetAll();
+        Task<IEnumerable<RoleBusinessModel>> GetAllSubdomainRoles(int subdomainId);
         void Add(string values);
         void Update(string values, int id);
         Task<bool> Remove(int roleId);

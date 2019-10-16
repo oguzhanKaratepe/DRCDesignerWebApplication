@@ -9,7 +9,8 @@
 @(Html.DevExtreme().DataGrid<Responsibility>()
           .ID("gridContainer")
       
-          .Editing(editing =>
+      
+              .Editing(editing =>
           {
               editing.Mode(GridEditMode.Popup).Popup(p => p
              .Title("Responsibility Details")

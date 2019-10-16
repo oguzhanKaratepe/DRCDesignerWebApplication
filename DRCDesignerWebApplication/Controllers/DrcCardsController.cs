@@ -159,19 +159,12 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpPost]
-        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainId,DrcCardViewModel drcCardViewModel)
+        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainVersionId,DrcCardViewModel drcCardViewModel)
         {
-            //var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
-            //var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
-            //if (result != true)
-            //{
-            //    return BadRequest();
-            //}
-            //else
-            //{
-            //    return Redirect("/DrcCards/index?id=" + currentSubdomainId);
-            //}
-            return Redirect("/DrcCards/index?id=" + currentSubdomainId);
+            var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
+            var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
+            
+            return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
         }
     }
 }

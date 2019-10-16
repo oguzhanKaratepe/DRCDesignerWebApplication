@@ -22,5 +22,9 @@ namespace DRCDesigner.DataAccess.Concrete
         {
             return await DrcCardContext.SubdomainVersionReferences.Where(z => z.SubdomainVersionId == versionId).Include(c=>c.ReferencedSubdomainVersion).ToListAsync();
         }
+        public async Task<IList<SubdomainVersionReference>> getVersionReferencedSubdomainVersions(int versionId)
+        {
+            return await DrcCardContext.SubdomainVersionReferences.Where(z => z.ReferencedVersionId == versionId).ToListAsync();
+        }
     }
 }

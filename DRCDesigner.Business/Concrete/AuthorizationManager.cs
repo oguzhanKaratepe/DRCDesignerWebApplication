@@ -115,7 +115,7 @@ namespace DRCDesigner.Business.Concrete
         {
             //this is roles with version and global ones
             var subdomainVersionRoles = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(id);
-
+         
             IList<RoleBusinessModel> rolesBag = new List<RoleBusinessModel>();
 
             foreach (var subdomainVersionRole in subdomainVersionRoles)
@@ -123,6 +123,14 @@ namespace DRCDesigner.Business.Concrete
                 var businessRoleModel =
                     _mapper.Map<RoleBusinessModel>(_roleUnitOfWork.RoleRepository.GetById(subdomainVersionRole.RoleId));
               rolesBag.Add(businessRoleModel);
+
+            }
+
+            var globalRoles = await _roleUnitOfWork.RoleRepository.getGlobalRoles();
+            foreach (var globalRole in globalRoles)
+            {
+                var businessRoleModel = _mapper.Map<RoleBusinessModel>(globalRole);
+                rolesBag.Add(businessRoleModel);
 
             }
             return rolesBag;

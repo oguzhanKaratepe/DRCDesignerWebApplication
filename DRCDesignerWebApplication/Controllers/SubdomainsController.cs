@@ -92,8 +92,8 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
         {
-            //var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
-            //return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
+            var dropDownBoxSubdomains = await _subdomainService.GetMoveDropDownBoxSubdomains(Id);
+            return DataSourceLoader.Load(dropDownBoxSubdomains, loadOptions);
             throw new NotImplementedException();
         }
 

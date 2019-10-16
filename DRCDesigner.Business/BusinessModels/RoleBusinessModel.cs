@@ -15,5 +15,6 @@ namespace DRCDesigner.Business.BusinessModels
         public string RoleName { get; set; }
 
         public int[] SubdomainVersionRoleIds { get; set; }
+        public string RoleVersionNumbers { get; set; }
     }
 }

@@ -33,5 +33,25 @@ namespace DRCDesigner.DataAccess.Concrete
             return await DrcCardContext.SubdomainVersions.Where(c => c.Id == versionId).Include(c => c.DRCards)
                 .SingleAsync();
         }
+
+        public async Task<bool> CheckIfSourceVersion(int versionId)
+        {
+            var sourceVersion = await DrcCardContext.SubdomainVersions.Where(m => m.SourceVersionId == versionId)
+                .ToListAsync();
+            if (sourceVersion.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public string getVersionNumber(int versionId)
+        {
+            return  DrcCardContext.SubdomainVersions.Where(m => m.Id == versionId).Select(m => m.VersionNumber).Single();
+        }
     }
 }

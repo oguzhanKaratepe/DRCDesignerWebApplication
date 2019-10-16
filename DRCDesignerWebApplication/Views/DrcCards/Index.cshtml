@@ -101,7 +101,7 @@
 
     #addSubdomainAlert {
         margin-top: 280px;
-        margin-left: 370px;
+        margin-left:160px;
     }
 
 
@@ -179,47 +179,43 @@
 
 <div class="min-vh-100 ">
 
-<div class="d-flex flex-row w-100 sticky-top">
+<div class="d-flex flex-column w-100 sticky-top">
     @{
         @Html.Partial("AddCardPartialView", Model.DrcCardViewModel)
         @Html.Partial("AddShadowCardPartialView", Model.DrcCardViewModel)
 
     }
+    
+@if (Model.TotalSubdomainSize > 0)
+{
     <div class="ml-4">
         @Html.Partial("SubdomainBarPartialView", Model)
     </div>
-
+}
+   
 
         @if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainVersionId != 0)
         {
-            @*<div class="">
-                <div role="group">
-                    <button id="btnGroupDrop1" class="btn btn-dark ml-1  dx-icon-plus" data-toggle="dropdown"></button>
-                    <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
-                        <a class="dropdown-item" onclick="AddClickHandler();">Document</a>
-                        <a class="dropdown-item" onclick="shadowCardPopUp();">Shadow Document</a>
-                    </div>
-                </div>
-
-            </div>*@
+        
+            <div class="dx-field-value ml-2 mt-2">
+                @(Html.DevExtreme().DropDownButton()
+                      .Icon("add")
+                      .StylingMode(ButtonStylingMode.Outlined)
+                      .FocusStateEnabled(false)
+                      .DropDownOptions(options => options.Width(230))
+                      .ShowArrowIcon(false)
+                      .UseSelectMode(false)
+                      .DataSource(new JS("fill"))
+                      .DisplayExpr("name")
+                      .OnItemClick("document_click")
+                      )
+            </div>
         }
         else if (Model.TotalSubdomainSize < 1)
         {
             <p class=" text-lg-center align-content-center" id="addSubdomainAlert">To be able start design, you must start by adding a new subdomain to your project.. </p>
         }
-    <div class="dx-field-value ml-2 mt-2">
-        @(Html.DevExtreme().DropDownButton()
-              .Icon("add")
-              .StylingMode(ButtonStylingMode.Outlined)
-              .FocusStateEnabled(false)
-              .DropDownOptions(options => options.Width(230))
-              .ShowArrowIcon(false)
-              .UseSelectMode(false)
-              .DataSource(new JS("fill"))
-              .DisplayExpr("name")
-              .OnItemClick("document_click")
-              )
-    </div>
+
    
     <script>
         var fill = [{
@@ -243,8 +239,9 @@
             }
 
         }
+
     </script>
-</div>
+
         <div class="flex-container d-flex flex-wrap ml-2 align-items-baseline">
 
             @foreach (var property in Model.DrcCardViewModes)
@@ -331,7 +328,7 @@
                                                 <h6> Collaboration Cards:</h6>
                                                 @string.Join(", ", @responsibility.ResponsibilityCollaborationCards.Select(m => m.DrcCardName))
                                     }
-                                            /**/
+                                          
 
 
 
@@ -408,7 +405,7 @@
                                                         <h6> Collaboration Card:</h6>
                                                         <span>@field.CollaborationCard.DrcCardName</span>
                                             }
-                                                    /**/
+                                                    
                                                             </text>))
                             </div>
                         }
@@ -418,10 +415,10 @@
 
                     @using (Html.DevExtreme().NamedTemplate("Move-CardPopup-template" + property.Id))
                     {
-                        @using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainId = @property.SubdomainVersionId }))
+                        @using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainVersionId = @property.SubdomainVersionId }))
                         {
                             Model.DrcCardViewModel = property;
-                            @Html.Hidden("currentSubdomainId", @property.SubdomainVersionId)
+                            @Html.Hidden("currentSubdomainVersionId", @property.SubdomainVersionId)
                             @(Html.DevExtreme().Form<DrcCardViewModel>()
                                                   .ID("form")
                                                   .FormData(Model.DrcCardViewModel)
@@ -430,7 +427,9 @@
                                                   .ShowColonAfterLabel(true)
                                                   .Items(formItems =>
                                                   {
-                                                      formItems.AddSimpleFor(m => m.SubdomainVersionId).Editor(m => m.SelectBox().DataSource(d => d.Mvc()
+                                                      formItems.AddSimpleFor(m => m.SubdomainVersionId)
+                                                          .Editor(m => m.SelectBox()
+                                                              .DataSource(d => d.Mvc()
                                                           .Controller("Subdomains")
                                                           .LoadAction("GetDropDownButtonSubdomains")
                                                           .Key("Id").LoadParams(new { Id = @property.SubdomainVersionId })).DisplayExpr("SubdomainName").ValueExpr("Id"));
@@ -470,9 +469,9 @@
                                                                                                   }).Tabs(tabItem =>
                                                                                                   {
                                                                                                       tabItem.Add().Title("RESPONSIBILITIES").Template(@<text>@Html.Partial("ResponsibilityUpdatePartial", property)</text>);
-                                                                                                                                                          tabItem.Add().Title("AUTHORIZATIONS").Template(@<text>@Html.Partial("AuthorizationDataGridUpdate", property)</text>);
-                                                                                                                                                                                                              tabItem.Add().Title("FIELDS").Template(@<text>
-                                                                                                                                                                                                                @Html.Partial("FieldDataGridUpdatePartialView", property)
+                                                                                                      tabItem.Add().Title("AUTHORIZATIONS").Template(@<text>@Html.Partial("AuthorizationDataGridUpdate", property)</text>);
+                                                                                                      tabItem.Add().Title("FIELDS").Template(@<text>
+                                                                                                                                                 @Html.Partial("FieldDataGridUpdatePartialView", property)
                                                                                                                                                                                                             </text>);
 
                                                                                                                                                                                                                                                               });
@@ -704,4 +703,7 @@
         popup.option("contentTemplate", $("#Move-CardPopup-template" + data));
         popup.show();
     }
+
+
+
 </script>

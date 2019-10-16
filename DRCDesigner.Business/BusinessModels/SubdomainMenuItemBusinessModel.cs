@@ -11,7 +11,7 @@ namespace DRCDesigner.Business.BusinessModels
         public bool disabled { get; set; }
         public string path { get; set; }
         public int type { get; set; }
-
+        public int order { get; set; }
         public bool EditLock { get; set; }
         public IEnumerable<SubdomainMenuItemBusinessModel> items { get; set; }
     }

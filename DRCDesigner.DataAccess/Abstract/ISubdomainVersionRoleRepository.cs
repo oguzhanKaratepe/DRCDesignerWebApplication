@@ -13,7 +13,7 @@ namespace DRCDesigner.DataAccess.Abstract
         Task<IEnumerable<SubdomainVersionRole>> GetAllRoleVersionsByRoleId(int roleId);
       
         Task<IEnumerable<SubdomainVersionRole>> GetAllVersionRolesBySubdomainVersionId(int subdomainVersionId);
-
-
+     
+       
     }
 }

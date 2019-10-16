@@ -28,6 +28,8 @@ namespace DRCDesigner.DataAccess.Concrete
         {
             return await DrcCardContext.SubdomainVersionRoles.AsNoTracking().Where(c => c.SubdomainVersionId == subdomainVersionId).ToListAsync();
         }
+
+       
     }
 
 

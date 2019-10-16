@@ -21,6 +21,7 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
             SubdomainVersionRepository=new SubdomainVersionRepository(_context);
             SubdomainVersionReferenceRepository=new SubdomainVersionReferenceRepository(_context);
             SubdomainVersionRoleRepository=new SubdomainVersionRoleRepository(_context);
+            RoleRepository=new RoleRepository(_context);
         }
      
         public ISubdomainRepository SubdomainRepository { get; private set; }
@@ -28,6 +29,6 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
         public ISubdomainVersionReferenceRepository SubdomainVersionReferenceRepository { get; }
         public IDrcCardRepository DrcCardRepository { get; private set; }
         public ISubdomainVersionRoleRepository SubdomainVersionRoleRepository { get; private set; }
-       
+        public IRoleRepository RoleRepository { get; }
     }
 }

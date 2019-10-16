@@ -43,28 +43,42 @@ namespace DRCDesigner.Business.Concrete
             _roleUnitOfWork.Complete();
         }
 
-        public async Task<IEnumerable<RoleBusinessModel>> GetAll()
+        public async Task<IEnumerable<RoleBusinessModel>> GetAllSubdomainRoles(int subdomainId)
         {
-            var roles = await _roleUnitOfWork.RoleRepository.GetAll();
+            var subdomainWithVersions = await _roleUnitOfWork.SubdomainRepository.GetSubdomainWithAllVersions(subdomainId);
 
             IList<RoleBusinessModel> roleBusinessModels = new List<RoleBusinessModel>();
-            foreach (var role in roles)
+            List<int> selectedRoleIds=new List<int>();
+            foreach (var subdomainVersion in  subdomainWithVersions.SubdomainVersions)
             {
-                var roleBusinessModel = _mapper.Map<RoleBusinessModel>(role);
-                var roleSubdomainVersions = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(role.Id);
+                var SubdomainVersionRoles = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(subdomainVersion.Id);
 
-                roleBusinessModel.SubdomainVersionRoleIds = new int[roleSubdomainVersions.Count()];
-                int i = 0;
-                foreach (var roleSubdomainVersion in roleSubdomainVersions)
+                foreach (var SubdomainVersionRole in SubdomainVersionRoles)
                 {
-                    roleBusinessModel.SubdomainVersionRoleIds[i] = roleSubdomainVersion.SubdomainVersionId;
-                    i++;
+                    var role = _roleUnitOfWork.RoleRepository.GetById(SubdomainVersionRole.RoleId);
+
+                    if (!selectedRoleIds.Contains(role.Id)) { 
+
+                    var roleBusinessModel = _mapper.Map<RoleBusinessModel>(role);
+                    var roleVersions = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(SubdomainVersionRole.RoleId);
+
+                    roleBusinessModel.SubdomainVersionRoleIds = new int[roleVersions.Count()];
+                    int i = 0;
+                    foreach (var roleVersion in roleVersions)
+                    {
+                        var roleVersionName = _roleUnitOfWork.SubdomainVersionRepository.getVersionNumber((int)roleVersion.SubdomainVersionId);
+                            roleBusinessModel.RoleVersionNumbers += roleVersionName +" ";
+                        roleBusinessModel.SubdomainVersionRoleIds[i] =(int)roleVersion.SubdomainVersionId;
+                        i++;
+                    }
+                    roleBusinessModels.Add(roleBusinessModel);
+                    selectedRoleIds.Add(role.Id);
+                    }
                 }
 
-                roleBusinessModels.Add(roleBusinessModel);
             }
 
-            _roleUnitOfWork.Complete();
+
             return roleBusinessModels;
 
         }
@@ -83,7 +97,7 @@ namespace DRCDesigner.Business.Concrete
             int i = 0;
             foreach (var roleSubdomainVersion in roleSubdomainVersions)
             {
-                roleBusinessModel.SubdomainVersionRoleIds[i] = roleSubdomainVersion.SubdomainVersionId;
+                roleBusinessModel.SubdomainVersionRoleIds[i] =(int) roleSubdomainVersion.SubdomainVersionId;
                 _roleUnitOfWork.SubdomainVersionRoleRepository.Remove(roleSubdomainVersion);
                 i++;
             }
@@ -107,11 +121,20 @@ namespace DRCDesigner.Business.Concrete
             {
                 _roleUnitOfWork.RoleRepository.Remove(roleId);
                var subdomainVersionRoles= await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(roleId);
+
                foreach (var subdomainVersionRole in subdomainVersionRoles)
                {
                    _roleUnitOfWork.SubdomainVersionRoleRepository.Remove(subdomainVersionRole);
                }
-               _roleUnitOfWork.Complete();
+
+               var authorizationRoles =
+                   _roleUnitOfWork.AuthorizationRoleRepository.GetAuthorizationRolesByRoleId(roleId);
+               foreach (var authorizationRole in authorizationRoles)
+               {
+                  _roleUnitOfWork.AuthorizationRoleRepository.Remove(authorizationRole); 
+               }
+
+                _roleUnitOfWork.Complete();
 
                return true;
             }

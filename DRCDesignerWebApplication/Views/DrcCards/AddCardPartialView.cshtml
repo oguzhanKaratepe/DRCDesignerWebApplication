@@ -2,16 +2,6 @@
 @model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
 
 
-<style>
-
-
-    #addSubdomainAlert {
-        margin-top: 280px;
-        margin-left: 370px;
-    }
-
-</style>
-
     @using (Html.BeginForm("Post", "DrcCards", FormMethod.Post, new { id = "addCard" }))
     {
         @Html.HiddenFor(m => m.SubdomainVersionId)

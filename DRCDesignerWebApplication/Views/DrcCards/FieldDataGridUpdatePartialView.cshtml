@@ -8,7 +8,7 @@
       .ShowBorders(true)
       .Editing(editing =>
       {
-          editing.Mode(GridEditMode.Cell);
+          editing.Mode(GridEditMode.Popup);
           editing.AllowAdding(true);
           editing.AllowUpdating(true);
           editing.AllowDeleting(true);
@@ -47,6 +47,7 @@
               .ValueExpr("Id")
               ).MinWidth(180);
       })
+    
       .Paging(p => p.PageSize(10))
       .RemoteOperations(true)
       )

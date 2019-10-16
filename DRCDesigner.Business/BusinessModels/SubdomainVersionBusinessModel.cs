@@ -30,6 +30,7 @@ namespace DRCDesigner.Business.BusinessModels
         public bool EditLock { get; set; }
 
         public int[] ReferencedVersionIds { get; set; }
-        
+        public string References { get; set; }
+
     }
 }

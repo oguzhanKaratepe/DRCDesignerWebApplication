@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using DRCDesigner.Business.Abstract;
+using DRCDesigner.Business.BusinessModels;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.Entities.Concrete;
 using Newtonsoft.Json;
@@ -13,10 +15,14 @@ namespace DRCDesigner.Business.Concrete
     public class SubdomainManager : ISubdomainService
     {
         private ISubdomainUnitOfWork _subdomainUnitOfWork;
-
-        public SubdomainManager(ISubdomainUnitOfWork subdomainUnitOfWork)
+        private ISubdomainVersionService _subdomainVersionService;
+        private IMapper _mapper;
+  
+        public SubdomainManager(ISubdomainUnitOfWork subdomainUnitOfWork, ISubdomainVersionService subdomainVersionService, IMapper mapper)
         {
             _subdomainUnitOfWork = subdomainUnitOfWork;
+            _subdomainVersionService = subdomainVersionService;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<Subdomain>> GetAll()
@@ -24,13 +30,25 @@ namespace DRCDesigner.Business.Concrete
             return await _subdomainUnitOfWork.SubdomainRepository.GetAll();
         }
 
-        public void Add(string values)
+        public async void Add(string values)
         {
             var newSubdomain = new Subdomain();
             JsonConvert.PopulateObject(values, newSubdomain);
            
             _subdomainUnitOfWork.SubdomainRepository.Add(newSubdomain);
             _subdomainUnitOfWork.Complete();
+
+
+            var globalRoles = await _subdomainUnitOfWork.RoleRepository.getGlobalRoles();
+            if (globalRoles.Count() == 0)
+            {
+                var role=new Role();
+                role.RoleName = "Admin";
+                role.IsGlobal = true;
+                _subdomainUnitOfWork.RoleRepository.Add(role);
+                _subdomainUnitOfWork.Complete();
+            }
+
         }
         public void Update(string values, int id)
         {
@@ -51,7 +69,7 @@ namespace DRCDesigner.Business.Concrete
 
                 foreach (var version in subdomainVersions)
                 {
-                    _subdomainUnitOfWork.SubdomainVersionRepository.Remove(version);
+                    await _subdomainVersionService.Remove(version.Id);
                 }
 
                 _subdomainUnitOfWork.SubdomainRepository.Remove(subdomain);
@@ -65,26 +83,39 @@ namespace DRCDesigner.Business.Concrete
             return true;
         }
 
-        public async Task<IEnumerable<Subdomain>> GetMoveDropDownBoxSubdomains(int subdomainId)
+        public async Task<IEnumerable<SubdomainVersionBusinessModel>> GetMoveDropDownBoxSubdomains(int subdomainVersionId)
         {
 
-           // var subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAll();
-           //var subdomainCollection = new List<Subdomain>();
+            IList<SubdomainVersionBusinessModel> allVersions = new List<SubdomainVersionBusinessModel>();
+            if (subdomainVersionId > 0)
+            {
+                var currentSubdomain = _subdomainUnitOfWork.SubdomainVersionRepository.GetById(subdomainVersionId);
+                var subdomains = await _subdomainUnitOfWork.SubdomainRepository.GetAllWithVersions();
+                foreach (var subdomain in subdomains)
+                {
+                    if (subdomain.Id != currentSubdomain.SubdomainId)
+                    {
+                        foreach (var subdomainVersion in subdomain.SubdomainVersions)
+                        {
+                            var subdomainversionBModel = _mapper.Map<SubdomainVersionBusinessModel>(subdomainVersion);
 
-           // foreach (var subdomain in subdomains)
-           // {
-           //     if (subdomain.Id != subdomainId)
-           //     {
-           //         subdomainCollection.Add(subdomain);
-           //     }
-           //     else
-           //     {
-           //         //do not add current subdomain
-           //     }
-           // }
+                            var subdomainName= _subdomainUnitOfWork.SubdomainRepository.GetSubdomainName(subdomainversionBModel.SubdomainId);
+                            var versionNumber = subdomainversionBModel.VersionNumber;
 
-           // return subdomainCollection;
-            throw new NotImplementedException();
+                            subdomainversionBModel.SubdomainName = subdomainName + " > " + versionNumber;
+                         
+                            if (!subdomainversionBModel.EditLock)
+                            {
+                                allVersions.Add(subdomainversionBModel);
+                            }
+                            
+                        }
+                    }
+                }
+
+            }
+
+            return allVersions;
         }
 
         public async Task<IEnumerable<SubdomainVersion>> GetAllSubdomainVersions(int subdomainId)

@@ -14,5 +14,8 @@ namespace DRCDesigner.DataAccess.Abstract
         Task<SubdomainVersion> GetVersionWithReferencesById(int versionId);
         Task<SubdomainVersion> GetSubdomainVersionCardsWithId(int versionId);
 
+        Task<bool> CheckIfSourceVersion(int versionId);
+        string getVersionNumber(int versionId);
+
     }
 }

@@ -30,10 +30,10 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<object> Get(int Id,DataSourceLoadOptions loadOptions)
+        public async Task<object> Get(int subdomainId, DataSourceLoadOptions loadOptions)
         {
             IList<RoleViewModel> roleViewModels=new List<RoleViewModel>();
-            foreach (var roleBusinessModel in await _roleService.GetAll())
+            foreach (var roleBusinessModel in await _roleService.GetAllSubdomainRoles(subdomainId))
             {
                 RoleViewModel roleViewModel = _mapper.Map<RoleViewModel>(roleBusinessModel);
                roleViewModels.Add(roleViewModel);
