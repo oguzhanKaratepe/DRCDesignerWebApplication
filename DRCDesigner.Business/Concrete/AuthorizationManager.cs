@@ -111,19 +111,28 @@ namespace DRCDesigner.Business.Concrete
             _roleUnitOfWork.Complete();
         }
 
-        public async Task<IEnumerable<object>> GetAuthorizationRoles(int Id)
+        public async Task<IEnumerable<object>> GetAuthorizationRoles(int id)
         {
-            var roles = await _roleUnitOfWork.RoleRepository.GetAll();
+            //this is roles with version and global ones
+            var subdomainVersionRoles = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(id);
+         
+            IList<RoleBusinessModel> rolesBag = new List<RoleBusinessModel>();
 
-            IList<Role> rolesBag = new List<Role>();
-
-            foreach (var role in roles)
+            foreach (var subdomainVersionRole in subdomainVersionRoles)
             {
-                if (role.SubdomainVersionId == null || role.SubdomainVersionId == Id)
-                    rolesBag.Add(role);
+                var businessRoleModel =
+                    _mapper.Map<RoleBusinessModel>(_roleUnitOfWork.RoleRepository.GetById(subdomainVersionRole.RoleId));
+              rolesBag.Add(businessRoleModel);
 
             }
 
+            var globalRoles = await _roleUnitOfWork.RoleRepository.getGlobalRoles();
+            foreach (var globalRole in globalRoles)
+            {
+                var businessRoleModel = _mapper.Map<RoleBusinessModel>(globalRole);
+                rolesBag.Add(businessRoleModel);
+
+            }
             return rolesBag;
         }
     }

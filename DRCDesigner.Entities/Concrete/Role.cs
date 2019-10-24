@@ -10,7 +10,8 @@ namespace DRCDesigner.Entities.Concrete
     {
         public Role()
         {
-            AuthorizationRoles=new List<AuthorizationRole>();
+            AuthorizationRoles = new List<AuthorizationRole>();
+            SubdomainVersionRoles=new List<SubdomainVersionRole>();
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id{ get; set; }
@@ -18,9 +19,9 @@ namespace DRCDesigner.Entities.Concrete
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "RoleName")]
         public string RoleName{ get; set; }
 
-        public int? SubdomainVersionId{ get; set; }
+        public bool IsGlobal { get; set; }
         [JsonIgnore]
-        public virtual SubdomainVersion SubdomainVersion { get; set; }
+        public virtual IList<SubdomainVersionRole> SubdomainVersionRoles { get; set; }
         [JsonIgnore]
         public virtual IList<AuthorizationRole> AuthorizationRoles { get; set; }
     }

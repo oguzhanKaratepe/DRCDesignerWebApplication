@@ -1,0 +1,49 @@
+﻿
+
+@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesignerWebApplication.ViewModels
+
+@model DrcCardContainerViewModel
+
+<div class="d-flex flex-wrap">
+    <div class="border border-left border-right rounded mt-1">
+        @(Html.DevExtreme().Menu()
+                      .ID("menu") 
+                      .DataSource(Model.SubdomainMenuItems)
+                      .OnItemClick("menuItem_click")
+        )
+    </div>
+ 
+</div>
+<script>
+
+    function getMenuInstance() {
+        return $("#menu").dxMenu("instance");
+    }
+
+    function menuItem_click(e) {
+
+        var item = e.itemData;
+        if (item.type == 1){
+      
+       
+                //  getMenuInstance().option("selectedItem", item);
+                $("#loadPanel").dxLoadPanel("show");
+             
+                window.location = "/DrcCards/index?id=" + item.Id;
+
+            
+        }
+        //var item = e.itemData;
+        //if (item.type == 1) {
+        //    $("#product-details").text(item.path);
+
+    
+        //    //  console.warn(data);
+        //    //  console.warn(e.component);
+        //}
+
+
+    }
+
+</script>

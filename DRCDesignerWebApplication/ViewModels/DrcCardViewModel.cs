@@ -25,6 +25,10 @@ namespace DRCDesignerWebApplication.ViewModels
         [DisplayName("Document Name")]
         public string DrcCardName { get; set; }
         public int Order { get; set; }
+        public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
+
+        public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
+
         public string SourceDrcCardPath { get; set; }
         [JsonIgnore]
         public virtual ICollection<FieldViewModel> Fields { get; set; }

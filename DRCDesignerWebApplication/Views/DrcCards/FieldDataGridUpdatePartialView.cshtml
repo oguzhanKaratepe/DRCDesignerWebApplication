@@ -4,53 +4,311 @@
 @model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
 
 
+
 @(Html.DevExtreme().DataGrid<FieldViewModel>()
-      .ShowBorders(true)
-      .Editing(editing =>
-      {
-          editing.Mode(GridEditMode.Cell);
-          editing.AllowAdding(true);
-          editing.AllowUpdating(true);
-          editing.AllowDeleting(true);
-
-      })
-      .ElementAttr(new{style="margin-top:-37px"})
-      .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-      .Height(460)
-      .DataSource(a => a.Mvc().Controller("Fields")
-          .LoadAction("Get")
-          .UpdateAction("Put")
-          .InsertAction("Post")
-          .DeleteAction("Delete").Key("Id").LoadParams(new { cardId =Model.Id })).OnRowInserting(@<text>
-                                                                                                 function (e) {
-                                                                                                 e.data.DrcCardId = @Model.Id;
-                                                                                                 }
-                                                                                              </text>)
-      .Columns(columns => {
-          columns.AddFor(m => m.AttributeName).Width(230);
-          columns.AddFor(m => m.Type)
-              .Caption("Attribute Type")
-              .Width(185)
-              .Lookup(lookup => {
-                  lookup.DataSource(FieldsController.GetFieldTypeDataSource());
-                  lookup.DisplayExpr("Name");
-                  lookup.AllowClearing(true);
-                  lookup.ValueExpr("Id");
-
-              });
-
-          columns.AddFor(m => m.CollaborationId)
-              .Caption("Collaboration")
-              .Width(145)
-              .Lookup(lookup => lookup.DataSource(m=>m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id =Model.SubdomainVersionId, cardId = Model.Id }))
-              .DisplayExpr("DrcCardName").AllowClearing(true)
-              .ValueExpr("Id")
-              ).MinWidth(180);
-      })
-      .Paging(p => p.PageSize(10))
-      .RemoteOperations(true)
-      )
-      
+      .ID("FieldGrid")
+      .OnInitNewRow("onInitNewRow")
+      .OnEditingStart("onEditingStart")
+      .OnEditorPreparing("eds")
+          .ShowBorders(true)
+          .Editing(editing =>
+          {
+              editing.Mode(GridEditMode.Popup).AllowAdding(true).AllowUpdating(true).AllowDeleting(true)
+                  .Popup(p => p
+                      .Title("Details")
+                  .ShowTitle(true).Width(700).Height(550)
+                  .Position(pos => pos
+                      .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                      .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                      .Of(new JS("window"))
+                  )
+                  )
+                              .Form(f => f.CustomizeItem("customizeItem").Items(items =>
+                              {
 
 
-  
+                                  items.AddSimpleFor(m=>m.AttributeName).Editor(editor => editor.TextBox());
+                                  items.AddSimpleFor(m => m.Type).Editor(m=>m.SelectBox().OnSelectionChanged("ValueChanged"));
+                                  //items.AddGroup()
+                                  //    .ColCount(2)
+                                  //    .ColSpan(2)
+                                  //    .Items(groupItems =>
+                                  //    {
+                                  //        groupItems.AddSimpleFor(m=>m.AttributeName).Editor(editor => editor.TextBox());
+                                  //        groupItems.AddSimpleFor(m => m.Type).Editor(m=>m.SelectBox().OnSelectionChanged("ValueChanged"));
+
+                                  //    });
+
+
+                                  items.AddGroup()
+                                      .Caption("String Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+                                          //groupItems.AddSimpleFor(m => m.CollaborationId);
+                                          groupItems.AddSimpleFor(m => m.RegularExpression);
+                                          groupItems.AddSimpleFor(m => m.MinLength).Editor(editor => editor.NumberBox().Min(0));
+                                          groupItems.AddSimpleFor(m => m.MaxLength).Editor(editor => editor.NumberBox().Min(0));
+                                          //groupItems.AddSimpleFor(m => m.MinValue);
+                                          //groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          // groupItems.AddSimpleFor(m => m.CreditCard).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.CreditCard).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("Byte Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MinValue);
+                                          groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+
+                                  items.AddGroup()
+                                      .Caption("Integer Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MinValue);
+                                          groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+
+                                  items.AddGroup()
+                                      
+                                      .Caption("Double Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MinValue);
+                                          groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("Decimal Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MinValue);
+                                          groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+                                  items.AddGroup()
+                                      .Caption("Long Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MinValue);
+                                          groupItems.AddSimpleFor(m => m.MaxValue);
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("Bool Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+                                          groupItems.AddSimpleFor(m => m.DefaultValue);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+
+                                      });
+                                  items.AddGroup()
+                                      .Caption("Enum Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+                                  items.AddGroup()
+                                      .Caption("DateOnly Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("Time Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("DateTime Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+
+                                  items.AddGroup()
+                                      .Caption("RelationElement Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+                                          groupItems.AddSimpleFor(m => m.CollaborationId);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("ComplexTypeElement Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("DetailElement Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("Measurement Field Details")
+                                      .ColCount(2)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+
+                                          groupItems.AddSimpleFor(m => m.MeasurementType).Editor(m=>m.Lookup().PopupHeight(300));
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3");
+
+                                      });
+
+                              })
+
+              );
+
+
+          })
+          .ElementAttr(new { style = "margin-top:-37px" })
+          .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual))
+          .Height(460)
+
+          .DataSource(a => a.Mvc().Controller("Fields")
+              .LoadAction("Get")
+              .UpdateAction("Put")
+              .InsertAction("Post")
+              .DeleteAction("Delete").Key("Id").LoadParams(new { cardId = Model.Id })).OnRowInserting(@<text>
+                function (e) {
+                e.data.DrcCardId = @Model.Id;
+                }
+            </text>)
+                 .Columns(columns =>
+                 {
+
+                     columns.AddFor(m => m.AttributeName).Width(180);
+                     columns.AddFor(m => m.Type)
+                         .Caption("Attribute Type")
+                         .Width(185)
+                         .Lookup(lookup =>
+                         {
+                             lookup.DataSource(FieldsController.GetFieldTypeDataSource());
+                             lookup.DisplayExpr("Name");
+                             lookup.AllowClearing(true);
+                             lookup.ValueExpr("Id");
+
+                         }).SetCellValue("es");
+
+                     columns.AddFor(m => m.CollaborationId)
+                         .Caption("Collaboration")
+                         .Width(145)
+                         .Lookup(lookup => lookup.DataSource(m => m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id = Model.SubdomainVersionId, cardId = Model.Id }))
+                         .DisplayExpr("DrcCardName").AllowClearing(true)
+                         .ValueExpr("Id")
+                         ).MinWidth(180);
+                     columns.AddFor(m=>m.MoreDetails)
+                         .SetCellValue("es")
+                         .Visible(false);
+
+                     columns.Add().DataField("MaxLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer")); ;
+                     columns.Add().DataField("MinLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer")); ;
+                     columns.Add().DataField("MaxValue").Visible(false);
+                     columns.Add().DataField("MinValue").Visible(false);
+                     columns.Add().DataField("Required").Visible(false);
+                     columns.Add().DataField("RegularExpression").Visible(false);
+                     columns.Add().DataField("CreditCard").Visible(false);
+                     columns.Add().DataField("Unique").Visible(false);
+                     columns.Add().DataField("MeasurementType").Visible(false)
+                         .Width(185)
+                         .Lookup(lookup =>
+                         {
+                             lookup.DataSource(FieldsController.GetMeasurementTypes());
+                             lookup.DisplayExpr("Name");
+                             lookup.AllowClearing(true);
+                             lookup.ValueExpr("Id");
+
+                         }).SetCellValue("es");;
+                     columns.Add().DataField("DefaultValue").Visible(false);
+
+                     
+                 })
+                
+
+                          .Paging(p => p.PageSize(10))
+                      .RemoteOperations(true)
+)
+
+
+
+

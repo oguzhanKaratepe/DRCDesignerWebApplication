@@ -22,13 +22,61 @@ namespace DRCDesigner.Business.Concrete
             _documentTransferUnitOfWork = documentTransferUnitOfWork;
             _mapper = mapper;
         }
+        public async Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId)
+        {
+            string pathName = "Subdomains";
 
+            var subdomainsWithVersions = await _drcUnitOfWork.SubdomainRepository.GetAllWithVersions();
+            IList<SubdomainMenuItemBusinessModel> subdomainMenuItems = new List<SubdomainMenuItemBusinessModel>();
+
+            var menuRootItem = new SubdomainMenuItemBusinessModel();
+
+            IList<SubdomainMenuItemBusinessModel> subdomains = new List<SubdomainMenuItemBusinessModel>();
+            foreach (var subdomain in subdomainsWithVersions)
+            {
+                SubdomainMenuItemBusinessModel root = new SubdomainMenuItemBusinessModel();
+                root.text = subdomain.SubdomainName;
+                root.type = 0;
+                root.disabled = false;
+
+                IList<SubdomainMenuItemBusinessModel> versions = new List<SubdomainMenuItemBusinessModel>();
+                foreach (var subdomainVersion in subdomain.SubdomainVersions)
+                {
+                    SubdomainMenuItemBusinessModel b = new SubdomainMenuItemBusinessModel();
+                    b.Id = subdomainVersion.Id;
+                    b.text = subdomainVersion.VersionNumber;
+                    b.type = 1;
+                    b.EditLock = subdomainVersion.EditLock;
+                    versions.Add(b);
+                    if (subdomainVersion.Id == versionId)
+                    {
+                        pathName = subdomain.SubdomainName + ":" + subdomainVersion.VersionNumber;
+                        b.disabled = true;
+                    }
+
+                }
+
+                root.items = versions;
+                if (versions.Count < 1)
+                {
+                    root.disabled = true;
+                }
+
+                subdomains.Add(root);
+            }
+
+            menuRootItem.items = subdomains;
+            subdomainMenuItems.Add(menuRootItem);
+            menuRootItem.text = pathName;
+            menuRootItem.type = 0;
+            return subdomainMenuItems;
+        }
         public void Add(DrcCardBusinessModel businessModeldrcCard)
         {
             var drcCard = _mapper.Map<DrcCard>(businessModeldrcCard);
             drcCard.DrcCardName = "New Document";
 
-            string[] commanRoleBag = new[] { "C", "R", "U", "D" };
+            string[] commanRoleBag = new[] { "Create", "Read", "Update", "Delete" };
             for (int i = 0; i < commanRoleBag.Length; i++)
             {
                 var authorization = new Authorization();
@@ -110,6 +158,23 @@ namespace DRCDesigner.Business.Concrete
 
             }
 
+            // functions defined above are to delete card own instance, but that card could have relations with other cards.
+
+            var cardConnectionsByOtherCardsOverResponsibility = _drcUnitOfWork.DrcCardResponsibilityRepository
+                .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(drcCard.Id);
+
+            foreach (var cardConnection in cardConnectionsByOtherCardsOverResponsibility)
+            {
+                _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(cardConnection);
+            }
+
+            var cardConnectionsByOtherCardsOverField =
+                _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldCollaborationsByDrcCardId(drcCard.Id);
+            foreach (var cardConnection in cardConnectionsByOtherCardsOverField)
+            {
+                _drcUnitOfWork.DrcCardFieldRepository.Remove(cardConnection);
+            }
+
             if (drcCard.MainCardId != null)
             {
                 _drcUnitOfWork.DrcCardResponsibilityRepository.RemoveAllDrcCardResponsibilityCollaborationsByDrcCardId(drcCard.Id);
@@ -153,10 +218,26 @@ namespace DRCDesigner.Business.Concrete
             return responsibilityBusinessModels;
         }
 
-        public async Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId)
+        public async Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId, int? mainCardId)
         {
             var drcCardFieldCollections = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(cardId);
             IList<FieldBusinessModel> fieldBusinessModels = new List<FieldBusinessModel>();
+
+
+            if (mainCardId != null)
+            {
+                int sourceCardId = (int)mainCardId;
+                var sourceFieldCollections = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(sourceCardId);
+
+
+                foreach (var fieldCollection in sourceFieldCollections)
+                {
+                    var sourceFieldViewModel = _mapper.Map<FieldBusinessModel>(_drcUnitOfWork.FieldRepository.GetById(fieldCollection.FieldId));
+                    sourceFieldViewModel.IsShadowField = true;
+                    fieldBusinessModels.Add(sourceFieldViewModel);
+                }
+
+            }
 
             foreach (var drcCardFieldCollection in drcCardFieldCollections)
             {
@@ -175,6 +256,9 @@ namespace DRCDesigner.Business.Concrete
                 }
 
             }
+
+
+            _drcUnitOfWork.Complete();
 
             return fieldBusinessModels;
         }
@@ -215,85 +299,70 @@ namespace DRCDesigner.Business.Concrete
             ShadowCardSelectBoxBusinessModel selectBoxCard;
             IList<ShadowCardSelectBoxBusinessModel> selectBoxCards = new List<ShadowCardSelectBoxBusinessModel>();
 
-            //var Version = await _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
+            var Version =
+                await _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
 
-            //foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
-            //{
-            //    var subdomain = _drcUnitOfWork.SubdomainRepository.GetById(referencedVersion.SubdomainId);
-            //    var cards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(referencedVersion.Id);
+            foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
+            {
 
-            //    foreach (var drcCard in cards)
-            //    {
-            //        if (drcCard.MainCardId == null)
-            //        {
-            //            selectBoxCard = new ShadowCardSelectBoxBusinessModel();
-            //            selectBoxCard.Id = drcCard.Id;
-            //            selectBoxCard.DrcCardName = drcCard.DrcCardName;
-            //            selectBoxCard.SubdomainVersionId = drcCard.SubdomainVersionId;
-            //            selectBoxCard.CardSourcePath = subdomain.SubdomainName + ":>" + referencedVersion.VersionNumber;
-            //            if (drcCard.SubdomainVersionId != subdomainVersionId)
-            //            {
-            //                selectBoxCards.Add(selectBoxCard);
-            //            }
+                var referencedSubdomainVersionWithCards = await _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(referencedVersion.ReferencedVersionId);
+                var referencedVersionSubdomain = _drcUnitOfWork.SubdomainRepository.GetById(referencedSubdomainVersionWithCards.SubdomainId);
 
-            //        }
-            //        else
-            //        {
-            //            //do nothing
-            //        }
+                foreach (var drcCard in referencedSubdomainVersionWithCards.DRCards)
+                {
+                    if (drcCard.MainCardId == null)
+                    {
+                        selectBoxCard = new ShadowCardSelectBoxBusinessModel();
+                        selectBoxCard.Id = drcCard.Id;
+                        selectBoxCard.DrcCardName = drcCard.DrcCardName;
+                        selectBoxCard.SubdomainVersionId = drcCard.SubdomainVersionId;
+                        selectBoxCard.CardSourcePath = referencedVersionSubdomain.SubdomainName + ":" + referencedSubdomainVersionWithCards.VersionNumber;
+                        if (drcCard.SubdomainVersionId != subdomainVersionId)
+                        {
+                            selectBoxCards.Add(selectBoxCard);
+                        }
 
-            //    }
-            //}
+                    }
+                    else
+                    {
+                        //do nothing
+                    }
+
+                }
+            }
             return selectBoxCards;
 
         }
 
         public bool MoveCardToDestinationSubdomain(DrcCard drcCard)
         {
-            throw new NotImplementedException();
-            //if (drcCard.SubdomainId != 0 && drcCard.Id != 0)
-            //{
-            //    var card = _drcUnitOfWork.DrcCardRepository.GetById(drcCard.Id);
-            //    var cardResponsibilities = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(drcCard.Id);
-            //    foreach (var responsibilitycollection in cardResponsibilities)
-            //    {
-            //        var resCollaborationCollections = _drcUnitOfWork.DrcCardResponsibilityRepository.GetResponsibilityCollaborationsByResponsibilityId(
-            //            responsibilitycollection.ResponsibilityId);
-            //        foreach (var resCollaboration in resCollaborationCollections)
-            //        {
-            //            _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(resCollaboration);
-            //        }
-            //    }
+            if (drcCard.SubdomainVersionId != 0 && drcCard.Id != 0)
+            {
+                var card = _drcUnitOfWork.DrcCardRepository.GetById(drcCard.Id);
 
-            //    var cardRelationsWithOtherCards = _drcUnitOfWork.DrcCardResponsibilityRepository
-            //        .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(drcCard.Id);
-            //    foreach (var cardReletion in cardRelationsWithOtherCards)
-            //    {
-            //        _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(cardReletion);
-            //    }
+                var cardResponsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository
+                    .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(card.Id);
+                var cardFieldCollaborations =
+                    _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldCollaborationsByDrcCardId(card.Id);
 
-            //    var cardFields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(drcCard.Id);
+                if (cardResponsibilityCollaborations.Count == 0 && cardFieldCollaborations.Count == 0)
+                {
+                    card.SubdomainVersionId = drcCard.SubdomainVersionId;
+                    card.DrcCardName = drcCard.DrcCardName;
+                    _drcUnitOfWork.DrcCardRepository.Update(card);
+                    _drcUnitOfWork.Complete();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
 
-            //    foreach (var cardField in cardFields)
-            //    {
-            //        var fieldCollaboration =
-            //            _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(cardField.FieldId);
-            //        if (fieldCollaboration != null)
-            //        {
-            //            _drcUnitOfWork.DrcCardFieldRepository.Remove(fieldCollaboration);
-            //        }
-            //    }
-
-            //    card.SubdomainId = drcCard.SubdomainId;
-            //    card.DrcCardName = drcCard.DrcCardName;
-            //    _drcUnitOfWork.DrcCardRepository.Update(card);
-            //    _drcUnitOfWork.Complete();
-            //    return true;
-            //}
-            //else
-            //{
-            //    return false;
-            //}
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public string GetShadowCardSourcePath(int? shadowId)
@@ -327,14 +396,19 @@ namespace DRCDesigner.Business.Concrete
             return _drcUnitOfWork.SubdomainRepository.subdomainSize();
         }
 
-        public string activeStatePath(int versionId)
+        public bool isSubdomainVersionLocked(int id)
         {
-            var version = _drcUnitOfWork.SubdomainVersionRepository.GetById(versionId);
-            var subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
-            string activePath = subdomainName + " > " + version.VersionNumber;
+            var subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetById(id);
 
-            return activePath;
+            if (subdomainVersion != null)
+            {
+                return subdomainVersion.EditLock;
+            }
+
+            return false;
+
         }
+
 
         public async Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId)
         {
@@ -351,9 +425,13 @@ namespace DRCDesigner.Business.Concrete
             return cards;
         }
 
-        public void AddShadowCard(DrcCard drcCard)
+        public async void AddShadowCard(DrcCard drcCard)
         {
+            var id = (int) drcCard.MainCardId;
+            var fields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(id);
+
             _drcUnitOfWork.DrcCardRepository.Add(drcCard);
+
             _drcUnitOfWork.Complete();
         }
     }

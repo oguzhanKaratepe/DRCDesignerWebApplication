@@ -35,6 +35,9 @@ namespace DRCDesignerWebApplication.Helpers
             CreateMap<FieldBusinessModel, FieldViewModel>();
             CreateMap<FieldViewModel, FieldBusinessModel>();
 
+            CreateMap<RoleViewModel, RoleBusinessModel>();
+            CreateMap<RoleBusinessModel, RoleViewModel>();
+
             CreateMap<ShadowCardSelectBoxBusinessModel, ShadowCardSelectBoxViewModel>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dto => dto.DrcCardName, opt => opt.MapFrom(src => src.DrcCardName))
@@ -50,11 +53,10 @@ namespace DRCDesignerWebApplication.Helpers
                 .ForMember(dto => dto.DrcCard, opt => opt.MapFrom(src => src.DrcCard))
                 .ForMember(dto => dto.Type, opt => opt.MapFrom(src => src.Type));
 
-          
+            
 
             CreateMap<SubdomainVersionViewModel, SubdomainVersionBusinessModel>();
             CreateMap<SubdomainVersionBusinessModel, SubdomainVersionViewModel>();
-
 
         }
     }

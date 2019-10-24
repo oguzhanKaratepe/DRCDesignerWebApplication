@@ -13,5 +13,7 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Abstract
        IDrcCardRepository DrcCardRepository { get; }
        ISubdomainVersionRepository SubdomainVersionRepository { get; }
        ISubdomainVersionReferenceRepository SubdomainVersionReferenceRepository { get; }
+       ISubdomainVersionRoleRepository SubdomainVersionRoleRepository { get; }
+       IRoleRepository RoleRepository { get; }
     }
 }

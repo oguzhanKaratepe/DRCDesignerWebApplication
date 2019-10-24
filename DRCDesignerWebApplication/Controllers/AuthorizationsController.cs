@@ -79,9 +79,15 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetAuthorizationRoles(int Id, DataSourceLoadOptions loadOptions)
         {
-            var roles = await _authorizationService.GetAuthorizationRoles(Id);
+            var BusinessRoleModels = await _authorizationService.GetAuthorizationRoles(Id);
+            IList<RoleViewModel> roleViewModels=new List<RoleViewModel>();
+            foreach (var businessRoleModel in BusinessRoleModels)
+            {
+                var roleViewModel = _mapper.Map<RoleViewModel>(businessRoleModel);
+                roleViewModels.Add(roleViewModel);
+            }
 
-            return DataSourceLoader.Load(roles, loadOptions);
+            return DataSourceLoader.Load(roleViewModels, loadOptions);
         }
     }
 }

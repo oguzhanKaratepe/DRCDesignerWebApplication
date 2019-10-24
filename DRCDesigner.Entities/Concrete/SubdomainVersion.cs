@@ -15,7 +15,7 @@ namespace DRCDesigner.Entities.Concrete
         {
             ReferencedSubdomainVersions = new List<SubdomainVersionReference>();
             DRCards = new List<DrcCard>();
-            SubdomainVersionRoles = new List<Role>();
+            SubdomainVersionRoles = new List<SubdomainVersionRole>();
         }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "Id")]
         public int Id { get; set; }
@@ -34,8 +34,11 @@ namespace DRCDesigner.Entities.Concrete
 
         public SubdomainVersion SourceSubdomainVersion { get; set; }
 
+        [JsonIgnore]
+        public virtual IList<SubdomainVersionRole> SubdomainVersionRoles { get; set; }
+
         public virtual ICollection<DrcCard> DRCards { get; set; }
-        public virtual ICollection<Role> SubdomainVersionRoles { get; set; }
+ 
         public virtual ICollection<SubdomainVersionReference> ReferencedSubdomainVersions { get; set; }
     }
 }

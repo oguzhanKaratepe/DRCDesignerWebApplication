@@ -36,6 +36,8 @@ namespace DRCDesignerWebApplication.ViewModels
 
         public int[] ReferencedVersionIds { get; set; }
 
+        [DisplayName("Referenced Versions")]
+        public string References { get; set; }
 
 
     }

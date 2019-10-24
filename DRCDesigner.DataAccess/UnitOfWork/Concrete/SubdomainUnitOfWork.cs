@@ -20,12 +20,15 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Concrete
             DrcCardRepository=new DrcCardRepository(_context);
             SubdomainVersionRepository=new SubdomainVersionRepository(_context);
             SubdomainVersionReferenceRepository=new SubdomainVersionReferenceRepository(_context);
+            SubdomainVersionRoleRepository=new SubdomainVersionRoleRepository(_context);
+            RoleRepository=new RoleRepository(_context);
         }
      
         public ISubdomainRepository SubdomainRepository { get; private set; }
         public ISubdomainVersionRepository SubdomainVersionRepository { get; private set;}
         public ISubdomainVersionReferenceRepository SubdomainVersionReferenceRepository { get; }
         public IDrcCardRepository DrcCardRepository { get; private set; }
-       
+        public ISubdomainVersionRoleRepository SubdomainVersionRoleRepository { get; private set; }
+        public IRoleRepository RoleRepository { get; }
     }
 }

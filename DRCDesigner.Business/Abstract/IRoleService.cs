@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DRCDesigner.Business.BusinessModels;
 
 
 namespace DRCDesigner.Business.Abstract
 {
     public interface IRoleService
     {
-        Task<IEnumerable<Role>> GetAll();
+        Task<IEnumerable<RoleBusinessModel>> GetAllSubdomainRoles(int subdomainId);
         void Add(string values);
         void Update(string values, int id);
-        bool Remove(int roleId);
+        Task<bool> Remove(int roleId);
     }
 }

@@ -14,11 +14,14 @@ namespace DRCDesigner.Business.Abstract
         Task<IEnumerable<SubdomainVersionBusinessModel>> GetAllSubdomainVersions(int subdomainId);
         Task<IEnumerable<SubdomainVersionBusinessModel>> GetAllVersions();
         Task<IList<SubdomainVersionBusinessModel>> GetReferenceOptions(int subdomainId);
-       
+
+      
+
         //Task<IEnumerable<Subdomain>> GetMoveDropDownBoxSubdomains(int subdomainId);
         Task<bool> Add(string values);
        void Update(string values, int id);
         Task<bool> LookForSourceChange(int id,string values);
+        Task<bool> VersionIsASource(int subdomainVersionId);
         Task<bool> Remove(int subdomainVersionId);
     }
 }

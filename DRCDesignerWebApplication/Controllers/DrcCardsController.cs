@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Runtime.InteropServices.ComTypes;
@@ -30,8 +31,6 @@ namespace DRCDesignerWebApplication.Controllers
             _drcCardService = drcCardService;
         }
 
-      
-
         [HttpGet]
         public async Task<object> Index()
         {
@@ -54,7 +53,7 @@ namespace DRCDesignerWebApplication.Controllers
                     }
 
 
-                    foreach (var fieldBusinessModel in await _drcCardService.getListOfDrcCardFields(card.Id))
+                    foreach (var fieldBusinessModel in await _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
                     {
                         drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
                     }
@@ -70,10 +69,12 @@ namespace DRCDesignerWebApplication.Controllers
 
                 }
              
-                drcCardContainerViewModel.ActiveState = _drcCardService.activeStatePath(id);
+                
                 drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
             }
+            drcCardContainerViewModel.SubdomainMenuItems = await _drcCardService.GetAllSubdomainMenuItems(id);
             drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
+            drcCardContainerViewModel.IsSubdomainVersionLocked = _drcCardService.isSubdomainVersionLocked(id);
             return View(drcCardContainerViewModel);
             
         }
@@ -139,9 +140,9 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<object> GetShadowCardsSelectBox(int SubdomainVersionId, DataSourceLoadOptions loadOptions)
+        public async Task<object> GetShadowCardsSelectBox(int subdomainVersionId, DataSourceLoadOptions loadOptions)
         {
-            var shadowCardSelectBoxOptions = await _drcCardService.GetShadowSelectBoxOptions(SubdomainVersionId);
+            var shadowCardSelectBoxOptions = await _drcCardService.GetShadowSelectBoxOptions(subdomainVersionId);
          var dropBoxSelectOptions = _mapper.Map<IList<ShadowCardSelectBoxBusinessModel>, IList<ShadowCardSelectBoxViewModel>>(shadowCardSelectBoxOptions);
          return DataSourceLoader.Load(dropBoxSelectOptions, loadOptions);
         }
@@ -158,19 +159,25 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpPost]
-        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainId,DrcCardViewModel drcCardViewModel)
+        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainVersionId,DrcCardViewModel drcCardViewModel)
         {
-            //var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
-            //var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
-            //if (result != true)
-            //{
-            //    return BadRequest();
-            //}
-            //else
-            //{
-            //    return Redirect("/DrcCards/index?id=" + currentSubdomainId);
-            //}
-            return Redirect("/DrcCards/index?id=" + currentSubdomainId);
+            var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
+            var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
+            
+            return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
+        }
+
+        public static List<object> GetDeleteBehaviorOptions()
+        {
+            var items = new List<object>();
+            foreach (var item in Enum.GetValues(typeof(EDeleteBehaviorOptions)))
+            {
+                var fieldInfo = item.GetType().GetField(item.ToString());
+                var descriptionAttributes = fieldInfo.GetCustomAttributes(
+                    typeof(DisplayAttribute), false) as DisplayAttribute[];
+                items.Add(new { Id = item, Name = descriptionAttributes[0].Name });
+            }
+            return items;
         }
     }
 }

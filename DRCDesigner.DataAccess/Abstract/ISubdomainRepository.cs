@@ -13,6 +13,7 @@ namespace DRCDesigner.DataAccess.Abstract
         int subdomainSize();
         void Remove(Subdomain subdomain);
         Task<IEnumerable<Subdomain>> GetAllWithVersions();
+        Task<Subdomain> GetSubdomainWithAllVersions(int subdomainId);
         string GetSubdomainName(int subdomainId);
     }
 }

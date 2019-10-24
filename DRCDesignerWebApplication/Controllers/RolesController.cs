@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using AutoMapper;
 using DevExtreme.AspNet.Mvc;
 using DevExtreme.AspNet.Data;
 using DRCDesigner.Business.Abstract;
@@ -16,10 +17,11 @@ namespace DRCDesignerWebApplication.Controllers
     public class RolesController : Controller
     {
         private readonly IRoleService _roleService;
-
-        public RolesController(IRoleService roleService)
+        private readonly IMapper _mapper;
+        public RolesController(IRoleService roleService,IMapper mapper)
         {
             _roleService = roleService;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -28,14 +30,15 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<object> Get(int Id,DataSourceLoadOptions loadOptions)
+        public async Task<object> Get(int subdomainId, DataSourceLoadOptions loadOptions)
         {
-            RoleListViewModel roleListViewModel = new RoleListViewModel
+            IList<RoleViewModel> roleViewModels=new List<RoleViewModel>();
+            foreach (var roleBusinessModel in await _roleService.GetAllSubdomainRoles(subdomainId))
             {
-                Roles = await _roleService.GetAll()
-            };
-
-            return DataSourceLoader.Load(roleListViewModel.Roles, loadOptions);
+                RoleViewModel roleViewModel = _mapper.Map<RoleViewModel>(roleBusinessModel);
+               roleViewModels.Add(roleViewModel);
+            }
+            return DataSourceLoader.Load(roleViewModels, loadOptions);
         }
 
         [HttpPost]
@@ -62,9 +65,9 @@ namespace DRCDesignerWebApplication.Controllers
             return Ok();
         }
         [HttpDelete]
-        public ActionResult Delete(int key)
+        public async Task<ActionResult> Delete(int key)
         {
-            if (!_roleService.Remove(key))
+            if (!await _roleService.Remove(key))
             {
                 return BadRequest("I will add error to here");
             }

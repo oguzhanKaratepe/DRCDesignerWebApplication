@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -12,17 +13,17 @@ using Newtonsoft.Json;
 
 namespace DRCDesigner.Business.Concrete
 {
-   public class FieldManager:IFieldService
-   {
-       private IDrcUnitOfWork _drcUnitOfWork;
-       private IMapper _mapper;
+    public class FieldManager : IFieldService
+    {
+        private IDrcUnitOfWork _drcUnitOfWork;
+        private IMapper _mapper;
 
-       public FieldManager(IDrcUnitOfWork drcUnitOfWork,IMapper mapper)
-       {
-           _drcUnitOfWork = drcUnitOfWork;
-           _mapper = mapper;
+        public FieldManager(IDrcUnitOfWork drcUnitOfWork, IMapper mapper)
+        {
+            _drcUnitOfWork = drcUnitOfWork;
+            _mapper = mapper;
 
-       }
+        }
         public void Add(string values)
         {
             var newFieldBusinessModel = new FieldBusinessModel();
@@ -30,7 +31,127 @@ namespace DRCDesigner.Business.Concrete
 
 
             Field field = _mapper.Map<Field>(newFieldBusinessModel);
-            _drcUnitOfWork.FieldRepository.Add(field);
+
+            switch (field.Type)
+            {
+                case FieldType.String:
+                    field.MeasurementType = null;
+                    field.MaxValue = 0;
+                    field.MaxValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Integer:
+                case FieldType.Byte:
+                case FieldType.Double:
+                case FieldType.Decimal:
+                case FieldType.Long:
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+              
+                case FieldType.Bool:
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Enum:
+                    field.DefaultValue = null;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Time:
+                case FieldType.DateTime:
+                case FieldType.DateOnly:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.RelationElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.ComplexTypeElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+                case FieldType.DetailElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+                case FieldType.Measurement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    newFieldBusinessModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+            }
+
+
+
+
 
             DrcCardField newDrcCardFieldCollaboration = new DrcCardField();
             newDrcCardFieldCollaboration.DrcCard = _drcUnitOfWork.DrcCardRepository.GetById(newFieldBusinessModel.DrcCardId);
@@ -65,17 +186,135 @@ namespace DRCDesigner.Business.Concrete
 
             JsonConvert.PopulateObject(values, fieldViewModel);
             _drcUnitOfWork.FieldRepository.Remove(oldField);
-            var updatedField = _mapper.Map<Field>(fieldViewModel);
+            var field = _mapper.Map<Field>(fieldViewModel);
+
+            switch (field.Type)
+            {
+                case FieldType.String:
+                    field.MeasurementType = null;
+                    field.MaxValue = 0;
+                    field.MaxValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Integer:
+                case FieldType.Byte:
+                case FieldType.Double:
+                case FieldType.Decimal:
+                case FieldType.Long:
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+
+                case FieldType.Bool:
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Enum:
+                    field.DefaultValue = null;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.Time:
+                case FieldType.DateTime:
+                case FieldType.DateOnly:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.RelationElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+                case FieldType.ComplexTypeElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+                case FieldType.DetailElement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MeasurementType = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+
+                case FieldType.Measurement:
+                    field.DefaultValue = null;
+                    field.Unique = false;
+                    field.CreditCard = false;
+                    field.RegularExpression = null;
+                    field.MaxLength = 0;
+                    field.MinLength = 0;
+                    field.MaxValue = 0;
+                    field.MinValue = 0;
+                    fieldViewModel.CollaborationId = null;
+                    _drcUnitOfWork.FieldRepository.Add(field);
+                    break;
+            }
+          
             if (fieldViewModel.CollaborationId != null)
             {
                 var collaborationId = (int)fieldViewModel.CollaborationId;
                 var newfieldCollaboration = new DrcCardField();
-                newfieldCollaboration.FieldId = updatedField.Id;
+                newfieldCollaboration.FieldId = field.Id;
                 newfieldCollaboration.DrcCardId = collaborationId;
                 newfieldCollaboration.IsRelationCollaboration = true;
                 _drcUnitOfWork.DrcCardFieldRepository.Add(newfieldCollaboration);
             }
-            _drcUnitOfWork.FieldRepository.Add(updatedField);
+        
             _drcUnitOfWork.Complete();
         }
 
@@ -90,7 +329,7 @@ namespace DRCDesigner.Business.Concrete
             _drcUnitOfWork.Complete();
         }
 
-        
+
         public async Task<IList<DrcCard>> GetCollaborations(int versionId, int cardId)
         {
             var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(versionId);

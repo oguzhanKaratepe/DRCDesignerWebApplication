@@ -100,24 +100,37 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int key)
         {
-            if (!await _subdomainVersionService.Remove(key))
+            if (await _subdomainVersionService.VersionIsASource(key))
             {
-                return BadRequest("I will add error to here");
+                return BadRequest(
+                    "You are not allowed to delete this version because it is using as a source by some other versions");
+            }
+            else
+            {
+                if (!await _subdomainVersionService.Remove(key))
+                {
+                    return BadRequest("I will add error to here");
+                }
+
+                return Ok();
             }
 
-            return Ok();
+          
         }
         [HttpGet]
-        public async Task<object> GetAllVersionWithSubdomainNames(DataSourceLoadOptions loadOptions)
+        public async Task<object> GetSubdomainVersions(int subdomainId, DataSourceLoadOptions loadOptions)
         {
+
             IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
-            var subdomainVersions = await _subdomainVersionService.GetAllVersions();
+            var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersions(subdomainId);
             foreach (var BModelVersion in subdomainVersions)
             {
                 var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
                 viewModels.Add(viewmodel);
             }
             return DataSourceLoader.Load(viewModels, loadOptions);
+        
         }
+
     }
 }
