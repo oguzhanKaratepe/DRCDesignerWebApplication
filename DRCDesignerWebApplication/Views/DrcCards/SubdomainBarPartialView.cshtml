@@ -26,17 +26,13 @@
         var item = e.itemData;
         if (item.type == 1){
       
-            if (item.EditLock) {
-
-                DevExpress.ui.notify("This is a locked version, please unlock to access", "error", 1500);
-
-            } else {
+       
                 //  getMenuInstance().option("selectedItem", item);
                 $("#loadPanel").dxLoadPanel("show");
              
                 window.location = "/DrcCards/index?id=" + item.Id;
 
-            }
+            
         }
         //var item = e.itemData;
         //if (item.type == 1) {

@@ -1,18 +1,21 @@
 ﻿@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesignerWebApplication.Controllers
 @using DRCDesignerWebApplication.ViewModels
 @model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
 
 <style>
   
 </style>
-<div class="d-flex flex-column">
-    <h5>Document Name:</h5>
+<div class="d-flex flex-column ml-3">
+    @*<h5>Document Name:</h5>*@
         @(Html.DevExtreme().DataGrid<DrcCardViewModel>()
               .ShowBorders(false)
-              .Height(52)
-              .Width(450)
+              .ElementAttr(new { style = "margin-left:290px;" })
+              .Height(132)
+              .Width(660)
               .Scrolling(z=>z.ShowScrollbar(ShowScrollbarMode.Never))
-              .ShowColumnHeaders(false)
+              // .ShowColumnHeaders(false)
+              .HoverStateEnabled(false)
               .ElementAttr(new {style="margin-top:-2px;"})
               .Editing(editing =>
               {
@@ -24,10 +27,33 @@
                   .UpdateAction("Put")
                   .Key("Id").LoadParams(new { Id = Model.Id }))
               .Columns(columns => {
-                                      columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate(@<text>ewa</text>);
-                                  
+                  columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate("Document Name").Width(295);
+                  columns.AddFor(m => m.SecurityCriticalOption).AllowSorting(false)
+                      .Caption("Security Option")
+                      .Width(185)
+                      .Lookup(lookup =>
+                      {
+                          lookup.DataSource(FieldsController.GetSecurityCriticalOptions());
+                          lookup.DisplayExpr("Name");
+                          lookup.AllowClearing(true);
+                          lookup.ValueExpr("Id");
+
+                      }).SetCellValue("es");
+
+                  columns.AddFor(m => m.DeleteBehaviorOption).AllowSorting(false)
+                      .Caption("Delete Option")
+                      .Width(185)
+                      .Lookup(lookup =>
+                      {
+                          lookup.DataSource(DrcCardsController.GetDeleteBehaviorOptions());
+                          lookup.DisplayExpr("Name");
+                          lookup.AllowClearing(true);
+                          lookup.ValueExpr("Id");
+
+                      }).SetCellValue("es");
+
               })
-       
+
               )
 
 </div>

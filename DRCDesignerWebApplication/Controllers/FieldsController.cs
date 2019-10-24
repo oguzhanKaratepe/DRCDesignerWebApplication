@@ -75,11 +75,36 @@ namespace DRCDesignerWebApplication.Controllers
         {
             _fieldService.Delete(key);
         }
-
+         
         public static List<object> GetFieldTypeDataSource()
         {
             var items = new List<object>();
             foreach (var item in Enum.GetValues(typeof(FieldType)))
+            {
+                var fieldInfo = item.GetType().GetField(item.ToString());
+                var descriptionAttributes = fieldInfo.GetCustomAttributes(
+                    typeof(DisplayAttribute), false) as DisplayAttribute[];
+                items.Add(new { Id = item, Name = descriptionAttributes[0].Name });
+            }
+            return items;
+        }
+
+        public static List<object> GetSecurityCriticalOptions()
+        {
+            var items = new List<object>();
+            foreach (var item in Enum.GetValues(typeof(ESecurityCriticalOptions)))
+            {
+                var fieldInfo = item.GetType().GetField(item.ToString());
+                var descriptionAttributes = fieldInfo.GetCustomAttributes(
+                    typeof(DisplayAttribute), false) as DisplayAttribute[];
+                items.Add(new { Id = item, Name = descriptionAttributes[0].Name });
+            }
+            return items;
+        }
+        public static List<object> GetMeasurementTypes()
+        {
+            var items = new List<object>();
+            foreach (var item in Enum.GetValues(typeof(EMeasurementTypes)))
             {
                 var fieldInfo = item.GetType().GetField(item.ToString());
                 var descriptionAttributes = fieldInfo.GetCustomAttributes(

@@ -38,6 +38,11 @@ namespace DRCDesigner.DataAccess.Concrete
             DrcCardContext.SaveChanges();
         }
 
+        public string getDrcCardName(int id)
+        {
+            return DrcCardContext.DrcCards.Where(m => m.Id==id).Select(m=>m.DrcCardName).AsNoTracking().Single();
+        }
+
         public async Task<IEnumerable<DrcCard>> getAllCardsBySubdomainVersion(int subdomainVersionId)
         {
             return await DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).AsNoTracking().ToListAsync();

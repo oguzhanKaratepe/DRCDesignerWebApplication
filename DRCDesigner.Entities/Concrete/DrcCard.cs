@@ -18,6 +18,10 @@ namespace DRCDesigner.Entities.Concrete
         [DisplayName("Card Name")]
         public string DrcCardName { get; set; }
         public int Order { get; set; }
+
+        public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
+
+        public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
      
         [JsonIgnore]
         public virtual ICollection<DrcCardField> DrcCardFields { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Runtime.InteropServices.ComTypes;
@@ -30,8 +31,6 @@ namespace DRCDesignerWebApplication.Controllers
             _drcCardService = drcCardService;
         }
 
-      
-
         [HttpGet]
         public async Task<object> Index()
         {
@@ -54,7 +53,7 @@ namespace DRCDesignerWebApplication.Controllers
                     }
 
 
-                    foreach (var fieldBusinessModel in await _drcCardService.getListOfDrcCardFields(card.Id))
+                    foreach (var fieldBusinessModel in await _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
                     {
                         drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
                     }
@@ -75,6 +74,7 @@ namespace DRCDesignerWebApplication.Controllers
             }
             drcCardContainerViewModel.SubdomainMenuItems = await _drcCardService.GetAllSubdomainMenuItems(id);
             drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
+            drcCardContainerViewModel.IsSubdomainVersionLocked = _drcCardService.isSubdomainVersionLocked(id);
             return View(drcCardContainerViewModel);
             
         }
@@ -165,6 +165,19 @@ namespace DRCDesignerWebApplication.Controllers
             var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
             
             return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
+        }
+
+        public static List<object> GetDeleteBehaviorOptions()
+        {
+            var items = new List<object>();
+            foreach (var item in Enum.GetValues(typeof(EDeleteBehaviorOptions)))
+            {
+                var fieldInfo = item.GetType().GetField(item.ToString());
+                var descriptionAttributes = fieldInfo.GetCustomAttributes(
+                    typeof(DisplayAttribute), false) as DisplayAttribute[];
+                items.Add(new { Id = item, Name = descriptionAttributes[0].Name });
+            }
+            return items;
         }
     }
 }

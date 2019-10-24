@@ -11,32 +11,50 @@ namespace DRCDesigner.Entities.Concrete
         [Display(Name = "String")]
         String =0,
 
+        [Display(Name = "Byte")]
+        Byte = 1,
+
         [Display(Name = "Integer")]
-        Integer =1,
+        Integer =2,
 
         [Display(Name = "Double")]
-        Double =2,
-
-        [Display(Name = "Bool")]
-        Bool = 3,
-
-        [Display(Name = "Enum")]
-        Enum = 4,
+        Double =3,
 
         [Display(Name = "Decimal")]
-        Decimal =5,
+        Decimal = 4,
+
+        [Display(Name = "Long")]
+        Long = 5,
+
+        [Display(Name = "Bool")]
+        Bool = 6,
+
+        [Display(Name = "Enum")]
+        Enum = 7,
+
+
+        [Display(Name = "DateOnly")]
+        DateOnly = 8,
+
+        [Display(Name = "Time")]
+        Time = 9,
 
         [Display(Name = "DateTime")]
-        DateTime =6,
+        DateTime =10,
 
         [Display(Name = "RelationElement")]
-        RelationElement = 7,
+        RelationElement = 11,
 
         [Display(Name = "ComplexTypeElement")]
-        ComplexTypeElement = 8,
+        ComplexTypeElement = 12,
 
         [Display(Name = "DetailElement")]
-        DetailElement = 9
+        DetailElement = 13,
+
+        [Display(Name = "Measurement")]
+        Measurement = 14
+
+
 
 
     }

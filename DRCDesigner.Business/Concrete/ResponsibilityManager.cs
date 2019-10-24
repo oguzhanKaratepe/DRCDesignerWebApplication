@@ -40,7 +40,7 @@ namespace DRCDesigner.Business.Concrete
                 responsibilityModel.Title = tempResponsibility.Title;
                 responsibilityModel.PriorityOrder = tempResponsibility.PriorityOrder;
                 responsibilityModel.IsMandatory = tempResponsibility.IsMandatory;
-
+              
                 var responsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository.GetResponsibilityCollaborationsByResponsibilityId(tempResponsibility.Id);
                 if (responsibilityCollaborations.Count > 0)
                 {
@@ -49,6 +49,7 @@ namespace DRCDesigner.Business.Concrete
                     foreach (var collaborationCollection in responsibilityCollaborations)
                     {
                         tempIds[i] = collaborationCollection.DrcCardId;
+                       
                         i++;
                     }
 

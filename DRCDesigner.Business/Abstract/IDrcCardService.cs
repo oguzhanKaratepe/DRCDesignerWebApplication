@@ -14,7 +14,7 @@ namespace DRCDesigner.Business.Abstract
        void Update(int id,string values);
        void Delete(DrcCard drcCard);
        Task<IList<ResponsibilityBusinessModel>> getListOfDrcCardResponsibilities(int cardId);
-       Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId);
+       Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId,int? mainCardId);
        Task<IList<AuthorizationBusinessModel>> getListOfDrcCardAuthorizations(int cardId);
         Task<IList<DrcCardBusinessModel>> GetAllDrcCards(int subdomainVersionId);
         Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId);
@@ -23,6 +23,7 @@ namespace DRCDesigner.Business.Abstract
        string GetShadowCardSourcePath(int? shadowCardId);
        DrcCardBusinessModel GetCard(int id);
        int TotalSubdomainSize();
+       bool isSubdomainVersionLocked(int id);
        Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId);
    }
 }

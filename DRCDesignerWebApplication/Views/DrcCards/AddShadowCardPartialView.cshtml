@@ -36,7 +36,7 @@
                           .Visible(false)
                           .DragEnabled(true)
                           .CloseOnOutsideClick(false)
-                          .CloseOnBackButton(true)
+
                           .ShowCloseButton(true)
 
 )
@@ -49,6 +49,7 @@
     {
         
         @(Html.DevExtreme().SelectBox()
+              .ID("dropDownSelectBox")
               .DataSource(d => d.Mvc().Controller("DrcCards").LoadAction("GetShadowCardsSelectBox").Key("Id").LoadParams(new { subdomainVersionId = @Model.SubdomainVersionId}))
                       .DataSourceOptions(o => o.Group("CardSourcePath"))
                       .Grouped(true)

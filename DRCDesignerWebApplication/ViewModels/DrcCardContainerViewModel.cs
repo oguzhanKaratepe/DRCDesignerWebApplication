@@ -16,6 +16,8 @@ namespace DRCDesignerWebApplication.ViewModels
         public DrcCardViewModel DrcCardViewModel { get; set; }
         public IEnumerable<SubdomainMenuItemBusinessModel> SubdomainMenuItems { get; set; }
         public int TotalSubdomainSize { get; set; }
+
+        public bool IsSubdomainVersionLocked { get; set; }
      
 
 

@@ -218,10 +218,26 @@ namespace DRCDesigner.Business.Concrete
             return responsibilityBusinessModels;
         }
 
-        public async Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId)
+        public async Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId, int? mainCardId)
         {
             var drcCardFieldCollections = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(cardId);
             IList<FieldBusinessModel> fieldBusinessModels = new List<FieldBusinessModel>();
+
+
+            if (mainCardId != null)
+            {
+                int sourceCardId = (int)mainCardId;
+                var sourceFieldCollections = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(sourceCardId);
+
+
+                foreach (var fieldCollection in sourceFieldCollections)
+                {
+                    var sourceFieldViewModel = _mapper.Map<FieldBusinessModel>(_drcUnitOfWork.FieldRepository.GetById(fieldCollection.FieldId));
+                    sourceFieldViewModel.IsShadowField = true;
+                    fieldBusinessModels.Add(sourceFieldViewModel);
+                }
+
+            }
 
             foreach (var drcCardFieldCollection in drcCardFieldCollections)
             {
@@ -240,6 +256,9 @@ namespace DRCDesigner.Business.Concrete
                 }
 
             }
+
+
+            _drcUnitOfWork.Complete();
 
             return fieldBusinessModels;
         }
@@ -377,6 +396,19 @@ namespace DRCDesigner.Business.Concrete
             return _drcUnitOfWork.SubdomainRepository.subdomainSize();
         }
 
+        public bool isSubdomainVersionLocked(int id)
+        {
+            var subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetById(id);
+
+            if (subdomainVersion != null)
+            {
+                return subdomainVersion.EditLock;
+            }
+
+            return false;
+
+        }
+
 
         public async Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId)
         {
@@ -393,9 +425,13 @@ namespace DRCDesigner.Business.Concrete
             return cards;
         }
 
-        public void AddShadowCard(DrcCard drcCard)
+        public async void AddShadowCard(DrcCard drcCard)
         {
+            var id = (int) drcCard.MainCardId;
+            var fields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(id);
+
             _drcUnitOfWork.DrcCardRepository.Add(drcCard);
+
             _drcUnitOfWork.Complete();
         }
     }

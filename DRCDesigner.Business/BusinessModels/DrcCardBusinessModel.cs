@@ -24,6 +24,10 @@ namespace DRCDesigner.Business.BusinessModels
         [Required(ErrorMessage = "Document Name is required")]
         [DisplayName("Document Name")]
         public string DrcCardName { get; set; }
+        public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
+
+        public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
+
         public int Order { get; set; }
         public string SourceDrcCardPath { get; set; }
      
