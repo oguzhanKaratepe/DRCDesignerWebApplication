@@ -122,9 +122,9 @@ namespace DRCDesignerWebApplication.Controllers
 
         }
         [HttpGet]
-        public async Task<object> GetCardCollaborationOptions(int Id, int cardId, DataSourceLoadOptions loadOptions)
+        public async Task<object> GetCardCollaborationOptions(int cardId, DataSourceLoadOptions loadOptions)
         {
-            var cards= await _drcCardService.GetCardCollaborationOptions(Id, cardId);
+            var cards= await _drcCardService.GetCardCollaborationOptions(cardId);
             return DataSourceLoader.Load(cards, loadOptions);
         }
 

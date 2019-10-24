@@ -24,6 +24,6 @@ namespace DRCDesigner.Business.Abstract
        DrcCardBusinessModel GetCard(int id);
        int TotalSubdomainSize();
        bool isSubdomainVersionLocked(int id);
-       Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId);
+       Task<IList<DrcCard>> GetCardCollaborationOptions(int cardId);
    }
 }

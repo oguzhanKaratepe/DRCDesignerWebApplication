@@ -9,13 +9,15 @@
       .ID("FieldGrid")
       .OnInitNewRow("onInitNewRow")
       .OnEditingStart("onEditingStart")
+      
       .OnEditorPreparing("eds")
-          .ShowBorders(true)
+      .ShowBorders(true)
           .Editing(editing =>
-          {
+          { 
               editing.Mode(GridEditMode.Popup).AllowAdding(true).AllowUpdating(true).AllowDeleting(true)
                   .Popup(p => p
                       .Title("Details")
+                      .OnHiding("hidingpopup")
                   .ShowTitle(true).Width(700).Height(550)
                   .Position(pos => pos
                       .My(HorizontalAlignment.Center, VerticalAlignment.Center)
@@ -29,16 +31,7 @@
 
                                   items.AddSimpleFor(m=>m.AttributeName).Editor(editor => editor.TextBox());
                                   items.AddSimpleFor(m => m.Type).Editor(m=>m.SelectBox().OnSelectionChanged("ValueChanged"));
-                                  //items.AddGroup()
-                                  //    .ColCount(2)
-                                  //    .ColSpan(2)
-                                  //    .Items(groupItems =>
-                                  //    {
-                                  //        groupItems.AddSimpleFor(m=>m.AttributeName).Editor(editor => editor.TextBox());
-                                  //        groupItems.AddSimpleFor(m => m.Type).Editor(m=>m.SelectBox().OnSelectionChanged("ValueChanged"));
-
-                                  //    });
-
+                               
 
                                   items.AddGroup()
                                       .Caption("String Field Details")

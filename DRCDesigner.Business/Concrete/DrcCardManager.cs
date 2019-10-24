@@ -410,9 +410,10 @@ namespace DRCDesigner.Business.Concrete
         }
 
 
-        public async Task<IList<DrcCard>> GetCardCollaborationOptions(int Id, int cardId)
+        public async Task<IList<DrcCard>> GetCardCollaborationOptions(int cardId)
         {
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(Id);
+            var selectedCard = _drcUnitOfWork.DrcCardRepository.GetById(cardId);
+            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(selectedCard.SubdomainVersionId);
             IList<DrcCard> cards = new List<DrcCard>();
             foreach (var card in drcCards)
             {
