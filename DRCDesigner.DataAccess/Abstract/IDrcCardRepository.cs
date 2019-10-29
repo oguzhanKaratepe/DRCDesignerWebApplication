@@ -20,7 +20,7 @@ namespace DRCDesigner.DataAccess.Abstract
         //void Remove(DrcCard drcCard);
         IList<DrcCardResponsibility> GetDrcResponsibilities(int id); //drcCard id
 
-
+        Task<DrcCard> GetByIdWithoutTracking(int id);
 
     }
 }

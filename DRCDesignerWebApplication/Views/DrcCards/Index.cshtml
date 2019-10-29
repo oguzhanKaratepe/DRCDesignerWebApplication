@@ -1,4 +1,5 @@
 ﻿@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesigner.Business.BusinessModels
 @using DRCDesignerWebApplication.ViewModels
 @using Microsoft.CodeAnalysis.CSharp
 @using Microsoft.EntityFrameworkCore
@@ -185,8 +186,6 @@
     function onEditingStart(e) {
         InitNewRowStarted = false;
         rowKey = e.key;
-       
-
     }
     function hidingpopup(e) {
 
@@ -718,18 +717,26 @@
             id:2,
             name: "Shadow Document",
             delay: { show: 0, hide: 300 }
-        }];
+            }];
+
         function document_click(e) {
-            
             var a = e.itemData.id;
             if (a === 1) {
                 AddClickHandler();
-              
             }
             else if (a === 2) {
                 shadowCardPopUp();
             }
 
+        }
+        function shadowCardPopUp() {
+            var popup = $("#AddShadowCard-popup").dxPopup("instance");
+            popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
+            popup.show();
+        }
+
+        function AddClickHandler() {
+            $("#addCard").submit();
         }
 
     </script>
@@ -1003,38 +1010,44 @@
 
             @using (Html.DevExtreme().NamedTemplate("Move-CardPopup-template" + property.Id))
             {
-                @using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainVersionId = @property.SubdomainVersionId }))
-                {
-                    Model.DrcCardViewModel = property;
-                    @Html.Hidden("currentSubdomainVersionId", @property.SubdomainVersionId)
-                    @(Html.DevExtreme().Form<DrcCardViewModel>()
-                                                                  .ID("form")
-                                                                  .FormData(Model.DrcCardViewModel)
-                                                                  .LabelLocation(FormLabelLocation.Top)
-                                                                  .ReadOnly(false)
-                                                                  .ShowColonAfterLabel(true)
-                                                                  .Items(formItems =>
-                                                                  {
-                                                                      formItems.AddSimpleFor(m => m.SubdomainVersionId)
-                                                                          .Editor(m => m.SelectBox()
-                                                                              .DataSource(d => d.Mvc()
-                                                                          .Controller("Subdomains")
-                                                                          .LoadAction("GetDropDownButtonSubdomains")
-                                                                          .Key("Id").LoadParams(new { Id = @property.SubdomainVersionId })).DisplayExpr("SubdomainName").ValueExpr("Id"));
-                                                                      formItems.AddSimpleFor(m => m.DrcCardName).HelpText("You can update your document name before move..");
-                                                                      formItems.AddSimpleFor(m => m.Id).CssClass("AdShadowCardId");
+                @*@using (Html.BeginForm("MoveCardToDestinationSubdomain", "DrcCards", FormMethod.Post, new { currentSubdomainVersionId = @property.SubdomainVersionId }))
+                {*@
 
-                                                                      formItems.AddButton()
-                                                                          .HorizontalAlignment(HorizontalAlignment.Right)
-                                                                          .ButtonOptions(b => b.Text("Move Document")
-                                                                              .UseSubmitBehavior(true)
-                                                                          );
-                                                                  })
 
-                    )
+                         @(Html.DevExtreme().Form<DrcCardViewModel>()
+                               .OnFieldDataChanged("moveFieldDataChanged")
+                               .ID("MoveCardform")
+                               .FormData(Model.DrcCardViewModel)
+                               .LabelLocation(FormLabelLocation.Top)
+                               .ReadOnly(false)
+                               .ShowColonAfterLabel(true)
+                               .Items(formItems =>
+                               {
+                                   formItems.AddSimpleFor(m => m.SubdomainVersionId)
+                                       .Editor(m => m.SelectBox()
+                                           .ShowClearButton(true)
+                                           .DataSource(d => d.Mvc()
+                                               .Controller("Subdomains")
+                                               .LoadAction("GetDropDownButtonSubdomains")
+                                               .Key("Id").LoadParams(new {Id = @property.SubdomainVersionId})).DisplayExpr("SubdomainName").ValueExpr("Id").OnSelectionChanged("moveSelectBoxChanged"));
+                                   formItems.AddSimpleFor(m => m.DrcCardName).HelpText("You can update your document name before move..");
+                                   formItems.AddSimpleFor(m => m.Id).CssClass("AdShadowCardId");
 
-                }
+                                   formItems.AddButton()
+                                       .HorizontalAlignment(HorizontalAlignment.Right)
+                                       .ButtonOptions(b => b.Text("Move Document")
+                                           .ID("moveCardButton")
+                                           .Disabled(true)
+                                           .UseSubmitBehavior(true)
+                                           .OnClick("moveCardClickHandler")
+                                       );
+                               })
 
+                               )
+
+                @*}*@
+                     
+                 
             }
 
             @using (Html.DevExtreme().NamedTemplate("Update-popup-template" + property.Id))
@@ -1047,27 +1060,27 @@
                                                               {
                                                                   formItems.AddSimple().Template(@<text> @Html.Partial("PartialCardNameGrid", property)
                                                                 </text>);
-                                                                                                                          formItems.AddGroup()
-                                                                                                                  .Items(groupItem =>
-                                                                                                                  {
-                                                                                                                                                                                  groupItem.AddTabbed().TabPanelOptions(o =>
-                                                                                                                                                                          {
-                                                                                                                                                                                                                                          o.ElementAttr(new { style = "margin-top:-14 c  px;" });
-                                                                                                                                                                                                                                          o.DeferRendering(false);
-                                                                                                                                                                                                                                          o.Height(590);
-                                                                                                                                                                                                                                          o.AnimationEnabled(true);
-                                                                                                                                                                                                                                      }).Tabs(tabItem =>
-                                                                                                                                                                                                                                      {
-                                                                                                                                                                                                                                        
+                                                                  formItems.AddGroup()
+                                                                      .Items(groupItem =>
+                                                                      {
+                                                                          groupItem.AddTabbed().TabPanelOptions(o =>
+                                                                          {
+                                                                              o.ElementAttr(new { style = "margin-top:-14 c  px;" });
+                                                                              o.DeferRendering(false);
+                                                                              o.Height(590);
+                                                                              o.AnimationEnabled(true);
+                                                                          }).Tabs(tabItem =>
+                                                                          {
 
-                                                                                                                                                                                                                                  tabItem.Add().Title("RESPONSIBILITIES").Template(@<text>@Html.Partial("ResponsibilityUpdatePartial", property)</text>);
-                                                                                                                                                                                                                                  tabItem.Add().Title("AUTHORIZATIONS").Template(@<text>@Html.Partial("AuthorizationDataGridUpdate", property)</text>);
-                                                                                                                                                                                                                                          tabItem.Add().Title("FIELDS").Template(@<text>@Html.Partial("FieldDataGridUpdatePartialView", property)
-                                                                                                                                                                                                                                                                                  </text>);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                          })
+                                                                              tabItem.Add().Title("RESPONSIBILITIES").Template(@<text>@Html.Partial("ResponsibilityUpdatePartial", property)</text>);
+                                                                              tabItem.Add().Title("AUTHORIZATIONS").Template(@<text>@Html.Partial("AuthorizationDataGridUpdate", property)</text>);
+                                                                              tabItem.Add().Title("FIELDS").Template(@<text>@Html.Partial("FieldDataGridUpdatePartialView", property)
+                                                                                                                      </text>);
+
+                                                                          });
+                                                                      });
+                                                              })
 
                 )
             }
@@ -1116,92 +1129,98 @@
 </div>
 
 
+<div>
+
+    @(Html.DevExtreme().Popup()
+                                      .ID("Card-popup")
+                                      .ElementAttr("class", "popup")
+                                      .TitleTemplate(@<text>
+                                        <div class="long-title text-light d-flex justify-content-center p-3"><h3>Update Document</h3></div>
+                                        <div class="CloseButton pb-2 mb-5">
+                                            @Html.DevExtreme().Button().Icon("close").OnClick("closeButton")
+                                        </div>
+                                    </text>)
+                                                                                                              .Width(750)
+                                                                                                              .Height(760)
+                                                                                                              .ShowTitle(true)
+                                                                                                              .Visible(false)
+                                                                                                              .HoverStateEnabled(true)
+                                                                                                              .DragEnabled(true)
+                                                                                                              .CloseOnOutsideClick(false)
+
+                                                                                                              .ShowCloseButton(true)
 
 
-@(Html.DevExtreme().Popup()
-              .ID("Card-popup")
-              .ElementAttr("class", "popup")
-              .TitleTemplate(@<text>
-                <div class="long-title text-light d-flex justify-content-center p-3"><h3>Update Document</h3></div>
-                <div class="CloseButton pb-2 mb-5">
-                    @Html.DevExtreme().Button().Icon("close").OnClick("closeButton")
-                </div>
-            </text>)
-                          .Width(750)
-                          .Height(760)
+    )
+
+    @(Html.DevExtreme().Popup()
+                                     .ID("Card-delete-popup")
+                                     .ElementAttr("class", "popup")
+                                     .Width(500)
+                                     .Height(350)
+                                     .ShowTitle(true)
+                                     .Title("Do you want to delete this Item?")
+                                     .Visible(false)
+                                     .DragEnabled(true)
+                                     .CloseOnOutsideClick(false)
+
+                                     .ShowCloseButton(true)
+    )
+
+
+
+    @(Html.DevExtreme().Popup()
+                          .ID("Move-Document-Result")
+                          .ElementAttr("class", "popup")
+                          .Width(500)
+                          .Height(350)
                           .ShowTitle(true)
-                          .Visible(false)
-                          .HoverStateEnabled(true)
-                          .DragEnabled(true)
-                          .CloseOnOutsideClick(false)
-                     
-                          .ShowCloseButton(true)
-
-
-)
-
-@(Html.DevExtreme().Popup()
-             .ID("Card-delete-popup")
-             .ElementAttr("class", "popup")
-             .Width(500)
-             .Height(350)
-             .ShowTitle(true)
-             .Title("Do you want to delete this Item?")
-             .Visible(false)
-             .DragEnabled(true)
-             .CloseOnOutsideClick(false)
-           
-             .ShowCloseButton(true)
-)
-
-@(Html.DevExtreme().Popover()
-             .ID("more-option")
-             .ElementAttr("class", "popup")
-             .Width(80)
-             .Height(120)
-             .CloseOnOutsideClick(false)
-           
-             .ShowCloseButton(true)
-)
-
-@(Html.DevExtreme().Popup()
-              .ID("MoveCard-popup")
-              .ElementAttr("class", "popup")
-              .TitleTemplate(@<text>
-                <div class="long-title text-light d-flex justify-content-center p-3">
-                    <h3>Subdomain Change</h3>
-                </div>
-                <div class="CloseButton">
-                    @(Html.DevExtreme().Button().Icon("close").OnClick("closeMoveDocumentPopUp"))
-                </div>
-            </text>)
-                          .Width(450)
-                          .Height(370)
-                          .ShowTitle(true)
+                          .Title("Do you want to delete this Item?")
                           .Visible(false)
                           .DragEnabled(true)
                           .CloseOnOutsideClick(false)
-                        
+
                           .ShowCloseButton(true)
-)
+    )
+    @(Html.DevExtreme().Popover()
+                                     .ID("more-option")
+                                     .ElementAttr("class", "popup")
+                                     .Width(80)
+                                     .Height(120)
+                                     .CloseOnOutsideClick(false)
+                                     .ShowCloseButton(true)
+    )
 
-@(Html.DevExtreme().LoadPanel()
-          .ID("loadPanel")
-          .CloseOnOutsideClick(false)
-     
-      
-)
+    @(Html.DevExtreme().Popup()
+                                      .ID("MoveCard-popup")
+                                      .ElementAttr("class", "popup")
+                                      .TitleTemplate(@<text>
+                                        <div class="long-title text-light d-flex justify-content-center p-3">
+                                            <h3>Subdomain Change</h3>
+                                        </div>
+                                        <div class="CloseButton">
+                                            @(Html.DevExtreme().Button().Icon("close").OnClick("closeMoveDocumentPopUp"))
+                                        </div>
+                                    </text>)
+                                                                                                              .Width(450)
+                                                                                                              .Height(370)
+                                                                                                              .ShowTitle(true)
+                                                                                                              .Visible(false)
+                                                                                                              .DragEnabled(true)
+                                                                                                              .CloseOnOutsideClick(false)
 
+                                                                                                              .ShowCloseButton(true)
+    )
+
+    @(Html.DevExtreme().LoadPanel()
+                                  .ID("loadPanel")
+                                  .CloseOnOutsideClick(false)
+
+
+    )
+</div>
 <script>
-    function shadowCardPopUp() {
-        var popup = $("#AddShadowCard-popup").dxPopup("instance");
-        popup.option("contentTemplate", $("#Add-ShadowPopup-template"));
-        popup.show();
-    }
-
-    function AddClickHandler(e) {
-        $("#addCard").submit();
-    }
+  
     function addShadowClickHandler(e) {
         var a = $("#form").dxForm("instance");
         var form = a.option();
@@ -1220,12 +1239,63 @@
             DevExpress.ui.notify("You must select a source document!!", "error", 1500);
         }
 
-
+    }
+    function moveFieldDataChanged(e) {
+        var a = $("#MoveCardform").dxForm("instance");
+        var form = a.option();
+      
+        if (form.formData.DrcCardName === "") {
+            $("#moveCardButton").dxButton("instance").option("disabled", true);
+        } else {
+            $("#moveCardButton").dxButton("instance").option("disabled", false);
+        }
+     
+      
+     
+        
+    }
+    function moveSelectBoxChanged(e) {
+        if (e.selectedItem == null) {
+            $("#moveCardButton").dxButton("instance").option("disabled", true);
+        } else {
+            $("#moveCardButton").dxButton("instance").option("disabled", false);
+        }
     }
 
-    function moveCardClickHandler(e) {
 
-        $("#MoveCard").submit();
+    function moveCardClickHandler() {
+
+      //  $("#MoveCard").submit();
+        var a = $("#MoveCardform").dxForm("instance").option("formData");
+        var jsonData = JSON.stringify(a);
+        var Id = a.Id;
+        var tagetVersionId = a.SubdomainVersionId;
+        var drcDocumentName = a.DrcCardName;
+      $.ajax({
+          url: '/DrcCards/MoveCardToDestinationSubdomain/',
+          data: jsonData,
+          contentType: 'application/json',
+          processData: false,
+          type: 'POST',
+          success: function (data) {
+            
+              if (data !== null) {
+                  DevExpress.ui.notify(" Your document successfully moved", "success", 3500);
+                 
+              }
+          },
+          failure: function (response) {
+              DevExpress.ui.notify(response.status +" ( "+ response.statusText+" )"+"  "+ response.responseText, "error", 2500);
+              
+          },
+          error: function (response) {
+              alert(response.responseText);
+          }
+      });
+
+
+
+      closeMoveDocumentPopUp();
     }
     function closeMoveDocumentPopUp() {
 

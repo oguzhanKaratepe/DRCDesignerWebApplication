@@ -20,10 +20,12 @@ namespace DRCDesigner.DataAccess.Concrete
    
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
 
-        //public IEnumerable<Field> getDrcCardAllFields(int id)
-        //{
-        //    return DrcCardContext.Fields.Where(m => m.DrcCardId == id).ToList();
-        //}
+        public IEnumerable<Field> getDrcCardAllFields(int id)
+        {
+            var result = DrcCardContext.Fields.Include(m => m.DrcCardFields).ThenInclude(m => m.DrcCard).ToList();
+            return result.Where(m => m.DrcCardFields.Any(c => c.DrcCardId == id)).ToList();
+        }
+     
         public async Task<Field> GetByIdWithoutTracking(int id)
         {
             return await DrcCardContext.Fields.AsNoTracking().Where(c => c.Id == id).SingleAsync();

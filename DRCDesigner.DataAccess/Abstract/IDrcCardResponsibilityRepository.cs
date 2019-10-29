@@ -15,9 +15,9 @@ namespace DRCDesigner.DataAccess.Abstract
         IList<DrcCardResponsibility> GetDrcCardResponsibilitiesByDrcCardId(int id);
         IList<DrcCardResponsibility> GetShadowCardAllResponsibilityCollaborationsByDrcCardId(int id);
         IList<DrcCardResponsibility> GetResponsibilityCollaborationsByResponsibilityId(int id);
-        IList<DrcCardResponsibility> GetResponsibilityAllRelationsByResponsibilityId(int id);
+        IList<DrcCardResponsibility> GetDrcCardResponsibilitiesByResponsibilityId(int id);
         void RemoveAllDrcCardResponsibilityCollaborationsByDrcCardId(int id);
-
+        DrcCardResponsibility GetDrcCardResponsibilityByResponsibilityId(int id);
 
     }
 }

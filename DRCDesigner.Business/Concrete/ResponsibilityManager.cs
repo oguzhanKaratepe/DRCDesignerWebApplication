@@ -145,8 +145,7 @@ namespace DRCDesigner.Business.Concrete
 
         public void Delete(int id)
         {
-            var responsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository
-                .GetResponsibilityAllRelationsByResponsibilityId(id);
+            var responsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByResponsibilityId(id);
             foreach (var responsibilityCollaboration in responsibilityCollaborations)
             {
                 _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(responsibilityCollaboration);

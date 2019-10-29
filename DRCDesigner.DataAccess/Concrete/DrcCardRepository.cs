@@ -210,7 +210,12 @@ namespace DRCDesigner.DataAccess.Concrete
             throw new NotImplementedException();
         }
 
+            public async Task<DrcCard> GetByIdWithoutTracking(int id)
+            {
+                return await DrcCardContext.DrcCards.AsNoTracking().Where(m => m.Id == id).SingleAsync();
+            }
 
-        public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
+
+            public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
     }
 }

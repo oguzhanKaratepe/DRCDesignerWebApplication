@@ -19,7 +19,7 @@ namespace DRCDesigner.Business.Abstract
         Task<IList<DrcCardBusinessModel>> GetAllDrcCards(int subdomainVersionId);
         Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId);
         Task<IList<ShadowCardSelectBoxBusinessModel>> GetShadowSelectBoxOptions(int subdomainVersionId);
-       bool MoveCardToDestinationSubdomain(DrcCard drcCard);
+       
        string GetShadowCardSourcePath(int? shadowCardId);
        DrcCardBusinessModel GetCard(int id);
        int TotalSubdomainSize();

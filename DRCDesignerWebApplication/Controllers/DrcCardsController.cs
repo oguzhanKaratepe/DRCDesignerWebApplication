@@ -23,12 +23,13 @@ namespace DRCDesignerWebApplication.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IDrcCardService _drcCardService;
-
-        public DrcCardsController(IDrcCardService drcCardService, IMapper mapper)
+        private readonly IDrcCardMoveService _drcCardMoveService;
+        public DrcCardsController(IDrcCardService drcCardService, IMapper mapper, IDrcCardMoveService drcCardMoveService)
         {
           
             _mapper = mapper;
             _drcCardService = drcCardService;
+            _drcCardMoveService = drcCardMoveService;
         }
 
         [HttpGet]
@@ -159,12 +160,34 @@ namespace DRCDesignerWebApplication.Controllers
         }
 
         [HttpPost]
-        public ActionResult MoveCardToDestinationSubdomain(int currentSubdomainVersionId,DrcCardViewModel drcCardViewModel)
+        public async Task<IActionResult> MoveCardToDestinationSubdomain([FromBody]DrcCardViewModel drcCardViewModel)
         {
-            var drcCard = _mapper.Map<DrcCard>(drcCardViewModel);
-            var result = _drcCardService.MoveCardToDestinationSubdomain(drcCard);
+            if (ModelState.IsValid)
+            {
+                var result =await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+
+                if (result.MoveResultType!=MoveResultType.Success)
+                {
+                    return BadRequest(result.MoveResultDefinition);
+                }
+                else
+                {
+                    return Ok(result);
+                }
+            }
+            else
+            {
+                return BadRequest("I will add error to here");
+            }
+
             
-            return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
+
+          
+
+           return BadRequest("your Move result  succeed");
+ 
+          return Ok(drcCardViewModel);
+          //  return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
         }
 
         public static List<object> GetDeleteBehaviorOptions()

@@ -58,6 +58,7 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IFieldService, FieldManager>();
             services.AddScoped<IResponsibilityService, ResponsibilityManager>();
             services.AddScoped<IAuthorizationService, AuthorizationManager>();
+            services.AddScoped<IDrcCardMoveService, DrcCardMoveManager>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

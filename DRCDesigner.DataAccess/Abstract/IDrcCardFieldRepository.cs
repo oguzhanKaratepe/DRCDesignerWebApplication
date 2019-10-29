@@ -11,6 +11,7 @@ namespace DRCDesigner.DataAccess.Abstract
 {
     public interface IDrcCardFieldRepository : IRepository<DrcCardField>
     {
+        DrcCardField GetDrcCardIdByFieldId(int id);
         List<DrcCardField> GetDrcCardFieldsByDrcCardId(int id);
         DrcCardField GetFieldCollaborationByFieldId(int id);
         List<DrcCardField> GetAllDrcCardFieldsByFieldId(int id);

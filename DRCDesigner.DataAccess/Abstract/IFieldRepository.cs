@@ -11,7 +11,7 @@ namespace DRCDesigner.DataAccess.Abstract
 {
    public interface IFieldRepository: IRepository<Field>
     {
-        //IEnumerable<Field> getDrcCardAllFields(int id); //id: drcCard id
+        IEnumerable<Field> getDrcCardAllFields(int id); //id: drcCard id
 
         Task<Field> GetByIdWithoutTracking(int id);
     }

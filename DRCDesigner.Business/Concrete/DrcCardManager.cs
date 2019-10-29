@@ -14,12 +14,11 @@ namespace DRCDesigner.Business.Concrete
     public class DrcCardManager : IDrcCardService
     {
         private IDrcUnitOfWork _drcUnitOfWork;
-        private IDocumentTransferUnitOfWork _documentTransferUnitOfWork;
+   
         private IMapper _mapper;
         public DrcCardManager(IMapper mapper, IDrcUnitOfWork drcUnitOfWork, IDocumentTransferUnitOfWork documentTransferUnitOfWork)
         {
             _drcUnitOfWork = drcUnitOfWork;
-            _documentTransferUnitOfWork = documentTransferUnitOfWork;
             _mapper = mapper;
         }
         public async Task<IEnumerable<SubdomainMenuItemBusinessModel>> GetAllSubdomainMenuItems(int versionId)
@@ -334,36 +333,7 @@ namespace DRCDesigner.Business.Concrete
 
         }
 
-        public bool MoveCardToDestinationSubdomain(DrcCard drcCard)
-        {
-            if (drcCard.SubdomainVersionId != 0 && drcCard.Id != 0)
-            {
-                var card = _drcUnitOfWork.DrcCardRepository.GetById(drcCard.Id);
-
-                var cardResponsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository
-                    .GetShadowCardAllResponsibilityCollaborationsByDrcCardId(card.Id);
-                var cardFieldCollaborations =
-                    _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldCollaborationsByDrcCardId(card.Id);
-
-                if (cardResponsibilityCollaborations.Count == 0 && cardFieldCollaborations.Count == 0)
-                {
-                    card.SubdomainVersionId = drcCard.SubdomainVersionId;
-                    card.DrcCardName = drcCard.DrcCardName;
-                    _drcUnitOfWork.DrcCardRepository.Update(card);
-                    _drcUnitOfWork.Complete();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-            else
-            {
-                return false;
-            }
-        }
+     
 
         public string GetShadowCardSourcePath(int? shadowId)
         {
