@@ -59,7 +59,12 @@ namespace DRCDesignerWebApplication.Controllers
             var refenceOptions = await _subdomainVersionService.GetReferenceOptions(id);
             return DataSourceLoader.Load(refenceOptions, loadOptions);
         }
-
+        [HttpGet]
+        public async Task<object> GetVersionExportOptions(DataSourceLoadOptions loadOptions)
+        {
+            var exportOptions = await _subdomainVersionService.GetExportOptions();
+            return DataSourceLoader.Load(exportOptions, loadOptions);
+        }
         [HttpPost]
         public async Task<IActionResult> Post(string values)
         {
@@ -89,7 +94,11 @@ namespace DRCDesignerWebApplication.Controllers
                 {
                     return BadRequest("You are not allowed to change source version!!");
                 }
-                _subdomainVersionService.Update(values, key);
+                 bool update= await _subdomainVersionService.Update(values, key);
+                 if (update)
+                 {
+                     return Ok();
+                 }
             }
             else
                 return BadRequest("I will add error to here");
@@ -107,7 +116,7 @@ namespace DRCDesignerWebApplication.Controllers
             }
             else
             {
-                if (!await _subdomainVersionService.Remove(key))
+                if (! _subdomainVersionService.Remove(key))
                 {
                     return BadRequest("I will add error to here");
                 }

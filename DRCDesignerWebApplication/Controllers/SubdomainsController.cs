@@ -23,10 +23,12 @@ namespace DRCDesignerWebApplication.Controllers
 
         private readonly ISubdomainService _subdomainService;
         private readonly IMapper _mapper;
-        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper)
+        private readonly IExportService _exportService;
+        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper,IExportService exportService)
         {
             _subdomainService = subdomainService;
             _mapper = mapper;
+            _exportService = exportService;
         }
 
         public IActionResult Index()
@@ -48,7 +50,7 @@ namespace DRCDesignerWebApplication.Controllers
 
             SubdomainListViewModel subdomainListViewModel=new SubdomainListViewModel
             {
-                Subdomains=await _subdomainService.GetAll()
+                Subdomains= _subdomainService.GetAll()
              };
 
             return DataSourceLoader.Load(subdomainListViewModel.Subdomains, loadOptions);
@@ -89,6 +91,12 @@ namespace DRCDesignerWebApplication.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<IActionResult>  CreateOutPutHtml(ExportViewModel exportViewModel)
+        {
+            _exportService.ExportSubdomainVersionAsHtmlFile(exportViewModel.VersionId);
+            return Ok();
+        }
         [HttpGet]
         public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
         {

@@ -44,10 +44,14 @@ namespace DRCDesigner.DataAccess.Concrete
                 .Where(a => a.ResponsibilityId == id && a.IsRelationCollaboration).ToList();
         }
 
-        public IList<DrcCardResponsibility> GetResponsibilityAllRelationsByResponsibilityId(int id)
+        public IList<DrcCardResponsibility> GetDrcCardResponsibilitiesByResponsibilityId(int id)
         {
             return DrcCardContext.DrcCardResponsibilities
                 .Where(a => a.ResponsibilityId == id).ToList();
+        }
+        public DrcCardResponsibility GetDrcCardResponsibilityByResponsibilityId(int id)
+        {
+            return DrcCardContext.DrcCardResponsibilities.Single(a => a.ResponsibilityId == id && !a.IsRelationCollaboration);
         }
 
         public void RemoveAllDrcCardResponsibilityCollaborationsByDrcCardId(int id)

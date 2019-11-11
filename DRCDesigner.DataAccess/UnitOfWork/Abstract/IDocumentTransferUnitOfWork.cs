@@ -14,6 +14,14 @@ namespace DRCDesigner.DataAccess.UnitOfWork.Abstract
         IDrcCardRepository DrcCardRepository { get;  }
         IDrcCardResponsibilityRepository DrcCardResponsibilityRepository { get; }
         IDrcCardFieldRepository DrcCardFieldRepository { get; }
+        ISubdomainVersionReferenceRepository SubdomainVersionReferenceRepository { get; }
+        ISubdomainVersionRepository SubdomainVersionRepository { get; }
+        ISubdomainRepository SubdomainRepository { get; }
+        IFieldRepository FieldRepository { get; }
+        IResponsibilityRepository ResponsibilityRepository { get; }
+        IAuthorizationRepository AuthorizationRepository { get; }
+        IAuthorizationRoleRepository AuthorizationRoleRepository { get; }
+
 
     }
 }

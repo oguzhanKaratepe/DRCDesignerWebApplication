@@ -145,8 +145,7 @@ namespace DRCDesigner.Business.Concrete
 
         public void Delete(int id)
         {
-            var responsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository
-                .GetResponsibilityAllRelationsByResponsibilityId(id);
+            var responsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByResponsibilityId(id);
             foreach (var responsibilityCollaboration in responsibilityCollaborations)
             {
                 _drcUnitOfWork.DrcCardResponsibilityRepository.Remove(responsibilityCollaboration);
@@ -159,7 +158,7 @@ namespace DRCDesigner.Business.Concrete
 
         public async Task<IList<DrcCard>> GetResponsibilityShadows(int versionId, int cardId)
         {
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(versionId);
+            var drcCards = _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(versionId);
             IList<DrcCard> cards = new List<DrcCard>();
             foreach (var card in drcCards)
             {

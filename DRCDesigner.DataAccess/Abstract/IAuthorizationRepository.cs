@@ -11,7 +11,7 @@ namespace DRCDesigner.DataAccess.Abstract
 {
     public interface IAuthorizationRepository:IRepository<Authorization>
     {
-       Task<IList<Authorization>> GetAuthorizationsByDrcCardId(int Id);
-       Task<Authorization> GetByIdWithoutTracking(int id);
+       IList<Authorization> GetAuthorizationsByDrcCardId(int Id);
+       Authorization GetByIdWithoutTracking(int id);
     }
 }

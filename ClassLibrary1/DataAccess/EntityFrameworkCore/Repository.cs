@@ -19,9 +19,9 @@ namespace DRCDesigner.Core.DataAccess.EntityFrameworkCore
         {
             _context.Set<TEntity>().Add(entity);
         }
-        public async Task<IEnumerable<TEntity>> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
-           return await _context.Set<TEntity>().ToListAsync();
+           return  _context.Set<TEntity>().ToList();
         }
 
         public TEntity GetById(int id)

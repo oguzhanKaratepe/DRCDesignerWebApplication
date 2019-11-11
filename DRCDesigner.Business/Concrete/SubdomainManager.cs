@@ -25,12 +25,12 @@ namespace DRCDesigner.Business.Concrete
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Subdomain>> GetAll()
+        public IEnumerable<Subdomain> GetAll()
         {
-            return await _subdomainUnitOfWork.SubdomainRepository.GetAll();
+            return  _subdomainUnitOfWork.SubdomainRepository.GetAll();
         }
 
-        public async void Add(string values)
+        public void Add(string values)
         {
             var newSubdomain = new Subdomain();
             JsonConvert.PopulateObject(values, newSubdomain);
@@ -39,15 +39,17 @@ namespace DRCDesigner.Business.Concrete
             _subdomainUnitOfWork.Complete();
 
 
-            var globalRoles = await _subdomainUnitOfWork.RoleRepository.getGlobalRoles();
-            if (globalRoles.Count() == 0)
+            var globalRoles = _subdomainUnitOfWork.RoleRepository.getGlobalRoles();
+            if (!globalRoles.Any())
             {
-                var role=new Role();
+                var role = new Role();
                 role.RoleName = "Admin";
                 role.IsGlobal = true;
                 _subdomainUnitOfWork.RoleRepository.Add(role);
                 _subdomainUnitOfWork.Complete();
             }
+
+       
 
         }
         public void Update(string values, int id)
@@ -69,7 +71,7 @@ namespace DRCDesigner.Business.Concrete
 
                 foreach (var version in subdomainVersions)
                 {
-                    await _subdomainVersionService.Remove(version.Id);
+                     _subdomainVersionService.Remove(version.Id);
                 }
 
                 _subdomainUnitOfWork.SubdomainRepository.Remove(subdomain);

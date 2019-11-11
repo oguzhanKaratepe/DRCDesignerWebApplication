@@ -30,7 +30,7 @@ namespace DRCDesigner.Business.Concrete
         }
 
 
-
+      
 
         public async Task<bool> Add(string values)
         {
@@ -43,7 +43,7 @@ namespace DRCDesigner.Business.Concrete
             {
                 var sourceId = (int)subdomainVersionModel.SourceVersionId;
                 var sourceSubdomainVersion =
-                    await _subdomainUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(sourceId);
+                     _subdomainUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(sourceId);
                 if (sourceSubdomainVersion.EditLock)
                 {
                     return false;
@@ -59,8 +59,7 @@ namespace DRCDesigner.Business.Concrete
                         subdomainVersionModel.ReferencedSubdomainVersions.Add(newReference);
                     }
 
-                    var sourceSubdomainVersionRoles =
-                        await _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(sourceId);
+                    var sourceSubdomainVersionRoles =  _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(sourceId);
 
                     foreach (var sourceSubVersionRole in sourceSubdomainVersionRoles)
                     {
@@ -97,11 +96,11 @@ namespace DRCDesigner.Business.Concrete
             return true;
         }
 
-        public async void CloneSourceVersionToNewVersion(SubdomainVersion subdomainVersion)
+        public void CloneSourceVersionToNewVersion(SubdomainVersion subdomainVersion)
         {
             var sourceId = (int)subdomainVersion.SourceVersionId;
           
-            var sourceVersionCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(sourceId);
+            var sourceVersionCards = _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(sourceId);
 
 
             IList<SourceNewDrcCardMap> sourceNewDrcCardMaps = new List<SourceNewDrcCardMap>();
@@ -116,7 +115,7 @@ namespace DRCDesigner.Business.Concrete
                 newDrcCard.SubdomainVersionId = 0;
                 newDrcCard.SubdomainVersion = subdomainVersion;
                 _drcUnitOfWork.DrcCardRepository.Add(newDrcCard);
-
+                _drcUnitOfWork.Complete();
                 sourceNewDrcCardMap.NewCardId = newDrcCard.Id;
                 sourceNewDrcCardMaps.Add(sourceNewDrcCardMap);
             }
@@ -132,7 +131,7 @@ namespace DRCDesigner.Business.Concrete
                 {
                     Responsibility newResponsibility = new Responsibility();
                     newResponsibility =
-                        await _drcUnitOfWork.ResponsibilityRepository.GetByIdWithoutTracking(sourceDrcCardResponsibility
+                         _drcUnitOfWork.ResponsibilityRepository.GetByIdWithoutTracking(sourceDrcCardResponsibility
                             .ResponsibilityId);
                     var sourceResponsibilityCollaborations = _drcUnitOfWork.DrcCardResponsibilityRepository.GetResponsibilityCollaborationsByResponsibilityId(newResponsibility.Id);
                     newResponsibility.Id = 0;
@@ -155,7 +154,9 @@ namespace DRCDesigner.Business.Concrete
                         newResponsibilityCollaboration.IsRelationCollaboration =
                             sourceResponsibilityCollaboration.IsRelationCollaboration;
                         _drcUnitOfWork.DrcCardResponsibilityRepository.Add(newResponsibilityCollaboration);
+                        _drcUnitOfWork.Complete();
                     }
+                    _drcUnitOfWork.Complete();
 
 
                 }
@@ -166,7 +167,7 @@ namespace DRCDesigner.Business.Concrete
                 foreach (var sourceCardField in sourceCardFields)
                 {
                     Field newField = new Field();
-                    newField = await _drcUnitOfWork.FieldRepository.GetByIdWithoutTracking(sourceCardField.FieldId);
+                    newField =  _drcUnitOfWork.FieldRepository.GetByIdWithoutTracking(sourceCardField.FieldId);
                     var sourceFieldCollaboration =
                         _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(newField.Id);
                     newField.Id = 0;
@@ -189,15 +190,17 @@ namespace DRCDesigner.Business.Concrete
                     newDrcCardFieldCollaboration.Field = newField;
                     newDrcCardFieldCollaboration.IsRelationCollaboration = true;
                     _drcUnitOfWork.DrcCardFieldRepository.Add(newDrcCardFieldCollaboration);
+                    _drcUnitOfWork.Complete();
                     }
+                    _drcUnitOfWork.Complete();
                 }
 
-                var sourceCardAuthorizations = await _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(sourceNewDrcCardMap.SourceCardId);
+                var sourceCardAuthorizations = _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(sourceNewDrcCardMap.SourceCardId);
 
                 foreach (var sourceCardAuthorization in sourceCardAuthorizations)
                 {
                     Authorization newAuthorization=new Authorization();
-                    newAuthorization = await _drcUnitOfWork.AuthorizationRepository.GetByIdWithoutTracking(sourceCardAuthorization.Id);
+                    newAuthorization =  _drcUnitOfWork.AuthorizationRepository.GetByIdWithoutTracking(sourceCardAuthorization.Id);
                     var oldAuthorizationRoles=_drcUnitOfWork.AuthorizationRoleRepository.GetAuthorizationRolesByAuthorizationId(newAuthorization.Id);
                     newAuthorization.Id = 0;
                     newAuthorization.DrcCardId = 0;
@@ -210,11 +213,14 @@ namespace DRCDesigner.Business.Concrete
                         authorizationRole.AuthorizationId = newAuthorization.Id;
                         authorizationRole.RoleId = oldAuthorizationRole.RoleId;
                         _drcUnitOfWork.AuthorizationRoleRepository.Add(authorizationRole);
+                        _drcUnitOfWork.Complete();
                     }
                     
                 }
                 _drcUnitOfWork.Complete();
             }
+
+         
         }
 
 
@@ -244,7 +250,7 @@ namespace DRCDesigner.Business.Concrete
 
             foreach (var version in versions)
             {
-                var versionWithRefs = await _subdomainUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(version.Id);
+                var versionWithRefs =  _subdomainUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(version.Id);
 
                 var versiyonBusinessModel = _mapper.Map<SubdomainVersionBusinessModel>(versionWithRefs);
                 int i = 0;
@@ -279,7 +285,7 @@ namespace DRCDesigner.Business.Concrete
         {
             IList<SubdomainVersionBusinessModel> versionsBusinessModels = new List<SubdomainVersionBusinessModel>();
 
-            var versions = await _subdomainUnitOfWork.SubdomainVersionRepository.GetAll();
+            var versions =  _subdomainUnitOfWork.SubdomainVersionRepository.GetAll();
 
             foreach (var version in versions)
             {
@@ -318,7 +324,22 @@ namespace DRCDesigner.Business.Concrete
 
             return allVersions;
         }
+        public async Task<IList<SubdomainVersionBusinessModel>> GetExportOptions()
+        {
+            IList<SubdomainVersionBusinessModel> allVersions = new List<SubdomainVersionBusinessModel>();
+            var subdomainVersions = _subdomainUnitOfWork.SubdomainVersionRepository.GetAll();
 
+            foreach (var subdomainVersion in subdomainVersions)
+            {
+                var subdomainversionBModel = _mapper.Map<SubdomainVersionBusinessModel>(subdomainVersion);
+                subdomainversionBModel.SubdomainName =
+                    _subdomainUnitOfWork.SubdomainRepository.GetSubdomainName(subdomainversionBModel.SubdomainId);
+                allVersions.Add(subdomainversionBModel);
+
+            }
+
+            return allVersions;
+        }
 
         public async Task<bool> VersionIsASource(int subdomainVersionId)
         {
@@ -332,7 +353,7 @@ namespace DRCDesigner.Business.Concrete
                 return false;
             }
         }
-        public async Task<bool> Remove(int subdomainVersionId)
+        public bool Remove(int subdomainVersionId)
         {
            
 
@@ -340,15 +361,15 @@ namespace DRCDesigner.Business.Concrete
             {
                 var subdomainVersion = _subdomainUnitOfWork.SubdomainVersionRepository.GetById(subdomainVersionId);
                 var cards =
-                    await _subdomainUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(subdomainVersionId);
+                     _subdomainUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(subdomainVersionId);
 
                 foreach (var drcCard in cards)
                 {
-                    _drcCardService.Delete(drcCard);
+                    _drcCardService.Delete(drcCard.Id);
                 }
 
                 var versionReferenceRelations =
-                    await  _subdomainUnitOfWork.SubdomainVersionReferenceRepository.getVersionReferencedSubdomainVersions(
+                      _subdomainUnitOfWork.SubdomainVersionReferenceRepository.getVersionReferencedSubdomainVersions(
                         subdomainVersionId);
                 foreach (var relation in versionReferenceRelations)
                 {
@@ -356,14 +377,14 @@ namespace DRCDesigner.Business.Concrete
                 }
 
                 var versionRoles =
-                    await _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(
+                     _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(
                         subdomainVersionId);
                 foreach (var role in versionRoles)
                 {
                     _subdomainUnitOfWork.SubdomainVersionRoleRepository.Remove(role);
                     _subdomainUnitOfWork.Complete();
 
-                    var rolesReferences= await _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(role.RoleId);
+                    var rolesReferences=  _subdomainUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(role.RoleId);
                     if (rolesReferences.Count() == 0)
                     {
                         _subdomainUnitOfWork.RoleRepository.Remove(role.RoleId);
@@ -380,7 +401,7 @@ namespace DRCDesigner.Business.Concrete
             }
         }
 
-        public async void Update(string values, int id)
+        public async Task<bool> Update(string values, int id)
         {
             var subdomainVersion = _subdomainUnitOfWork.SubdomainVersionRepository.GetById(id);
             var subdomainReferences = await _subdomainUnitOfWork.SubdomainVersionReferenceRepository.getAllVersionReferences(id);
@@ -408,6 +429,7 @@ namespace DRCDesigner.Business.Concrete
                 subdomainVersion.ReferencedSubdomainVersions.Add(newReference);
             }
             _subdomainUnitOfWork.Complete();
+            return true;
         }
 
         public async Task<bool> LookForSourceChange(int id, string values)

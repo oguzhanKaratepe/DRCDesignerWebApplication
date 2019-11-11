@@ -20,14 +20,14 @@ namespace DRCDesigner.DataAccess.Concrete
         {
 
         }
-        public async Task<IList<Entities.Concrete.Authorization>> GetAuthorizationsByDrcCardId(int Id)
+        public IList<Entities.Concrete.Authorization> GetAuthorizationsByDrcCardId(int Id)
         {
-            return await DrcCardContext.Authorizations.Include(m => m.AuthorizationRoles).Where(m => m.DrcCardId == Id).ToListAsync();
+            return  DrcCardContext.Authorizations.Include(m => m.AuthorizationRoles).Where(m => m.DrcCardId == Id).ToList();
         }
 
-        public async Task<Authorization> GetByIdWithoutTracking(int id)
+        public Authorization GetByIdWithoutTracking(int id)
         {
-           return await DrcCardContext.Authorizations.AsNoTracking().Where(c=>c.Id==id).SingleAsync();
+           return  DrcCardContext.Authorizations.AsNoTracking().Single(c => c.Id==id);
         }
 
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }

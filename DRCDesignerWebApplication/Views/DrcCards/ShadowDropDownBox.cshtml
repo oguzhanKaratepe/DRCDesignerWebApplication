@@ -1,4 +1,4 @@
-﻿@model DRCDesignerWebApplication.ViewModels.DrcCardViewModel;
+﻿
 <script>
     function gridBox_valueChanged(args, setValueMethod) {
         var $dataGrid = $("#dDBoxDataGrid");
@@ -24,7 +24,7 @@
       .Value(new JS("data.ShadowCardIds"))
       .ValueExpr("Id")
       .DisplayExpr("DrcCardName")
-      .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {Id = Model.SubdomainVersionId, cardId = Model.Id }))
+      .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {cardId = new JS("tabExtras.id") }))
       .Placeholder("Select Collaboration")
       .Width(172)
       .ShowClearButton(true)
@@ -44,7 +44,7 @@
                                  .ShowBorders(true)
                                  .ShowRowLines(true)
                                  .Scrolling( scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-                                 .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {Id = Model.SubdomainVersionId, cardId = Model.Id }))
+                                 .DataSource(d => d.Mvc().LoadAction("GetCardCollaborationOptions").Controller("DrcCards").Key("Id").LoadParams(new {cardId = new JS("tabExtras.id") }))
                                  
                                  .Columns(columns =>
                                  {

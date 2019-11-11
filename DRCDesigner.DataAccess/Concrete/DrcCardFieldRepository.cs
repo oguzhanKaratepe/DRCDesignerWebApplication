@@ -26,7 +26,10 @@ namespace DRCDesigner.DataAccess.Concrete
         {
             return DrcCardContext.DrcCardFields.Where(a => a.FieldId == id).ToList();
         }
-
+        public DrcCardField GetDrcCardIdByFieldId(int id)
+        {
+            return DrcCardContext.DrcCardFields.Single(a => a.FieldId == id && !a.IsRelationCollaboration);
+        }
         public List<DrcCardField> GetDrcCardFieldCollaborationsByDrcCardId(int id)
         {
             return DrcCardContext.DrcCardFields.Where(a => a.DrcCardId == id && a.IsRelationCollaboration)

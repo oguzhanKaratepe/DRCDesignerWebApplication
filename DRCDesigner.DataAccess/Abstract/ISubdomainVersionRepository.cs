@@ -11,7 +11,7 @@ namespace DRCDesigner.DataAccess.Abstract
     public interface ISubdomainVersionRepository :IRepository<SubdomainVersion>
     {
         Task<IEnumerable<SubdomainVersion>> GetAllSubdomainVersionsBySubdomainId(int subdomainId);
-        Task<SubdomainVersion> GetVersionWithReferencesById(int versionId);
+        SubdomainVersion GetVersionWithReferencesById(int versionId);
         Task<SubdomainVersion> GetSubdomainVersionCardsWithId(int versionId);
 
         Task<bool> CheckIfSourceVersion(int versionId);
