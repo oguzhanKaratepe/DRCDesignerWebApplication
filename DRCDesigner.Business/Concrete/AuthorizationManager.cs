@@ -23,7 +23,7 @@ namespace DRCDesigner.Business.Concrete
         }
         public async Task<IList<AuthorizationBusinessModel>> GetCardAuthorizations(int cardId)
         {
-            IEnumerable<Authorization> authorizations = await _roleUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(cardId);
+            IEnumerable<Authorization> authorizations =  _roleUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(cardId);
 
             var authorizationModels = new List<AuthorizationBusinessModel>();
 
@@ -114,7 +114,7 @@ namespace DRCDesigner.Business.Concrete
         public async Task<IEnumerable<object>> GetAuthorizationRoles(int id)
         {
             //this is roles with version and global ones
-            var subdomainVersionRoles = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(id);
+            var subdomainVersionRoles = _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(id);
          
             IList<RoleBusinessModel> rolesBag = new List<RoleBusinessModel>();
 
@@ -126,7 +126,7 @@ namespace DRCDesigner.Business.Concrete
 
             }
 
-            var globalRoles = await _roleUnitOfWork.RoleRepository.getGlobalRoles();
+            var globalRoles = _roleUnitOfWork.RoleRepository.getGlobalRoles();
             foreach (var globalRole in globalRoles)
             {
                 var businessRoleModel = _mapper.Map<RoleBusinessModel>(globalRole);

@@ -51,7 +51,7 @@ namespace DRCDesigner.Business.Concrete
             List<int> selectedRoleIds=new List<int>();
             foreach (var subdomainVersion in  subdomainWithVersions.SubdomainVersions)
             {
-                var SubdomainVersionRoles = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(subdomainVersion.Id);
+                var SubdomainVersionRoles =  _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllVersionRolesBySubdomainVersionId(subdomainVersion.Id);
 
                 foreach (var SubdomainVersionRole in SubdomainVersionRoles)
                 {
@@ -60,7 +60,7 @@ namespace DRCDesigner.Business.Concrete
                     if (!selectedRoleIds.Contains(role.Id)) { 
 
                     var roleBusinessModel = _mapper.Map<RoleBusinessModel>(role);
-                    var roleVersions = await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(SubdomainVersionRole.RoleId);
+                    var roleVersions =  _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(SubdomainVersionRole.RoleId);
 
                     roleBusinessModel.SubdomainVersionRoleIds = new int[roleVersions.Count()];
                     int i = 0;
@@ -83,12 +83,12 @@ namespace DRCDesigner.Business.Concrete
 
         }
 
-        public async void Update(string values, int id)
+        public async Task Update(string values, int id)
         {
             var role = _roleUnitOfWork.RoleRepository.GetById(id);
 
             var roleSubdomainVersions =
-                await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(id);
+                _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(id);
             JsonConvert.PopulateObject(values, role);
 
             RoleBusinessModel roleBusinessModel = new RoleBusinessModel();
@@ -120,7 +120,7 @@ namespace DRCDesigner.Business.Concrete
             if (roleId > 0)
             {
                 _roleUnitOfWork.RoleRepository.Remove(roleId);
-               var subdomainVersionRoles= await _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(roleId);
+               var subdomainVersionRoles= _roleUnitOfWork.SubdomainVersionRoleRepository.GetAllRoleVersionsByRoleId(roleId);
 
                foreach (var subdomainVersionRole in subdomainVersionRoles)
                {

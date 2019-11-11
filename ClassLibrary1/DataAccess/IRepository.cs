@@ -17,6 +17,6 @@ namespace DRCDesigner.Core.DataAccess
 
         TEntity GetById(int id);
   
-        Task <IEnumerable<TEntity>> GetAll();
+        IEnumerable<TEntity> GetAll();
     }
 }

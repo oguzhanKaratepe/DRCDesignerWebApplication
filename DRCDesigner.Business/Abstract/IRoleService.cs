@@ -12,7 +12,7 @@ namespace DRCDesigner.Business.Abstract
     {
         Task<IEnumerable<RoleBusinessModel>> GetAllSubdomainRoles(int subdomainId);
         void Add(string values);
-        void Update(string values, int id);
+        Task Update(string values, int id);
         Task<bool> Remove(int roleId);
     }
 }

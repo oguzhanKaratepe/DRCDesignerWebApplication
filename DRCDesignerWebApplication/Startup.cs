@@ -7,7 +7,6 @@ using DRCDesigner.Business;
 using DRCDesigner.DataAccess.Concrete;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.DataAccess.UnitOfWork.Concrete;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -59,6 +58,8 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IResponsibilityService, ResponsibilityManager>();
             services.AddScoped<IAuthorizationService, AuthorizationManager>();
             services.AddScoped<IDrcCardMoveService, DrcCardMoveManager>();
+            services.AddScoped<IExportService, ExportManager>();
+
 
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -83,10 +84,14 @@ namespace DRCDesignerWebApplication
         
 
             services.AddMvc();
-
+            //DrcDesigner
+            //StudentManagement
+            var connection = @"server=(localdb)\MSSQLLocalDB; Database=DrcDesigner; Trusted_Connection=true";
             services.AddSession();
 
-            services.AddDbContext<DrcCardContext>(context => { context.UseInMemoryDatabase("OguzDatabase"); });
+            services.AddDbContext<DrcCardContext>(options =>
+              options.UseSqlServer(connection, b => b.MigrationsAssembly("DRCDesignerWebApplication")));
+           // services.AddDbContext<DrcCardContext>(context => { context.UseInMemoryDatabase("OguzDatabase"); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

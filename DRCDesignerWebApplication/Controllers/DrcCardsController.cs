@@ -48,19 +48,19 @@ namespace DRCDesignerWebApplication.Controllers
                     drcCardViewModel = _mapper.Map<DrcCardViewModel>(card);
 
 
-                    foreach (var responsibilityBusinessModel in await _drcCardService.getListOfDrcCardResponsibilities(card.Id))
+                    foreach (var responsibilityBusinessModel in  _drcCardService.getListOfDrcCardResponsibilities(card.Id))
                     {
                         drcCardViewModel.Responsibilities.Add(_mapper.Map<ResponsibilityViewModel>(responsibilityBusinessModel));
                     }
 
 
-                    foreach (var fieldBusinessModel in await _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
+                    foreach (var fieldBusinessModel in _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
                     {
                         drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
                     }
 
 
-                    foreach (var authorizationBusinessModel in await _drcCardService.getListOfDrcCardAuthorizations(card.Id))
+                    foreach (var authorizationBusinessModel in _drcCardService.getListOfDrcCardAuthorizations(card.Id))
                     {
                         drcCardViewModel.Authorizations.Add(_mapper.Map<AuthorizationViewModel>(authorizationBusinessModel));
                     }
@@ -79,7 +79,52 @@ namespace DRCDesignerWebApplication.Controllers
             return View(drcCardContainerViewModel);
             
         }
+        [HttpGet]
+        public async Task<object> Presentation( string searchText)
+        {
+            int id = Convert.ToInt32(HttpContext.Request.Query["id"]);
 
+            DrcCardContainerViewModel drcCardContainerViewModel = new DrcCardContainerViewModel();
+          
+            if (id != 0)
+            {
+                var tempCards = await _drcCardService.GetAllDrcCards(id);
+
+                foreach (var card in tempCards)
+                {
+                    DrcCardViewModel drcCardViewModel = _mapper.Map<DrcCardViewModel>(card);
+
+
+                    foreach (var responsibilityBusinessModel in _drcCardService.getListOfDrcCardResponsibilities(card.Id))
+                    {
+                        drcCardViewModel.Responsibilities.Add(_mapper.Map<ResponsibilityViewModel>(responsibilityBusinessModel));
+                    }
+
+
+                    foreach (var fieldBusinessModel in _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
+                    {
+                        drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
+                    }
+
+
+                    foreach (var authorizationBusinessModel in _drcCardService.getListOfDrcCardAuthorizations(card.Id))
+                    {
+                        drcCardViewModel.Authorizations.Add(_mapper.Map<AuthorizationViewModel>(authorizationBusinessModel));
+                    }
+
+                    drcCardViewModel.SourceDrcCardPath = _drcCardService.GetShadowCardSourcePath(card.MainCardId);
+                    drcCardContainerViewModel.DrcCardViewModes.Add(drcCardViewModel);
+
+                }
+
+                drcCardContainerViewModel.PresentationHeader = _drcCardService.GetPresentationHeader(id);
+                drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
+            }
+          
+            return View(drcCardContainerViewModel);
+
+        }
+     
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult PostShadow(DrcCardViewModel drcCardViewModel)
@@ -131,13 +176,16 @@ namespace DRCDesignerWebApplication.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(DrcCardContainerViewModel modelContainer)
+        public async Task<IActionResult> Delete([FromBody]DrcCardViewModel model)
         {
-            var cardToDelete = _mapper.Map<DrcCard>(modelContainer.DrcCardViewModel);
-            _drcCardService.Delete(cardToDelete);
+            string result= await _drcCardService.Delete(model.Id);
+
+             if (string.IsNullOrEmpty(result))
+             {
+                 return Ok();
+             }
            
-            return Redirect("/DrcCards/index?id="+ cardToDelete.SubdomainVersionId);
+            return BadRequest(result);
         }
 
         [HttpGet]
@@ -180,13 +228,6 @@ namespace DRCDesignerWebApplication.Controllers
                 return BadRequest("I will add error to here");
             }
 
-            
-
-          
-
-           return BadRequest("your Move result  succeed");
- 
-          return Ok(drcCardViewModel);
           //  return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
         }
 

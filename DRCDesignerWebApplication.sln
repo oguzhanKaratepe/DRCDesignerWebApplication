@@ -5,13 +5,13 @@ VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRCDesignerWebApplication", "DRCDesignerWebApplication\DRCDesignerWebApplication.csproj", "{2E3218EE-DCA4-48B9-A2E8-09DA801B95FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRCDesigner.Core", "ClassLibrary1\DRCDesigner.Core.csproj", "{AB6B6470-4F41-4D67-A542-B77A3381A3ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRCDesigner.Core", "ClassLibrary1\DRCDesigner.Core.csproj", "{AB6B6470-4F41-4D67-A542-B77A3381A3ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRCDesigner.Entities", "DRCDesigner.Entities\DRCDesigner.Entities.csproj", "{C5EACBA0-5DC8-4297-87D1-3E7023D7C951}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRCDesigner.Entities", "DRCDesigner.Entities\DRCDesigner.Entities.csproj", "{C5EACBA0-5DC8-4297-87D1-3E7023D7C951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRCDesigner.Business", "DRCDesigner.Business\DRCDesigner.Business.csproj", "{9EBEC07A-A89E-4CB9-BCAF-88069E82F474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRCDesigner.Business", "DRCDesigner.Business\DRCDesigner.Business.csproj", "{9EBEC07A-A89E-4CB9-BCAF-88069E82F474}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRCDesigner.DataAccess", "DRCDesigner.DataAccess\DRCDesigner.DataAccess.csproj", "{5AD91BB1-9FB5-4269-99BC-CAB6855A59D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRCDesigner.DataAccess", "DRCDesigner.DataAccess\DRCDesigner.DataAccess.csproj", "{5AD91BB1-9FB5-4269-99BC-CAB6855A59D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

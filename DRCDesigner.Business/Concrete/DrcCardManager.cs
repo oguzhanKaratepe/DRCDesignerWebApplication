@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace DRCDesigner.Business.Concrete
         private IDrcUnitOfWork _drcUnitOfWork;
    
         private IMapper _mapper;
-        public DrcCardManager(IMapper mapper, IDrcUnitOfWork drcUnitOfWork, IDocumentTransferUnitOfWork documentTransferUnitOfWork)
+        public DrcCardManager(IMapper mapper, IDrcUnitOfWork drcUnitOfWork)
         {
             _drcUnitOfWork = drcUnitOfWork;
             _mapper = mapper;
@@ -98,9 +99,52 @@ namespace DRCDesigner.Business.Concrete
             _drcUnitOfWork.Complete();
         }
 
-        public async void Delete(DrcCard drcCard)
+        private string checkDocumentHasAShadowDocument(DrcCard drcCard)
         {
-            var cardResponsibilityCollections = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(drcCard.Id);
+            var subdomainVersions = _drcUnitOfWork.SubdomainVersionRepository.GetAll();
+
+            ArrayList listOfPossibleShadowAreas=new ArrayList();
+
+            foreach (var subdomainVersion in subdomainVersions)
+            {
+                var versionWithReferences = _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersion.Id);
+                foreach (var versionReference in versionWithReferences.ReferencedSubdomainVersions)
+                {
+                    if (versionReference.ReferencedVersionId == drcCard.SubdomainVersionId)
+                    {
+                        listOfPossibleShadowAreas.Add(versionReference.SubdomainVersionId);
+                    }
+                }
+
+            }
+            string shadowUsedVersions = null;
+            foreach (int possibleShadowAreaVersion in listOfPossibleShadowAreas)
+            {
+                var versionDocuments =_drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(possibleShadowAreaVersion);
+
+                foreach (var drcDocument in versionDocuments)
+                {
+                    if (drcDocument.MainCardId == drcCard.Id)
+                    {
+                        var version = _drcUnitOfWork.SubdomainVersionRepository.GetById(drcDocument.SubdomainVersionId);
+                        string Subdomain = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
+                        shadowUsedVersions+= Subdomain+" > "+version.VersionNumber+" > "+drcDocument.DrcCardName+" ";
+                    }
+                }
+            }
+
+            return shadowUsedVersions;
+        }
+
+        public async Task<string> Delete(int id)
+        {
+            var drcCard = _drcUnitOfWork.DrcCardRepository.GetById(id);
+
+            string hasShadow = checkDocumentHasAShadowDocument(drcCard);
+
+            if (String.IsNullOrEmpty(hasShadow))
+            {
+                var cardResponsibilityCollections = _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(drcCard.Id);
             if (cardResponsibilityCollections != null)
             {
                 foreach (var cardResponsibilityCollection in cardResponsibilityCollections)
@@ -136,7 +180,7 @@ namespace DRCDesigner.Business.Concrete
                 }
             }
 
-            var cardAuthorizations = await _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(drcCard.Id);
+            var cardAuthorizations = _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(drcCard.Id);
 
             if (cardAuthorizations != null)
             {
@@ -181,9 +225,13 @@ namespace DRCDesigner.Business.Concrete
             }
             _drcUnitOfWork.DrcCardRepository.Remove(drcCard);
             _drcUnitOfWork.Complete();
+            return "";
+            }
+
+            return hasShadow;
         }
 
-        public async Task<IList<ResponsibilityBusinessModel>> getListOfDrcCardResponsibilities(int cardId)
+        public IList<ResponsibilityBusinessModel> getListOfDrcCardResponsibilities(int cardId)
         {
             var responsibilitiesCollection =
                 _drcUnitOfWork.DrcCardResponsibilityRepository.GetDrcCardResponsibilitiesByDrcCardId(cardId);
@@ -217,7 +265,7 @@ namespace DRCDesigner.Business.Concrete
             return responsibilityBusinessModels;
         }
 
-        public async Task<IList<FieldBusinessModel>> getListOfDrcCardFields(int cardId, int? mainCardId)
+        public IList<FieldBusinessModel> getListOfDrcCardFields(int cardId, int? mainCardId)
         {
             var drcCardFieldCollections = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(cardId);
             IList<FieldBusinessModel> fieldBusinessModels = new List<FieldBusinessModel>();
@@ -262,10 +310,10 @@ namespace DRCDesigner.Business.Concrete
             return fieldBusinessModels;
         }
 
-        public async Task<IList<AuthorizationBusinessModel>> getListOfDrcCardAuthorizations(int cardId)
+        public IList<AuthorizationBusinessModel> getListOfDrcCardAuthorizations(int cardId)
         {
             IList<AuthorizationBusinessModel> authorizationBusinessModels = new List<AuthorizationBusinessModel>();
-            foreach (var authorization in await _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(cardId))
+            foreach (var authorization in _drcUnitOfWork.AuthorizationRepository.GetAuthorizationsByDrcCardId(cardId))
             {
                 var AuthorizationBusinessModel = _mapper.Map<AuthorizationBusinessModel>(authorization);
                 var authroles = _drcUnitOfWork.AuthorizationRoleRepository.GetAuthorizationRolesByAuthorizationId(authorization.Id);
@@ -284,7 +332,7 @@ namespace DRCDesigner.Business.Concrete
         public async Task<IList<DrcCardBusinessModel>> GetAllDrcCards(int subdomainVersionId)
         {
             IList<DrcCardBusinessModel> drcCardBusinessModels = new List<DrcCardBusinessModel>();
-            foreach (var drcCard in await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(subdomainVersionId))
+            foreach (var drcCard in  _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(subdomainVersionId))
             {
                 var cardBusinessModel = _mapper.Map<DrcCardBusinessModel>(drcCard);
                 drcCardBusinessModels.Add(cardBusinessModel);
@@ -299,7 +347,7 @@ namespace DRCDesigner.Business.Concrete
             IList<ShadowCardSelectBoxBusinessModel> selectBoxCards = new List<ShadowCardSelectBoxBusinessModel>();
 
             var Version =
-                await _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
+                 _drcUnitOfWork.SubdomainVersionRepository.GetVersionWithReferencesById(subdomainVersionId);
 
             foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
             {
@@ -333,7 +381,14 @@ namespace DRCDesigner.Business.Concrete
 
         }
 
-     
+        public string GetPresentationHeader(int versionId)
+        {
+            var version = _drcUnitOfWork.SubdomainVersionRepository.GetById(versionId);
+            var subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
+
+            return subdomainName + " " + version.VersionNumber;
+        }
+
 
         public string GetShadowCardSourcePath(int? shadowId)
         {
@@ -383,7 +438,7 @@ namespace DRCDesigner.Business.Concrete
         public async Task<IList<DrcCard>> GetCardCollaborationOptions(int cardId)
         {
             var selectedCard = _drcUnitOfWork.DrcCardRepository.GetById(cardId);
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(selectedCard.SubdomainVersionId);
+            var drcCards =  _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(selectedCard.SubdomainVersionId);
             IList<DrcCard> cards = new List<DrcCard>();
             foreach (var card in drcCards)
             {
@@ -399,7 +454,7 @@ namespace DRCDesigner.Business.Concrete
         public async void AddShadowCard(DrcCard drcCard)
         {
             var id = (int) drcCard.MainCardId;
-            var fields = _drcUnitOfWork.DrcCardFieldRepository.GetDrcCardFieldsByDrcCardId(id);
+           
 
             _drcUnitOfWork.DrcCardRepository.Add(drcCard);
 

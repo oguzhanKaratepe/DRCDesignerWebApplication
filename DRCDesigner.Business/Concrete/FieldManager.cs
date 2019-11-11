@@ -332,7 +332,7 @@ namespace DRCDesigner.Business.Concrete
 
         public async Task<IList<DrcCard>> GetCollaborations(int versionId, int cardId)
         {
-            var drcCards = await _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(versionId);
+            var drcCards =  _drcUnitOfWork.DrcCardRepository.getAllCardsBySubdomainVersion(versionId);
             IList<DrcCard> cards = new List<DrcCard>();
             foreach (var card in drcCards)
             {

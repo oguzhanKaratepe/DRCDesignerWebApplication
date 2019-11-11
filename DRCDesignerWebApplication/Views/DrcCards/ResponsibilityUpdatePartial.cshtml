@@ -37,7 +37,7 @@
                                                .ValueExpr("Id"));
 
                                             groupItems.AddSimple().DataField("IsMandatory").Editor(editor => editor.Switch().ElementAttr(new { style = "margin-left:20px;" }));
-                                                        groupItems.AddSimple().DataField("PriorityOrder").Editor(editor => editor.NumberBox().Width(30));
+                                                        groupItems.AddSimple().DataField("PriorityOrder").Editor(editor => editor.NumberBox().Width(45));
                                                         groupItems.AddSimple().DataField("ResponsibilityDefinition").ColSpan(3)
                                                             .Editor(editor => editor.TextArea().MinHeight(95).StylingMode(EditorStylingMode.Outlined).Width(645));
                                                     });
@@ -51,10 +51,10 @@
                     })
                     .ElementAttr(new { style = "margin-top:-37px" })
                     .Scrolling(scrolling => scrolling.Mode(GridScrollingMode.Virtual))
-                    .Height(495)
+                    .Height(465)
                     .ShowBorders(true)
                     .ShowRowLines(true)
-
+       
                     .Columns(columns =>
                     {
                         columns.AddFor(m => m.Title).Alignment(HorizontalAlignment.Center);

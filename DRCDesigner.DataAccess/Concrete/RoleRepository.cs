@@ -18,9 +18,9 @@ namespace DRCDesigner.DataAccess.Concrete
 
 
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
-        public async Task<IEnumerable<Role>> getGlobalRoles()
+        public IEnumerable<Role> getGlobalRoles()
         {
-            return await DrcCardContext.Roles.Where(n => n.IsGlobal == true).ToListAsync();
+            return DrcCardContext.Roles.Where(n => n.IsGlobal).ToList();
         }
     }
 }

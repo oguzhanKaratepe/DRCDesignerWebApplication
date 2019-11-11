@@ -43,9 +43,9 @@ namespace DRCDesigner.DataAccess.Concrete
             return DrcCardContext.DrcCards.Where(m => m.Id==id).Select(m=>m.DrcCardName).AsNoTracking().Single();
         }
 
-        public async Task<IEnumerable<DrcCard>> getAllCardsBySubdomainVersion(int subdomainVersionId)
+        public IEnumerable<DrcCard> getAllCardsBySubdomainVersion(int subdomainVersionId)
         {
-            return await DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).AsNoTracking().ToListAsync();
+            return  DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).AsNoTracking().ToList();
         }
 
         //public void Remove(DrcCard drcCard)

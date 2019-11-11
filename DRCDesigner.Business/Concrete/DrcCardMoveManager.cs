@@ -22,8 +22,6 @@ namespace DRCDesigner.Business.Concrete
             _mapper = mapper;
         }
 
-
-        
         public async Task<DocumentMoveObject> MoveCardToDestinationSubdomainAsync(int drcCardId, int targetSubdomainVersionId, string newDrcCardName)
         {
             DocumentMoveObject moveObject=new DocumentMoveObject
@@ -206,7 +204,7 @@ namespace DRCDesigner.Business.Concrete
             return true;
         }
 
-        private  async void createShadow(DrcCard drcCard, int targetSubdomainVersionId)
+        private  async Task createShadow(DrcCard drcCard, int targetSubdomainVersionId)
         {
             int oldId = drcCard.Id;
 

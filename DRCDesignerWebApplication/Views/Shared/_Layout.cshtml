@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using DevExtreme.AspNet.Mvc.Builders
+@using DRCDesignerWebApplication.ViewModels
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +10,7 @@
     <meta name="author" content="">
 
     <title>web designer</title>
-   
+
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
             asp-fallback-src="~/lib/popper.js/dist/umd/popper.min.js"
@@ -58,89 +60,149 @@
         [contenteditable].form-control {
             -webkit-box-shadow: inset 0 0px 0 #ddd !important;
             box-shadow: inset 0 0px 0 #ddd !important;
-  
         }
-     
     </style>
 </head>
-<body class="" style="background-color: #222;" >
+
+<body class="" style="background-color: #222;">
+
     <div class="bg-dark h-100 ">
+
         @(Html.DevExtreme().Toolbar()
-              
-              .ElementAttr(new{style="border-bottom:1px solid;"})
-                                  .ID("layout-toolbar")
-                                  .Items(items =>
-                                  {
-                                      items.Add().Widget(w => w.Button()
-                                          .Icon("menu")
-                                          .OnClick("button_clickHandler")
-                                          ).Location(ToolbarItemLocation.Before);
 
-                                      items.Add()
-                                          .Widget(w => w
-                                              .Button()
-                                              .Text("Help")
-                                              .OnClick("helpButton_click")
-                                      )
-                                          .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                      .ElementAttr(new { style = "border-bottom:1px solid;" })
+                      .ID("layout-toolbar")
+                      .Items(items =>
+                      {
+                          items.Add().Widget(w => w.Button()
+                              .Icon("menu")
+                              .OnClick("button_clickHandler")
+                              ).Location(ToolbarItemLocation.Before);
 
-                                    items.Add()
-                                        .Widget(w => w
-                                            .Button()
-                                            .Text("..")
-                                            .OnClick("printButton_click")
+                          items.Add()
+                              .Widget(w => w
+                                  .Button()
+                                  .Text("Help")
+                                  .OnClick("helpButton_click")
+                              )
+                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
-                                        )
-                                        .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                          items.Add()
+                              .Widget(w => w
+                                  .Button()
+                                  .Text("Export Project")
+                                  .OnClick("exportButton_click")
 
-                                   
-                                 
+                              )
+                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
-                                      items.Add()
-                                          .Template(@<text><div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
-                                                             .LocateInMenu(ToolbarItemLocateInMenuMode.Never)
-                                          .Location(ToolbarItemLocation.Center);
 
-                                  })
+                          items.Add()
+                              .Widget(w => w
+                                  .Button()
+                                  .Text("Settıngs")
+
+                              )
+                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                          items.Add()
+                              .Template(@<text>
+                                <div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
+                                              .LocateInMenu(ToolbarItemLocateInMenuMode.Never)
+                                              .Location(ToolbarItemLocation.Center);
+
+                                      })
         )
 
         <div class="bg-dark text-light">
             @(Html.DevExtreme().Drawer()
-                                  .ID("layout-drawer")
-                                  .MinSize(50)
-                                  .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
-                                  .RevealMode(DrawerRevealMode.Expand)
-                                  .AnimationEnabled(true)
-                                 
-                                  .ActiveStateEnabled(true)
-                                  .OpenedStateMode(DrawerOpenedStateMode.Shrink)
-                                  .ActiveStateEnabled(true)
-                                   .Template(@<text>
-                                    @(Html.DevExtreme().List()
-                                                  .Width(200)
-                                          
-                                                  //  .OnInitialized("list_onInitialized")
-                                                  .Items(items =>
-                                                  {
-                                                     
-                                                    items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
-                                                      items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
-                                                   
-                                                      items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
-                                                      
-                                                  })
-                                                  .KeyExpr("path")
-                                                  .SelectionMode(ListSelectionMode.Single)
-                                                  .OnSelectionChanged("list_onSelectionChanged")
-                                    )
-                                </text>)
-                                                                      .Content(@<text>
-                                                                        @RenderBody()</text>)
+                          .ID("layout-drawer")
+                          .MinSize(50)
+                          .Opened(new JS("JSON.parse(sessionStorage.getItem('drawerOpened'))"))
+                          .RevealMode(DrawerRevealMode.Expand)
+                          .AnimationEnabled(true)
+
+                          .ActiveStateEnabled(true)
+                          .OpenedStateMode(DrawerOpenedStateMode.Shrink)
+                          .ActiveStateEnabled(true)
+                          .Template(@<text>
+                            @(Html.DevExtreme().List()
+                                      .Width(200)
+
+                                      //  .OnInitialized("list_onInitialized")
+                                      .Items(items =>
+                                      {
+
+                                                        items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
+                                                        items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
+
+                                                        items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
+
+                                                    })
+                                      .KeyExpr("path")
+                                      .SelectionMode(ListSelectionMode.Single)
+                                      .OnSelectionChanged("list_onSelectionChanged")
+                            )
+                        </text>)
+                                      .Content(@<text>
+                                        @RenderBody()</text>)
             )
 
         </div>
 
+
+        @(Html.DevExtreme().Popup()
+                      .ID("exportHtmlFormPopup")
+                      .ElementAttr("class", "popup")
+                      .Width(500)
+                      .Height(350)
+                      .ShowTitle(true)
+                      .Title("Select subdomain to export?")
+                      .Visible(false)
+                      .DragEnabled(true)
+                      .CloseOnOutsideClick(false)
+              .ShowCloseButton(true))
+
+        @using (Html.DevExtreme().NamedTemplate("exportHtml-popup-template"))
+        {
+
+        @using (Html.BeginForm("CreateOutPutHtml", "Subdomains", FormMethod.Post, new { id = "acx" }))
+        {
+
+          
+                @(Html.DevExtreme().Form<ExportViewModel>
+                     ()
+                     .ID("form")
+                     .ValidationGroup("ExportModel")
+                     .LabelLocation(FormLabelLocation.Top)
+                     .ReadOnly(false)
+                     .ShowColonAfterLabel(true)
+                     .Items(formItems =>
+                     {
+                         formItems.AddSimpleFor(m => m.VersionId).Editor(editor => editor.SelectBox().DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetVersionExportOptions")
+                             .Key("Id"))
+                             .DisplayExpr("VersionNumber")
+                             .ValueExpr("Id").DataSourceOptions(o => o.Group("SubdomainName")).Grouped(true).ElementAttr(new { style = "border-bottom:0.5px solid;" }));
+
+                      
+                     })
+
+                      )
+
+            <div>
+                @(Html.DevExtreme().Button()
+                      .Text("Export")
+                      .ValidationGroup("ExportModel")
+                      .OnClick("exportClick")
+                      .UseSubmitBehavior(false)
+                  
+                      )
+            </div>
+            }
+
+        }
+
         <script type="text/javascript">
+
 
             function button_clickHandler() {
 
@@ -154,17 +216,26 @@
                 document.location = e.addedItems[0].path;
 
             }
+
             function helpButton_click() {
+
                 window.location.href = "/Home/HelpPage";
-               
+
+            }
+
+            function exportClick() {
+
+                $("#acx").submit();
+            }
+
+            function exportButton_click() {
+
+                var popup = $("#exportHtmlFormPopup").dxPopup("instance");
+                popup.option("contentTemplate", $("#exportHtml-popup-template"));
+                popup.show();
             }
 
 
-            function printButton_click() {
-                DevExpress.ui.notify("... option has been clicked!");
-            }
-
-         
         </script>
     </div>
 </body>

@@ -18,6 +18,7 @@ namespace DRCDesignerWebApplication.ViewModels
         public int TotalSubdomainSize { get; set; }
 
         public bool IsSubdomainVersionLocked { get; set; }
+        public String PresentationHeader { get; set; }
      
 
 

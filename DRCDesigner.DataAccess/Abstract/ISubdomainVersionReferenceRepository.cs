@@ -14,6 +14,6 @@ namespace DRCDesigner.DataAccess.Abstract
 
 
         Task<IList<SubdomainVersionReference>> getAllVersionReferences(int versionId);
-        Task<IList<SubdomainVersionReference>> getVersionReferencedSubdomainVersions(int versionId);
+        IList<SubdomainVersionReference> getVersionReferencedSubdomainVersions(int versionId);
     }
 }

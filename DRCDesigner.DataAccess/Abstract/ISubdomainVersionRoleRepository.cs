@@ -10,9 +10,9 @@ namespace DRCDesigner.DataAccess.Abstract
 {
     public interface ISubdomainVersionRoleRepository :IRepository<SubdomainVersionRole>
     {
-        Task<IEnumerable<SubdomainVersionRole>> GetAllRoleVersionsByRoleId(int roleId);
+        IEnumerable<SubdomainVersionRole> GetAllRoleVersionsByRoleId(int roleId);
       
-        Task<IEnumerable<SubdomainVersionRole>> GetAllVersionRolesBySubdomainVersionId(int subdomainVersionId);
+        IEnumerable<SubdomainVersionRole> GetAllVersionRolesBySubdomainVersionId(int subdomainVersionId);
      
        
     }

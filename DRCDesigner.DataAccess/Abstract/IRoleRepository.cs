@@ -12,7 +12,7 @@ namespace DRCDesigner.DataAccess.Abstract
    public interface IRoleRepository:IRepository<Role>
    {
 
-       Task<IEnumerable<Role>> getGlobalRoles();
+       IEnumerable<Role> getGlobalRoles();
 
    }
 }

@@ -22,7 +22,7 @@ namespace DRCDesigner.Entities.Concrete
         public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
 
         public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
-     
+
         [JsonIgnore]
         public virtual ICollection<DrcCardField> DrcCardFields { get; set; }
         [JsonIgnore]

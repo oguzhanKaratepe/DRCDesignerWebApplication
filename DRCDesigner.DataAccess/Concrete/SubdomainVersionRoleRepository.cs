@@ -18,15 +18,15 @@ namespace DRCDesigner.DataAccess.Concrete
         }
         public DrcCardContext DrcCardContext { get { return _context as DrcCardContext; } }
 
-        public async  Task<IEnumerable<SubdomainVersionRole>> GetAllRoleVersionsByRoleId(int roleId)
+        public IEnumerable<SubdomainVersionRole> GetAllRoleVersionsByRoleId(int roleId)
         {
-            return  await  DrcCardContext.SubdomainVersionRoles.Where(c => c.RoleId == roleId).ToListAsync();
+            return  DrcCardContext.SubdomainVersionRoles.Where(c => c.RoleId == roleId).ToList();
         }
 
 
-        public async Task<IEnumerable<SubdomainVersionRole>> GetAllVersionRolesBySubdomainVersionId(int subdomainVersionId)
+        public IEnumerable<SubdomainVersionRole> GetAllVersionRolesBySubdomainVersionId(int subdomainVersionId)
         {
-            return await DrcCardContext.SubdomainVersionRoles.AsNoTracking().Where(c => c.SubdomainVersionId == subdomainVersionId).ToListAsync();
+            return  DrcCardContext.SubdomainVersionRoles.AsNoTracking().Where(c => c.SubdomainVersionId == subdomainVersionId).ToList();
         }
 
        
