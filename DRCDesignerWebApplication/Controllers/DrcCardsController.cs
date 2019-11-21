@@ -26,7 +26,7 @@ namespace DRCDesignerWebApplication.Controllers
         private readonly IDrcCardMoveService _drcCardMoveService;
         public DrcCardsController(IDrcCardService drcCardService, IMapper mapper, IDrcCardMoveService drcCardMoveService)
         {
-          
+
             _mapper = mapper;
             _drcCardService = drcCardService;
             _drcCardMoveService = drcCardMoveService;
@@ -46,53 +46,6 @@ namespace DRCDesignerWebApplication.Controllers
                 foreach (var card in tempCards)
                 {
                     drcCardViewModel = _mapper.Map<DrcCardViewModel>(card);
-
-
-                    foreach (var responsibilityBusinessModel in  _drcCardService.getListOfDrcCardResponsibilities(card.Id))
-                    {
-                        drcCardViewModel.Responsibilities.Add(_mapper.Map<ResponsibilityViewModel>(responsibilityBusinessModel));
-                    }
-
-
-                    foreach (var fieldBusinessModel in _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
-                    {
-                        drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
-                    }
-
-
-                    foreach (var authorizationBusinessModel in _drcCardService.getListOfDrcCardAuthorizations(card.Id))
-                    {
-                        drcCardViewModel.Authorizations.Add(_mapper.Map<AuthorizationViewModel>(authorizationBusinessModel));
-                    }
-                    
-                    drcCardViewModel.SourceDrcCardPath = _drcCardService.GetShadowCardSourcePath(card.MainCardId);
-                    drcCardContainerViewModel.DrcCardViewModes.Add(drcCardViewModel);
-
-                }
-             
-                
-                drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
-            }
-            drcCardContainerViewModel.SubdomainMenuItems = await _drcCardService.GetAllSubdomainMenuItems(id);
-            drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
-            drcCardContainerViewModel.IsSubdomainVersionLocked = _drcCardService.isSubdomainVersionLocked(id);
-            return View(drcCardContainerViewModel);
-            
-        }
-        [HttpGet]
-        public async Task<object> Presentation( string searchText)
-        {
-            int id = Convert.ToInt32(HttpContext.Request.Query["id"]);
-
-            DrcCardContainerViewModel drcCardContainerViewModel = new DrcCardContainerViewModel();
-          
-            if (id != 0)
-            {
-                var tempCards = await _drcCardService.GetAllDrcCards(id);
-
-                foreach (var card in tempCards)
-                {
-                    DrcCardViewModel drcCardViewModel = _mapper.Map<DrcCardViewModel>(card);
 
 
                     foreach (var responsibilityBusinessModel in _drcCardService.getListOfDrcCardResponsibilities(card.Id))
@@ -117,14 +70,81 @@ namespace DRCDesignerWebApplication.Controllers
 
                 }
 
-                drcCardContainerViewModel.PresentationHeader = _drcCardService.GetPresentationHeader(id);
+
                 drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
             }
-          
+            drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
+            drcCardContainerViewModel.IsSubdomainVersionLocked = _drcCardService.isSubdomainVersionLocked(id);
+
+                
             return View(drcCardContainerViewModel);
 
         }
+        [HttpGet]
+        public async Task<object> Presentation(string searchText)
+        {
      
+            String querySubdomain = HttpContext.Request.Query["subdomain"];
+            String queryVersion = HttpContext.Request.Query["version"];
+
+            DrcCardContainerViewModel drcCardContainerViewModel = new DrcCardContainerViewModel();
+            int id = _drcCardService.getVersionIdFromQueryString(querySubdomain, queryVersion);
+            if (id > 0)
+            {
+              
+
+                if (id != 0)
+                {
+                    var tempCards = await _drcCardService.GetAllDrcCards(id);
+
+                    foreach (var card in tempCards)
+                    {
+                        DrcCardViewModel drcCardViewModel = _mapper.Map<DrcCardViewModel>(card);
+
+
+                        foreach (var responsibilityBusinessModel in _drcCardService.getListOfDrcCardResponsibilities(card.Id))
+                        {
+                            drcCardViewModel.Responsibilities.Add(_mapper.Map<ResponsibilityViewModel>(responsibilityBusinessModel));
+                        }
+
+
+                        foreach (var fieldBusinessModel in _drcCardService.getListOfDrcCardFields(card.Id, card.MainCardId))
+                        {
+                            drcCardViewModel.Fields.Add(_mapper.Map<FieldViewModel>(fieldBusinessModel));
+                        }
+
+
+                        foreach (var authorizationBusinessModel in _drcCardService.getListOfDrcCardAuthorizations(card.Id))
+                        {
+                            drcCardViewModel.Authorizations.Add(_mapper.Map<AuthorizationViewModel>(authorizationBusinessModel));
+                        }
+
+                        drcCardViewModel.SourceDrcCardPath = _drcCardService.GetShadowCardSourcePath(card.MainCardId);
+                        drcCardContainerViewModel.DrcCardViewModes.Add(drcCardViewModel);
+
+                    }
+
+                    drcCardContainerViewModel.PresentationHeader = _drcCardService.GetPresentationHeader(id);
+                    drcCardContainerViewModel.DrcCardViewModel.SubdomainVersionId = id;
+                }
+                return View(drcCardContainerViewModel);
+            }
+
+            drcCardContainerViewModel.ErrorMessage = "The address you entered is not available";
+
+            return View(drcCardContainerViewModel); 
+
+        }
+
+
+        [HttpGet]
+        public async Task<object> GetSubdomainsWithVersions(int Id, DataSourceLoadOptions loadOptions)
+        {
+            var SubdomainsWithVersions = await _drcCardService.GetAllSubdomainMenuItems(Id);
+
+            return DataSourceLoader.Load(SubdomainsWithVersions, loadOptions);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult PostShadow(DrcCardViewModel drcCardViewModel)
@@ -144,10 +164,10 @@ namespace DRCDesignerWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Post(DrcCardViewModel drcCardViewModel)
         {
-           
-                var newDrcCard = _mapper.Map<DrcCardBusinessModel>(drcCardViewModel);
-                _drcCardService.Add(newDrcCard);
-          
+
+            var newDrcCard = _mapper.Map<DrcCardBusinessModel>(drcCardViewModel);
+            _drcCardService.Add(newDrcCard);
+
 
             return Redirect("/DrcCards/index?id=" + drcCardViewModel.SubdomainVersionId);
         }
@@ -170,7 +190,7 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> GetCardCollaborationOptions(int cardId, DataSourceLoadOptions loadOptions)
         {
-            var cards= await _drcCardService.GetCardCollaborationOptions(cardId);
+            var cards = await _drcCardService.GetCardCollaborationOptions(cardId);
             return DataSourceLoader.Load(cards, loadOptions);
         }
 
@@ -178,13 +198,13 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody]DrcCardViewModel model)
         {
-            string result= await _drcCardService.Delete(model.Id);
+            string result = await _drcCardService.Delete(model.Id);
 
-             if (string.IsNullOrEmpty(result))
-             {
-                 return Ok();
-             }
-           
+            if (string.IsNullOrEmpty(result))
+            {
+                return Ok();
+            }
+
             return BadRequest(result);
         }
 
@@ -192,17 +212,17 @@ namespace DRCDesignerWebApplication.Controllers
         public async Task<object> GetShadowCardsSelectBox(int subdomainVersionId, DataSourceLoadOptions loadOptions)
         {
             var shadowCardSelectBoxOptions = await _drcCardService.GetShadowSelectBoxOptions(subdomainVersionId);
-         var dropBoxSelectOptions = _mapper.Map<IList<ShadowCardSelectBoxBusinessModel>, IList<ShadowCardSelectBoxViewModel>>(shadowCardSelectBoxOptions);
-         return DataSourceLoader.Load(dropBoxSelectOptions, loadOptions);
+            var dropBoxSelectOptions = _mapper.Map<IList<ShadowCardSelectBoxBusinessModel>, IList<ShadowCardSelectBoxViewModel>>(shadowCardSelectBoxOptions);
+            return DataSourceLoader.Load(dropBoxSelectOptions, loadOptions);
         }
 
         [HttpGet]
         public async Task<object> GetCard(int Id, DataSourceLoadOptions loadOptions)
 
         {
-            var cardViewModel = _mapper.Map<DrcCardViewModel>(_drcCardService.GetCard(Id)); 
-            
-            List<DrcCardViewModel> viewModel= new List<DrcCardViewModel>();
+            var cardViewModel = _mapper.Map<DrcCardViewModel>(_drcCardService.GetCard(Id));
+
+            List<DrcCardViewModel> viewModel = new List<DrcCardViewModel>();
             viewModel.Add(cardViewModel);
             return DataSourceLoader.Load(viewModel, loadOptions);
         }
@@ -212,9 +232,9 @@ namespace DRCDesignerWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result =await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+                var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
 
-                if (result.MoveResultType!=MoveResultType.Success)
+                if (result.MoveResultType != MoveResultType.Success)
                 {
                     return BadRequest(result.MoveResultDefinition);
                 }
@@ -228,7 +248,7 @@ namespace DRCDesignerWebApplication.Controllers
                 return BadRequest("I will add error to here");
             }
 
-          //  return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
+            //  return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
         }
 
         public static List<object> GetDeleteBehaviorOptions()

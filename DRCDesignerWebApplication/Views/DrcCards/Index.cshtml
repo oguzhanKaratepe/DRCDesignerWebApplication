@@ -425,7 +425,7 @@
                 item.itemType === "group" &&
                 item.caption === "Byte Field Details") && !InitNewRowStarted
         ) {
-           // var dataGrid2 = $("#FieldGrid").dxDataGrid("instance");
+            // var dataGrid2 = $("#FieldGrid").dxDataGrid("instance");
             var index2 = dataGrid.getRowIndexByKey(rowKey) || 0;
             var type2 = dataGrid.cellValue(index2, "Type");
 
@@ -539,7 +539,7 @@
         }
 
         if (
-           ( item &&
+            ( item &&
                 item.itemType === "group" &&
                 item.caption === "DateOnly Field Details") && !InitNewRowStarted
         ) {
@@ -585,7 +585,7 @@
                 item.visible = false;
             }
 
-            }
+        }
         if (
             (item &&
                 item.itemType === "group" &&
@@ -601,59 +601,59 @@
                 item.visible = false;
             }
 
+        }
+
+        if (
+            ( item &&
+                item.itemType === "group" &&
+                item.caption === "ComplexTypeElement Field Details") && !InitNewRowStarted
+        ) {
+            
+            var index66 = dataGrid.getRowIndexByKey(rowKey) || 0;
+            var type66 = dataGrid.cellValue(index66, "Type");
+
+            if (type66 === 12) {
+                item.visible = true;
+            } else {
+                item.visible = false;
             }
 
-            if (
-               ( item &&
-                    item.itemType === "group" &&
-                    item.caption === "ComplexTypeElement Field Details") && !InitNewRowStarted
-            ) {
+        }
+
             
-                var index66 = dataGrid.getRowIndexByKey(rowKey) || 0;
-                var type66 = dataGrid.cellValue(index66, "Type");
+        if (
+            ( item &&
+                item.itemType === "group" &&
+                item.caption === "DetailElement Field Details") && !InitNewRowStarted
+        ) {
+            
+            var index60 = dataGrid.getRowIndexByKey(rowKey) || 0;
+            var type60 = dataGrid.cellValue(index60, "Type");
 
-                if (type66 === 12) {
-                    item.visible = true;
-                } else {
-                    item.visible = false;
-                }
-
+            if (type60 === 13) {
+                item.visible = true;
+            } else {
+                item.visible = false;
             }
 
-            
-            if (
-               ( item &&
-                    item.itemType === "group" &&
-                    item.caption === "DetailElement Field Details") && !InitNewRowStarted
-            ) {
-            
-                var index60 = dataGrid.getRowIndexByKey(rowKey) || 0;
-                var type60 = dataGrid.cellValue(index60, "Type");
+        }
 
-                if (type60 === 13) {
-                    item.visible = true;
-                } else {
-                    item.visible = false;
-                }
+        if (
+            ( item &&
+                item.itemType === "group" &&
+                item.caption === "Measurement Field Details") && !InitNewRowStarted
+        ) {
+            
+            var index18 = dataGrid.getRowIndexByKey(rowKey) || 0;
+            var type18 = dataGrid.cellValue(index18, "Type");
 
+            if (type18 === 14) {
+                item.visible = true;
+            } else {
+                item.visible = false;
             }
 
-            if (
-               ( item &&
-                    item.itemType === "group" &&
-                    item.caption === "Measurement Field Details") && !InitNewRowStarted
-            ) {
-            
-                var index18 = dataGrid.getRowIndexByKey(rowKey) || 0;
-                var type18 = dataGrid.cellValue(index18, "Type");
-
-                if (type18 === 14) {
-                    item.visible = true;
-                } else {
-                    item.visible = false;
-                }
-
-            }
+        }
 
       
       
@@ -667,6 +667,8 @@
 </script>
 
 <div class="min-vh-100">
+
+
 
     <div class="d-flex flex-column w-100 sticky-top">
         @{
@@ -756,7 +758,7 @@
                    
                     Model.DrcCardViewModel = property;
 
-                    <div class="card border-secondary  mb-3 mr-2 mt-2 d-flex" style="min-width: 28rem; max-width: 36rem;">
+                    <div class="card border-secondary  mb-3 mr-2 mt-2 d-flex" style="min-width: 30rem; max-width: 35rem;">
                         @if (property.MainCardId != null)
                         {
                             <div id="shadowcardheader" class="card-header  text-light border-secondary d-flex flex-column pb-5">
@@ -1307,35 +1309,35 @@
     }
     function moveCardClickHandler() {
 
-      //  $("#MoveCard").submit();
+        //  $("#MoveCard").submit();
         var a = $("#MoveCardform").dxForm("instance").option("formData");
         var jsonData = JSON.stringify(a);
 
-      $.ajax({
-          url: '/DrcCards/MoveCardToDestinationSubdomain/',
-          data: jsonData,
-          contentType: 'application/json',
-          processData: false,
-          type: 'POST',
-          success: function (data) {
+        $.ajax({
+            url: '/DrcCards/MoveCardToDestinationSubdomain/',
+            data: jsonData,
+            contentType: 'application/json',
+            processData: false,
+            type: 'POST',
+            success: function (data) {
 
-              if (data !== null) {
-                  DevExpress.ui.notify(" Your document successfully moved", "success", 3500);
+                if (data !== null) {
+                    DevExpress.ui.notify(" Your document successfully moved", "success", 3500);
 
-              }
-          },
-          failure: function (response) {
-              DevExpress.ui.notify(response.status +" ( "+ response.statusText+" )"+"  "+ response.responseText, "error", 2500);
+                }
+            },
+            failure: function (response) {
+                DevExpress.ui.notify(response.status +" ( "+ response.statusText+" )"+"  "+ response.responseText, "error", 2500);
 
-          },
-          error: function (response) {
-              alert(response.responseText);
-          }
-      });
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
 
 
 
-      closeMoveDocumentPopUp();
+        closeMoveDocumentPopUp();
     }
     function closeMoveDocumentPopUp() {
 

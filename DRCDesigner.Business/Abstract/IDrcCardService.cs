@@ -26,5 +26,7 @@ namespace DRCDesigner.Business.Abstract
        int TotalSubdomainSize();
        bool isSubdomainVersionLocked(int id);
        Task<IList<DrcCard>> GetCardCollaborationOptions(int cardId);
+
+       int getVersionIdFromQueryString(String subdomain,String version);
    }
 }

@@ -101,9 +101,11 @@
         margin-top: 280px;
         margin-left: 160px;
     }
+
     .bg-info {
         background: purple !important;
     }
+
     .dxeFocused_MetropolisBlue {
         padding: 1px 3px 2px 3px;
         outline: none;
@@ -116,276 +118,310 @@
         top: 25px;
         right: 16px;
         font-size: 18px;
+        height: 35px;
+    }
+    .centerText {
+        text-align: center;
+        margin-top: 20%;
     }
 </style>
 
 
-
-<div class="text-center"><h3 class="pt-4 pb-4 text-light">&nbsp;@Model.PresentationHeader&nbsp;</h3></div>
-<div id="users" class="">
-
-<input class="search  topright" placeholder="Search in documents" style="width: 18%"/>
-
-<ul class="list  d-flex flex-wrap align-items-baseline">
-@foreach (var property in Model.DrcCardViewModes)
+@if (@Model.ErrorMessage != null)
 {
-    <li>
-    <div class="name card border-secondary  mb-3 mr-2 mt-2 d-flex" style="min-width: 35rem; max-width: 47rem;">
 
-    @if (property.MainCardId != null)
+    <p  class="text-light centerText">@Model.ErrorMessage</p>
+
+}
+else { 
+
+
+
+    <div id="users" class="bg-dark">
+  
+    <div class="text-center border-bottom rounded-bottom">
+        <h3 class="pt-3 pb-3 text-light">&nbsp;@Model.PresentationHeader&nbsp;</h3></div>
+    <input class="search topright rounded" placeholder="Search documents" style="width: 20%;"/>
+
+    <ul class="list list-unstyled  d-flex flex-wrap align-items-baseline">
+    @foreach (var property in Model.DrcCardViewModes)
     {
-        <div id="shadowcardheader" class="card-header text-light border-secondary d-flex flex-wrap justify-content-between  pb-5">
+        <li class="ml-3">
+        <div class="name card border-secondary  mb-3 mr-2 mt-2 d-flex" style="min-width: 50rem; max-width: 51rem;">
 
-            <div >
-                <div class="align-self-start">@property.DrcCardName</div>
-                <div class=" align-self-start p-0">@property.SourceDrcCardPath</div>
-            </div>
-
-            <div>
-                <div><a>Security Option: @property.SecurityCriticalOption</a></div>
-                <div><a>Delete Option: @property.DeleteBehaviorOption</a></div>
-            </div>
-
-        </div>
-    }
-    else
-    {
-        <div class="card-header text-light bg-info border-secondary d-flex flex-wrap justify-content-between dx-word-wrap">
-            <div class="d-flex ">@property.DrcCardName</div>
-
-            <div>
-                <div><a>Security Option: @property.SecurityCriticalOption</a></div>
-                <div><a>Delete Option: @property.DeleteBehaviorOption</a></div>
-            </div>
-        </div>
-
-    }
-
-
-
-    <div class="card-body text-dark bg-light row m-0 p-0" style="min-height: 11rem">
-        <div class="bd-highlight bg-light col col-5 pr-0 pl-0">
-            @foreach (var responsibility in property.Responsibilities)
-            {
-                <div class=" border-bottom rounded-bottom m-0 p-0">
-                    @if (@responsibility.IsMandatory == true)
-                    {
-
-                        <div class="text-truncate pt-1 pb-1">
-                            <a class="text-danger pl-1">!</a>
-                            <a class="pl-0 pr-2 text-dark " id="@("house" + responsibility.Id)">
-                                @responsibility.Title
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-truncate pl-2 pr-2 pt-1 pb-1 text-dark" id="@("house" + responsibility.Id)">
-                            @responsibility.Title <br>
-                        </div>
-                    }
-
-                </div>
-                @(Html.DevExtreme().Popover()
-                      .Target("#house" + responsibility.Id)
-                      .ShowEvent("mouseenter")
-                      .HideEvent("mouseleave").Width(280)
-                      .ContentTemplate(@<text>
-                                           <h6>Title:</h6>
-                                           <span class="text-break"> @responsibility.Title </span>
-                                           <br>
-                                           <h6><br>Responsibility Definition:</h6>
-                                           <span class="text-break"> @responsibility.ResponsibilityDefinition </span>
-
-                                           <h6><br>Priority Order:</h6>
-                                           <span> @responsibility.PriorityOrder</span>
-                                           @if (@responsibility.ResponsibilityCollaborationCards.Count > 0)
-                                           {
-                                               <h6> Collaboration Cards:</h6>
-                                               @string.Join(", ", @responsibility.ResponsibilityCollaborationCards.Select(m => m.DrcCardName))
-                                           }
-                                        </text>)
-                      .Position(a => a
-                          .At(HorizontalAlignment.Center, VerticalAlignment.Bottom)
-                          .My(HorizontalAlignment.Left, VerticalAlignment.Top)
-                          .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Flip)
-                          .Offset(0, 2)
-                      )
-                      )
-            }
-
-        </div>
-
-        <div class="bg-light border-right border-left rounded-left rounded-right col col-3 pr-0 pl-0">
-            @foreach (var Authorization in property.Authorizations)
-            {
-                <div>
-                    <div class="p-1 text-dark">@Authorization.OperationName (<a class="small text-center text-dark">@string.Join(", ", Authorization.Roles.Select(r => r.RoleName))</a>)</div>
-                </div>
-            }
-        </div>
-
-        <div class="bg-light col col-4 pl-0 pr-0">
-            @{
-                var cardContainer = new List<DrcCard>();
-                @foreach (var responsibility in property.Responsibilities)
-                 {
-                     foreach (var collaboration in responsibility.ResponsibilityCollaborationCards)
-                     {
-                         if (!cardContainer.Contains(collaboration))
-                         {
-                             cardContainer.Add(collaboration);
-                         }
-                     }
-
-                 }
-                @foreach (var field in property.Fields)
-                 {
-                     if (!cardContainer.Contains(field.CollaborationCard) && field.CollaborationCard != null)
-                     {
-                         if (!field.IsShadowField)
-                         {
-                             cardContainer.Add(field.CollaborationCard);
-                         }
-
-                     }
-                 }
-                foreach (var card in cardContainer)
-                {
-                    <div class="p-1 text-dark border-bottom rounded-bottom">@card.DrcCardName</div>
-                }
-            }
-        </div>
-
-    </div>
-    <div id="card-footer" class="border-top rounded-top card-footer  bg-transparent d-flex flex-wrap " style="min-height: 4rem">
-        @foreach (var field in property.Fields)
+        @if (property.MainCardId != null)
         {
+            <div id="shadowcardheader" class="card-header text-light border-secondary d-flex flex-wrap justify-content-between  pb-5">
 
-            if (field.IsShadowField)
-            {
-                <div id="@("field" + field.Id)" class="shadowcardheader text-light border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 ">
-
-                    @field.AttributeName
-
-                    @(Html.DevExtreme().Popover()
-                          .Target("#field" + field.Id)
-                          .ShowEvent("mouseenter")
-                          .HideEvent("mouseleave")
-                          .Position(Position.Bottom)
-                          .Width(270)
-                          .ContentTemplate(@<text>
-                                               <h6>@field.Type <br></h6>
-                                               @if (@field.CollaborationCard != null)
-                                               {
-                                                   <h6> Collaboration Card:</h6>
-                                                   <span>@field.CollaborationCard.DrcCardName</span>
-                                               }
-                                            </text>))
+                <div>
+                    <div class="align-self-start">@property.DrcCardName</div>
+                    <div class=" align-self-start p-0">@property.SourceDrcCardPath</div>
                 </div>
-            }
-            else
-            {
-                <div id="@("field" + field.Id)" class=" text-dark border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 ">
 
-                    @field.AttributeName
-
-                    @(Html.DevExtreme().Popover()
-                          .Target("#field" + field.Id)
-                          .ShowEvent("mouseenter")
-                          .HideEvent("mouseleave")
-                          .Position(Position.Bottom)
-                          .Width(270)
-                          .ContentTemplate(@<text>
-                                               <h6>@field.Type <br></h6>
-
-                                               @if (@field.CollaborationCard != null)
-                                               {
-                                                   <h6> Collaboration Card:</h6>
-                                                   <span>@field.CollaborationCard.DrcCardName</span>
-                                               }
-
-
-                                               @if (@field.Required == true)
-                                               {
-                                                   <h6> Required</h6>
-                                               }
-
-                                               @if (@field.Unique == true)
-                                               {
-                                                   <h6>Unique</h6>
-                                               }
-
-                                               @if (@field.MaxLength != 0)
-                                               {
-                                                   <h6>MaxLength:</h6>
-                                                   <span>@field.MaxLength</span>
-                                               }
-
-                                               @if (@field.MinLength != 0)
-                                               {
-                                                   <h6>MinLength:</h6>
-                                                   <span>@field.MinLength</span>
-                                               }
-
-
-                                               @if (@field.MaxValue != 0.0)
-                                               {
-                                                   <h6>MaxValue:</h6>
-                                                   <span>@field.MaxValue</span>
-                                               }
-
-
-                                               @if (@field.MinValue != 0.0)
-                                               {
-                                                   <h6>MinValue:</h6>
-                                                   <span>@field.MinValue</span>
-                                               }
-
-
-                                               @if (@field.CreditCard == true)
-                                               {
-                                                   <h6>Credit Card</h6>
-
-                                               }
-
-                                               @if (@field.DefaultValue != null)
-                                               {
-                                                   <h6>Default Value:</h6>
-                                                   <span>@field.DefaultValue</span>
-
-                                               }
-
-                                               @if (@field.RegularExpression != null)
-                                               {
-                                                   <h6>RegularExpression:</h6>
-                                                   <span>@field.RegularExpression</span>
-
-                                               }
-                                               @*@if (@field.MeasurementType!=null)
-                                                                                                                {
-                                                                                                                    <h6>MeasurementType:</h6>
-                                                                                                                    <span>@field.MeasurementType</span>
-
-                                                                                                                }*@
-
-
-                                            </text>))
+                <div>
+                    <div><a>Security Option: @property.SecurityCriticalOption</a></div>
+                    <div><a>Delete Option: @property.DeleteBehaviorOption</a></div>
                 </div>
-            }
+
+            </div>
+        }
+        else
+        {
+            <div class="card-header text-light bg-info border-secondary d-flex flex-wrap justify-content-between dx-word-wrap">
+                <div class="d-flex ">@property.DrcCardName</div>
+
+                <div>
+                    <div><a>Security Option: @property.SecurityCriticalOption</a></div>
+                    <div><a>Delete Option: @property.DeleteBehaviorOption</a></div>
+                </div>
+            </div>
 
         }
-    </div>
 
-    </div>
 
-    </li>
+
+        <div class="card-body text-dark bg-light row m-0 p-0" style="min-height: 11rem">
+            <div class="bd-highlight bg-light col col-5 pr-0 pl-0">
+                @foreach (var responsibility in property.Responsibilities)
+                {
+                    <div class=" border-bottom rounded-bottom m-0 p-0">
+                        @if (@responsibility.IsMandatory == true)
+                        {
+
+                            <div class="text-truncate pt-1 pb-1">
+                                <a class="text-danger pl-1">!</a>
+                                <a class="pl-0 pr-2 text-dark " id="@("house" + responsibility.Id)">
+                                    @responsibility.Title
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-truncate pl-2 pr-2 pt-1 pb-1 text-dark" id="@("house" + responsibility.Id)">
+                                @responsibility.Title <br>
+                            </div>
+                        }
+
+                    </div>
+                    @(Html.DevExtreme().Popover()
+                          .Target("#house" + responsibility.Id)
+                          .ShowEvent("mouseenter")
+                          .HideEvent("mouseleave").Width(280)
+                          .ContentTemplate(@<text>
+                                               <h6>Title:</h6>
+                                               <span class="text-break"> @responsibility.Title </span>
+                                               <br>
+                                               <h6><br>Responsibility Definition:</h6>
+                                               <span class="text-break"> @responsibility.ResponsibilityDefinition </span>
+
+                                               <h6><br>Priority Order:</h6>
+                                               <span> @responsibility.PriorityOrder</span>
+                                               @if (@responsibility.ResponsibilityCollaborationCards.Count > 0)
+                                               {
+                                                   <h6> Collaboration Cards:</h6>
+                                                   @string.Join(", ", @responsibility.ResponsibilityCollaborationCards.Select(m => m.DrcCardName))
+                                               }
+
+                                            </text>)
+                          .Position(a => a
+                              .At(HorizontalAlignment.Center, VerticalAlignment.Bottom)
+                              .My(HorizontalAlignment.Left, VerticalAlignment.Top)
+                              .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Flip)
+                              .Offset(0, 2)
+                          )
+                          )
+                }
+
+            </div>
+
+            <div class="bg-light border-right border-left rounded-left rounded-right col col-3 pr-0 pl-0">
+                @foreach (var Authorization in property.Authorizations)
+                {
+                    <div>
+                        <div class="p-1 text-dark">@Authorization.OperationName (<a class="small text-center text-dark">@string.Join(", ", Authorization.Roles.Select(r => r.RoleName))</a>)</div>
+                    </div>
+                }
+            </div>
+
+            <div class="bg-light col col-4 pl-0 pr-0">
+                @{
+                    var cardContainer = new List<DrcCard>();
+                    @foreach (var responsibility in property.Responsibilities)
+                     {
+                         foreach (var collaboration in responsibility.ResponsibilityCollaborationCards)
+                         {
+                             if (!cardContainer.Contains(collaboration))
+                             {
+                                 cardContainer.Add(collaboration);
+                             }
+                         }
+
+                     }
+                    @foreach (var field in property.Fields)
+                     {
+                         if (!cardContainer.Contains(field.CollaborationCard) && field.CollaborationCard != null)
+                         {
+                             if (!field.IsShadowField)
+                             {
+                                 cardContainer.Add(field.CollaborationCard);
+                             }
+
+                         }
+                     }
+                    foreach (var card in cardContainer)
+                    {
+                        <div class="p-1 text-dark border-bottom rounded-bottom">@card.DrcCardName</div>
+                    }
+                }
+            </div>
+
+        </div>
+        <div id="card-footer" class="border-top rounded-top card-footer  bg-transparent d-flex flex-wrap " style="min-height: 4rem">
+            @foreach (var field in property.Fields)
+            {
+
+                if (field.IsShadowField)
+                {
+                    <div id="@("field" + field.Id)" class="shadowcardheader text-light border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 ">
+
+                        @field.AttributeName
+
+                        @(Html.DevExtreme().Popover()
+                              .Target("#field" + field.Id)
+                              .ShowEvent("mouseenter")
+                              .HideEvent("mouseleave")
+                              .Position(Position.Bottom)
+                              .Width(270)
+                              .ContentTemplate(@<text>
+                                                   <h6>@field.Type <br></h6>
+
+                                                   @if (@field.Required == true)
+                                                   {
+                                                       <h6> Required</h6>
+                                                   }
+                                                   @if (@field.Unique == true)
+                                                   {
+                                                       <h6>Unique</h6>
+                                                   }
+                                                   @if (@field.MaxLength != 0)
+                                                   {
+                                                       <h6>MaxLength:</h6>
+                                                       <span>@field.MaxLength</span>
+                                                   }
+                                                   @if (@field.MinLength != 0)
+                                                   {
+                                                       <h6>MinLength:</h6>
+                                                       <span>@field.MinLength</span>
+                                                   }
+                                                   @if (@field.MaxValue != 0.0)
+                                                   {
+                                                       <h6>MaxValue:</h6>
+                                                       <span>@field.MaxValue</span>
+                                                   }
+                                                   @if (@field.MinValue != 0.0)
+                                                   {
+                                                       <h6>MinValue:</h6>
+                                                       <span>@field.MinValue</span>
+                                                   }
+                                                   @if (@field.CreditCard == true)
+                                                   {
+                                                       <h6>Credit Card</h6>
+
+                                                   }
+                                                   @if (@field.DefaultValue != null)
+                                                   {
+                                                       <h6>Default Value:</h6>
+                                                       <span>@field.DefaultValue</span>
+
+                                                   }
+                                                   @if (@field.RegularExpression != null)
+                                                   {
+                                                       <h6>RegularExpression:</h6>
+                                                       <span>@field.RegularExpression</span>
+
+                                                   }
+
+
+                                                </text>))
+                    </div>
+                }
+                else
+                {
+                    <div id="@("field" + field.Id)" class=" text-dark border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 ">
+
+                        @field.AttributeName
+
+                        @(Html.DevExtreme().Popover()
+                              .Target("#field" + field.Id)
+                              .ShowEvent("mouseenter")
+                              .HideEvent("mouseleave")
+                              .Position(Position.Bottom)
+                              .Width(270)
+                              .ContentTemplate(@<text>
+                                                   <h6>@field.Type <br></h6>
+
+                                                   @if (@field.Required == true)
+                                                   {
+                                                       <h6> Required</h6>
+                                                   }
+                                                   @if (@field.Unique == true)
+                                                   {
+                                                       <h6>Unique</h6>
+                                                   }
+                                                   @if (@field.MaxLength != 0)
+                                                   {
+                                                       <h6>MaxLength:</h6>
+                                                       <span>@field.MaxLength</span>
+                                                   }
+                                                   @if (@field.MinLength != 0)
+                                                   {
+                                                       <h6>MinLength:</h6>
+                                                       <span>@field.MinLength</span>
+                                                   }
+                                                   @if (@field.MaxValue != 0.0)
+                                                   {
+                                                       <h6>MaxValue:</h6>
+                                                       <span>@field.MaxValue</span>
+                                                   }
+                                                   @if (@field.MinValue != 0.0)
+                                                   {
+                                                       <h6>MinValue:</h6>
+                                                       <span>@field.MinValue</span>
+                                                   }
+                                                   @if (@field.CreditCard == true)
+                                                   {
+                                                       <h6>Credit Card</h6>
+
+                                                   }
+                                                   @if (@field.DefaultValue != null)
+                                                   {
+                                                       <h6>Default Value:</h6>
+                                                       <span>@field.DefaultValue</span>
+
+                                                   }
+                                                   @if (@field.RegularExpression != null)
+                                                   {
+                                                       <h6>RegularExpression:</h6>
+                                                       <span>@field.RegularExpression</span>
+
+                                                   }
+
+
+                                                </text>))
+                    </div>
+                }
+
+            }
+        </div>
+
+        </div>
+
+        </li>
+    }
+
+    </ul>
+    </div>
 }
-
-</ul>
-</div>
-
-
 
 <script>
     var options = {
