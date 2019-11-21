@@ -94,7 +94,7 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult>  CreateOutPutHtml(ExportViewModel exportViewModel)
         {
-            _exportService.ExportSubdomainVersionAsHtmlFile(exportViewModel.VersionId);
+           
             return Ok();
         }
         [HttpGet]

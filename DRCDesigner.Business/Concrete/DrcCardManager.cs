@@ -353,7 +353,7 @@ namespace DRCDesigner.Business.Concrete
             foreach (var referencedVersion in Version.ReferencedSubdomainVersions)
             {
 
-                var referencedSubdomainVersionWithCards = await _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(referencedVersion.ReferencedVersionId);
+                var referencedSubdomainVersionWithCards = _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(referencedVersion.ReferencedVersionId);
                 var referencedVersionSubdomain = _drcUnitOfWork.SubdomainRepository.GetById(referencedSubdomainVersionWithCards.SubdomainId);
 
                 foreach (var drcCard in referencedSubdomainVersionWithCards.DRCards)

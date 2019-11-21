@@ -29,9 +29,7 @@ namespace DRCDesigner.Business.Concrete
                 DrcCardIdToMove = drcCardId,
                 TargetSubdomainVersionId = targetSubdomainVersionId,
                 NewDocumentName = newDrcCardName
-
             };
-            
             var ifConnectedToAnyOtherDocument=checkIfDocumentConnectedToCurrentVersion(drcCardId);
 
             if (!String.IsNullOrWhiteSpace(ifConnectedToAnyOtherDocument))
@@ -188,7 +186,6 @@ namespace DRCDesigner.Business.Concrete
                     var drcCard = await _documentTransferUnitOfWork.DrcCardRepository.GetByIdWithoutTracking(collaboration.DrcCardId);
                     createShadow(drcCard,targetSubdomainVersionId);
                 }
-              
             }
             var drcDocumentFields = _documentTransferUnitOfWork.FieldRepository.getDrcCardAllFields(drcCardId);
             foreach (var drcDocumentField in drcDocumentFields)
@@ -204,7 +201,7 @@ namespace DRCDesigner.Business.Concrete
             return true;
         }
 
-        private  async Task createShadow(DrcCard drcCard, int targetSubdomainVersionId)
+        private void createShadow(DrcCard drcCard, int targetSubdomainVersionId)
         {
             int oldId = drcCard.Id;
 
@@ -214,7 +211,7 @@ namespace DRCDesigner.Business.Concrete
             }
 
             var targetVersion =
-                await _documentTransferUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(
+                _documentTransferUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(
                     targetSubdomainVersionId);
             bool needToCreateShadow = true;
             foreach (var drcDocument in targetVersion.DRCards)

@@ -7,6 +7,6 @@ namespace DRCDesigner.Business.Abstract
 {
     public interface IExportService
     {
-        void ExportSubdomainVersionAsHtmlFile(int versionId);
+       
     }
 }

@@ -27,10 +27,9 @@ namespace DRCDesigner.DataAccess.Concrete
             return  DrcCardContext.SubdomainVersions.Where(m => m.Id == versionId).Include(m => m.ReferencedSubdomainVersions).SingleOrDefault();
         }
 
-        public async  Task<SubdomainVersion> GetSubdomainVersionCardsWithId(int versionId)
+        public SubdomainVersion GetSubdomainVersionCardsWithId(int versionId)
         {
-            return await DrcCardContext.SubdomainVersions.Where(c => c.Id == versionId).Include(c => c.DRCards)
-                .SingleAsync();
+            return  DrcCardContext.SubdomainVersions.Where(c => c.Id == versionId).Include(c => c.DRCards).SingleOrDefault();
         }
 
         public async Task<bool> CheckIfSourceVersion(int versionId)
