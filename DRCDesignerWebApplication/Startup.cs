@@ -86,7 +86,10 @@ namespace DRCDesignerWebApplication
             services.AddMvc();
             //DrcDesigner
             //StudentManagement
-            var connection = @"server=(localdb)\MSSQLLocalDB; Database=DrcDesigner; Trusted_Connection=true";
+
+            //var connection = @"server=(localdb)\MSSQLLocalDB; Database=DrcDesigner; Trusted_Connection=true";
+            //var connection = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DrcDesigner;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            var connection = Configuration.GetConnectionString("DRCDesigner");
             services.AddSession();
 
             services.AddDbContext<DrcCardContext>(options =>
@@ -109,7 +112,7 @@ namespace DRCDesignerWebApplication
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
