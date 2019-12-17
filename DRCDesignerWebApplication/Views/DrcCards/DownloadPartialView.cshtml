@@ -1,0 +1,125 @@
+﻿
+@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardContainerViewModel;
+
+
+@if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainVersionId != 0)
+{
+ 
+
+<div class="border border-left border-right rounded mt-1">
+    @(Html.DevExtreme().DropDownButton()
+                                  .ID("ExportDropDown")
+                                  .Icon("download")
+                                  .StylingMode(ButtonStylingMode.Outlined)
+                                  .FocusStateEnabled(false)
+                                  .DropDownOptions(options => options.Width(230))
+                                  .ShowArrowIcon(false)
+                                  .UseSelectMode(false)
+                                  .DataSource(new JS("fillExport"))
+                                  .DisplayExpr("name")
+                                 .OnItemClick(@<text>
+                                    function (e) {
+                                    export_click(e, @Model.DrcCardViewModel.SubdomainVersionId);
+                                    }
+                                </text>)
+    )
+</div>
+}
+@(Html.DevExtreme().Popup()
+      .ID("Url-popup")
+       .Height(190)
+      .Width(900)
+      .ShowTitle(true)
+      .Title("Report Url")
+      .Visible(false)
+      .DragEnabled(false)
+      
+      .CloseOnOutsideClick(false)
+      )
+@using(Html.DevExtreme().NamedTemplate("Report-Url-Template")) {
+  
+    <div class=" justify-content-lg-start">
+        @(Html.DevExtreme().TextBox().ID("urlBox")
+              )
+    </div>
+    
+}
+
+
+<script>
+
+    function export_click(e, subdomainId) {
+   
+        var a = e.itemData.id;
+        if (a === 1) {
+            ExportUrl(subdomainId);
+        } else if (a === 2) {
+            ExportSubdomain(subdomainId);
+        }
+
+    }
+
+    function ExportUrl(SubdomainId) {
+     
+        $.ajax({
+            type: 'GET',
+            url: '/SubdomainVersionExport/GenerateReportUrl/',
+            data: { subdomainId: SubdomainId },
+          
+                success: function (data) {
+                    if (data !== null) {
+
+                        $("#urlBox").dxTextBox("instance")
+                            .option("value",data);
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {;
+                    alert(response.responseText);
+                }
+        });
+        
+       
+            showPopUp();
+
+    }
+    function showPopUp() {
+        var popup = $("#Url-popup").dxPopup("instance");
+        popup.option("contentTemplate", $("#Report-Url-Template"));
+        popup.show();
+    }
+    function ExportSubdomain(subdomainId) {
+        $.ajax({
+            type: 'POST',
+            url: '/SubdomainVersionExport/DownloadSubdomainVersion/',
+            data: { subdomainId: subdomainId },
+          
+            success: function (data) {
+             
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {;
+                alert(response.responseText);
+            }
+        });
+    }
+
+
+    var fillExport = [
+        {
+            id: 1,
+            name: "Report Url",
+            delay: { show: 0, hide: 500 }
+        }, {
+            id: 2,
+            name: "Export Subdomain",
+            delay: { show: 0, hide: 300 }
+        }
+    ];
+
+</script>

@@ -32,7 +32,6 @@ namespace DRCDesigner.Entities.Concrete
         [Display(Name = "Enum")]
         Enum = 7,
 
-
         [Display(Name = "DateOnly")]
         DateOnly = 8,
 
@@ -52,7 +51,10 @@ namespace DRCDesigner.Entities.Concrete
         DetailElement = 13,
 
         [Display(Name = "Measurement")]
-        Measurement = 14
+        Measurement = 14,
+
+        [Display(Name = "DynamicField")]
+        DynamicField =15
 
 
 

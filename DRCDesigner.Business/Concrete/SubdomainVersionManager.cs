@@ -72,7 +72,7 @@ namespace DRCDesigner.Business.Concrete
                 }
 
             }
-
+            
             if (newSubdomainVersionBModel.ReferencedVersionIds != null)
             {
                 foreach (var referenceId in newSubdomainVersionBModel.ReferencedVersionIds)

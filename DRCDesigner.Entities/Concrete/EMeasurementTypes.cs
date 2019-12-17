@@ -41,7 +41,8 @@ namespace DRCDesigner.Entities.Concrete
         /// Area
         /// </summary>
         [Display(Name = "Area")]
-        Area = 6,
+      
+          Area= 6,
         /// <summary>
         /// AreaDensity
         /// </summary>

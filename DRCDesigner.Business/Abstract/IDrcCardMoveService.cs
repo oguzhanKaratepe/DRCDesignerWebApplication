@@ -9,5 +9,6 @@ namespace DRCDesigner.Business.Abstract
     public interface IDrcCardMoveService
     {
         Task<DocumentMoveObject> MoveCardToDestinationSubdomainAsync(int drcCardId, int targetSubdomainVersionId, string newDrcCardName);
+        Task<string> CheckMoveOperationReferenceNeeds(int id, int subdomainVersionId);
     }
 }

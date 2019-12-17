@@ -22,6 +22,8 @@ namespace DRCDesigner.Entities.Concrete
         [Required(ErrorMessage = "Subdomain Name is required!")]
         public string SubdomainName { get; set; }
 
+        public string SubdomainNamespace { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<SubdomainVersion> SubdomainVersions {get; set;}
 

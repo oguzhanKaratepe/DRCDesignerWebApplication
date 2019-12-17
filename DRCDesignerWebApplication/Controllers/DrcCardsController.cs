@@ -232,16 +232,27 @@ namespace DRCDesignerWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+                var checkReferences = await _drcCardMoveService.CheckMoveOperationReferenceNeeds(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId);
 
-                if (result.MoveResultType != MoveResultType.Success)
+                if (string.IsNullOrWhiteSpace(checkReferences))
                 {
-                    return BadRequest(result.MoveResultDefinition);
+                    var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+
+                    if (result.MoveResultType != MoveResultType.Success)
+                    {
+                        return BadRequest(result.MoveResultDefinition);
+                    }
+                    else
+                    {
+                        return Ok(result);
+                    }
                 }
                 else
                 {
-                    return Ok(result);
+                    return BadRequest(checkReferences);
                 }
+
+             
             }
             else
             {

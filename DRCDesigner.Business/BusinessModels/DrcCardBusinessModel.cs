@@ -27,7 +27,7 @@ namespace DRCDesigner.Business.BusinessModels
         public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
 
         public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
-
+        public string Definition { get; set; }
         public int Order { get; set; }
         public string SourceDrcCardPath { get; set; }
      

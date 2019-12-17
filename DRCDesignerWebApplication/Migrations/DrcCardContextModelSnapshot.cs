@@ -55,6 +55,8 @@ namespace DRCDesignerWebApplication.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Definition");
+
                     b.Property<int>("DeleteBehaviorOption");
 
                     b.Property<string>("DrcCardName")
@@ -117,15 +119,23 @@ namespace DRCDesignerWebApplication.Migrations
 
                     b.Property<string>("DefaultValue");
 
-                    b.Property<int>("MaxLength");
+                    b.Property<string>("Description");
 
-                    b.Property<double>("MaxValue");
+                    b.Property<string>("EnumValues");
+
+                    b.Property<string>("ItemName");
+
+                    b.Property<int?>("MaxLength");
+
+                    b.Property<double?>("MaxValue");
 
                     b.Property<int?>("MeasurementType");
 
-                    b.Property<int>("MinLength");
+                    b.Property<int?>("MinLength");
 
-                    b.Property<double>("MinValue");
+                    b.Property<double?>("MinValue");
+
+                    b.Property<bool>("Nullable");
 
                     b.Property<string>("RegularExpression");
 
@@ -182,6 +192,8 @@ namespace DRCDesignerWebApplication.Migrations
 
                     b.Property<string>("SubdomainName")
                         .IsRequired();
+
+                    b.Property<string>("SubdomainNamespace");
 
                     b.HasKey("Id");
 

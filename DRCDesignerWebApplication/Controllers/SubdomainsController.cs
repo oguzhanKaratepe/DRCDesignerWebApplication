@@ -23,12 +23,11 @@ namespace DRCDesignerWebApplication.Controllers
 
         private readonly ISubdomainService _subdomainService;
         private readonly IMapper _mapper;
-        private readonly IExportService _exportService;
-        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper,IExportService exportService)
+
+        public SubdomainsController(ISubdomainService subdomainService,IMapper mapper)
         {
             _subdomainService = subdomainService;
             _mapper = mapper;
-            _exportService = exportService;
         }
 
         public IActionResult Index()

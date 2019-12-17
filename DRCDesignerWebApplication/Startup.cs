@@ -59,6 +59,7 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IAuthorizationService, AuthorizationManager>();
             services.AddScoped<IDrcCardMoveService, DrcCardMoveManager>();
             services.AddScoped<IExportService, ExportManager>();
+          
 
 
             services.AddMvc().AddJsonOptions(options => {
@@ -86,21 +87,26 @@ namespace DRCDesignerWebApplication
             services.AddMvc();
             //DrcDesigner
             //StudentManagement
-
+          
             //var connection = @"server=(localdb)\MSSQLLocalDB; Database=DrcDesigner; Trusted_Connection=true";
             //var connection = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DrcDesigner;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             var connection = Configuration.GetConnectionString("DRCDesigner");
             services.AddSession();
 
-            services.AddDbContext<DrcCardContext>(options =>
-              options.UseSqlServer(connection, b => b.MigrationsAssembly("DRCDesignerWebApplication")));
+            services.AddDbContext<DrcCardContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("DRCDesignerWebApplication")));
            // services.AddDbContext<DrcCardContext>(context => { context.UseInMemoryDatabase("OguzDatabase"); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-       
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<DrcCardContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
 
             if (env.IsDevelopment())
             {
@@ -118,7 +124,7 @@ namespace DRCDesignerWebApplication
             app.UseSession();
             app.UseCookiePolicy();
             app.UseMvc(configureRoutes);
-            
+          
         }
         private void configureRoutes(IRouteBuilder routeBuilder)
         {

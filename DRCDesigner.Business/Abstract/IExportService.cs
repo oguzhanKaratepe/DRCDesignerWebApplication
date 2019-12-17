@@ -7,6 +7,8 @@ namespace DRCDesigner.Business.Abstract
 {
     public interface IExportService
     {
-       
+  
+        string generateSubdomainVersionReportUrl(int subdomainId);
+        void generateSubdomainVersionDocuments(int subdomainId);
     }
 }
