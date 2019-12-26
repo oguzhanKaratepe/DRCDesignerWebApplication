@@ -293,8 +293,12 @@ else {
                               .Position(Position.Bottom)
                               .Width(270)
                               .ContentTemplate(@<text>
+                                                   <h6>Type:</h6>
                                                    <h6>@field.Type <br></h6>
-
+                                                   @if (@field.MeasurementType!=null)
+                                                   {
+                                                       <h6> @field.MeasurementType</h6>
+                                                   }
                                                    @if (@field.Required == true)
                                                    {
                                                        <h6> Required</h6>
@@ -303,22 +307,22 @@ else {
                                                    {
                                                        <h6>Unique</h6>
                                                    }
-                                                   @if (@field.MaxLength != 0)
+                                                   @if (@field.MaxLength != null)
                                                    {
                                                        <h6>MaxLength:</h6>
                                                        <span>@field.MaxLength</span>
                                                    }
-                                                   @if (@field.MinLength != 0)
+                                                   @if (@field.MinLength != null)
                                                    {
                                                        <h6>MinLength:</h6>
                                                        <span>@field.MinLength</span>
                                                    }
-                                                   @if (@field.MaxValue != 0.0)
+                                                   @if (@field.MaxValue != null)
                                                    {
                                                        <h6>MaxValue:</h6>
                                                        <span>@field.MaxValue</span>
                                                    }
-                                                   @if (@field.MinValue != 0.0)
+                                                   @if (@field.MinValue != null)
                                                    {
                                                        <h6>MinValue:</h6>
                                                        <span>@field.MinValue</span>
@@ -358,8 +362,12 @@ else {
                               .Position(Position.Bottom)
                               .Width(270)
                               .ContentTemplate(@<text>
+                                                   <h6>Type:</h6>
                                                    <h6>@field.Type <br></h6>
-
+                                                   @if (@field.MeasurementType!=null)
+                                                   {
+                                                       <h6> @field.MeasurementType</h6>
+                                                   }
                                                    @if (@field.Required == true)
                                                    {
                                                        <h6> Required</h6>
@@ -368,22 +376,22 @@ else {
                                                    {
                                                        <h6>Unique</h6>
                                                    }
-                                                   @if (@field.MaxLength != 0)
+                                                   @if (@field.MaxLength != null)
                                                    {
                                                        <h6>MaxLength:</h6>
                                                        <span>@field.MaxLength</span>
                                                    }
-                                                   @if (@field.MinLength != 0)
+                                                   @if (@field.MinLength != null)
                                                    {
                                                        <h6>MinLength:</h6>
                                                        <span>@field.MinLength</span>
                                                    }
-                                                   @if (@field.MaxValue != 0.0)
+                                                   @if (@field.MaxValue != null)
                                                    {
                                                        <h6>MaxValue:</h6>
                                                        <span>@field.MaxValue</span>
                                                    }
-                                                   @if (@field.MinValue != 0.0)
+                                                   @if (@field.MinValue != null)
                                                    {
                                                        <h6>MinValue:</h6>
                                                        <span>@field.MinValue</span>

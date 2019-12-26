@@ -361,8 +361,21 @@
         if ((item &&
             item.itemType === "group" &&
             item.caption === "ComplexTypeElement Field Details") && InitNewRowStarted) {
-
+            console.log(selectedType);
             if (selectedType === "ComplexTypeElement") {
+
+                item.visible = true;
+
+            } else {
+                item.visible = false;
+            }
+        }
+
+        if ((item &&
+            item.itemType === "group" &&
+            item.caption === "DynamicField Details") && InitNewRowStarted) {
+            console.log(selectedType);
+            if (selectedType === "DynamicField") {
 
                 item.visible = true;
 
@@ -661,6 +674,23 @@
 
         }
 
+        if (
+            (item &&
+                item.itemType === "group" &&
+                item.caption === "DynamicField Details") && !InitNewRowStarted
+        ) {
+
+            var index108 = dataGrid.getRowIndexByKey(rowKey) || 0;
+            var type108 = dataGrid.cellValue(index108, "Type");
+
+            if (type108 === 15) {
+                item.visible = true;
+            } else {
+                item.visible = false;
+            }
+
+        }
+
       
       
 
@@ -932,7 +962,7 @@
                                                                 <h6> Collaboration Card:</h6>
                                                                 <span>@field.CollaborationCard.DrcCardName</span>
                                                 }
-                                                            /**/
+                                                            
 
 
 
@@ -953,7 +983,12 @@
                                                                           .Width(270)
                                                                           .ContentTemplate(@<text>
                                                                             <h6>@field.Type <br></h6>
+                                                                                               @if (@field.ItemName!=null)
+                                                                                               {
+                                                                                                   <h6>Item Name:</h6>
+                                                                                                   <span>@field.ItemName</span>
 
+                                                                                               }
                                                                             @if (@field.CollaborationCard != null)
                                                                 {
                                                                 <h6> Collaboration Card:</h6>
@@ -973,28 +1008,28 @@
                                                 }
                                                            
 
-                                                                            @if (@field.MaxLength != 0)
+                                                                            @if (@field.MaxLength != null)
                                                                 {
                                                                 <h6>MaxLength:</h6>
                                                                 <span>@field.MaxLength</span>
                                                 }
                                                             
 
-                                                                            @if (@field.MinLength != 0)
+                                                                            @if (@field.MinLength != null)
                                                                 {
                                                                 <h6>MinLength:</h6>
                                                                 <span>@field.MinLength</span>
                                                 }
                                                            
 
-                                                                            @if (@field.MaxValue != 0.0)
+                                                                            @if (@field.MaxValue != null)
                                                                 {
                                                                 <h6>MaxValue:</h6>
                                                                 <span>@field.MaxValue</span>
                                                 }
                                                          
 
-                                                                            @if (@field.MinValue != 0.0)
+                                                                            @if (@field.MinValue !=null)
                                                                 {
                                                                 <h6>MinValue:</h6>
                                                                 <span>@field.MinValue</span>
@@ -1021,12 +1056,13 @@
                                                                 <span>@field.RegularExpression</span>
 
                                                 }
-                                                @*@if (@field.MeasurementType!=null)
+                                                                            @if (@field.MeasurementType!=null)
                                                 {
                                                     <h6>MeasurementType:</h6>
                                                     <span>@field.MeasurementType</span>
 
-                                                }*@
+                                                }
+                                                                      
 
 
                                                                         </text>))

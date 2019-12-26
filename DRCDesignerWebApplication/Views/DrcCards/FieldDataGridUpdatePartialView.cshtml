@@ -46,7 +46,7 @@
                                           groupItems.AddSimpleFor(m => m.MaxLength).Editor(editor => editor.NumberBox().Min(0).StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
                                           groupItems.AddSimpleFor(m => m.RegularExpression).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
                                       });
 
                                   items.AddGroup()
@@ -61,7 +61,7 @@
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be byte"));
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -79,7 +79,7 @@
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer"));
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
                                       });
 
 
@@ -96,8 +96,8 @@
                                           groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-3");
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("[0-9]").Message("Value must be Double"));
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
                                       });
 
                                   items.AddGroup()
@@ -112,8 +112,8 @@
                                           groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-3");
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("[0-9]").Message("Value must be Double"));
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
                                   items.AddGroup()
@@ -129,8 +129,8 @@
 
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("[0-9]").Message("Value must be Long"));
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -140,34 +140,38 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-1").ColSpan(2);
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-1");
+                                          groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-3").ValidationRules(r => r.AddPattern().Pattern("^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$").Message("Value must be true or false"));
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
                                   items.AddGroup()
-                                      .Caption("Enumeration Details")
-                                      .ColCount(3)
-                                      .ColSpan(2)
-                                      .Items(groupItems =>
-                                      {
-                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Enumeration"));
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
-                                          groupItems.AddSimpleFor(m => m.EnumValues).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Please separate them with comma" + " ' , ' ")).ColSpan(3).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Be careful about spelling!")).ColSpan(3).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
-                                      });
+                  .Caption("Enumeration Details")
+                  .ColCount(3)
+                  .ColSpan(2)
+                  .Items(groupItems =>
+                  {
+
+                      groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
+                      groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-3");
+                      groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                      groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Enumeration"));
+                      groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Be careful about spelling!")).ColSpan(2).CssClass("mr-2");
+                      groupItems.AddSimpleFor(m => m.EnumValues).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Please separate them with comma" + " ' , ' ")).ColSpan(3).CssClass("mr-2");
+                      groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
+                  });
                                   items.AddGroup()
                                       .Caption("DateOnly Field Details")
                                       .ColCount(3)
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
                                           groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -178,11 +182,11 @@
                                       .Items(groupItems =>
                                       {
 
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
                                           groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
-
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
                                       });
 
                                   items.AddGroup()
@@ -191,10 +195,11 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
                                           groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
                                       });
 
 
@@ -204,9 +209,11 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.CollaborationId).ColSpan(2);
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-3").ColSpan(1);
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                         
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3").ColSpan(1);
+                                          groupItems.AddSimpleFor(m => m.CollaborationId).ColSpan(3).CssClass("mr-3");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -217,8 +224,8 @@
                                       .Items(groupItems =>
                                       {
                                           groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of ComplexType Interface")).ColSpan(2);
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(1);
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -230,8 +237,8 @@
                                       {
 
                                           groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of DetailElement Interface")).ColSpan(2);
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(1);
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
 
                                       });
@@ -242,10 +249,23 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.MeasurementType).Editor(m=>m.Lookup().PopupHeight(300)).ColSpan(3).CssClass("mr-3");
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ColSpan(1);
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).ColSpan(2).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
+                                          groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-5");
+                                          groupItems.AddSimpleFor(m => m.MeasurementType).Editor(m => m.Lookup().PopupHeight(300)).ColSpan(3).CssClass("mr-3");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
+
+                                      });
+
+                                  items.AddGroup()
+                                      .Caption("DynamicField Details")
+                                      .ColCount(3)
+                                      .ColSpan(2)
+                                      .Items(groupItems =>
+                                      {
+                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Dynamic Field Interface")).ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
+                                          groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
 
@@ -307,6 +327,7 @@
                      columns.Add().DataField("RegularExpression").Visible(false);
                      columns.Add().DataField("CreditCard").Visible(false);
                      columns.Add().DataField("Unique").Visible(false);
+                     columns.Add().DataField("EnumValues").Visible(false) ;
                      columns.Add().DataField("MeasurementType").Visible(false)
                          .Width(185)
                          .Lookup(lookup =>

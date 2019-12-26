@@ -18,7 +18,7 @@ namespace DRCDesignerWebApplication.ViewModels
         public DrcCard CollaborationCard{ get; set; }
         [JsonIgnore]
         public DrcCard DrcCard { get; set; }
-        public EMeasurementTypes MeasurementType { get; set; }
+        public EMeasurementTypes? MeasurementType { get; set; }
         public string ItemName { get; set; }
         public string Description { get; set; }
         public bool Nullable { get; set; }

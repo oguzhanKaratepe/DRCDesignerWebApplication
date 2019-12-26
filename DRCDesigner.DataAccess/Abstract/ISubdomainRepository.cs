@@ -15,6 +15,7 @@ namespace DRCDesigner.DataAccess.Abstract
         Task<IEnumerable<Subdomain>> GetAllWithVersions();
         Task<Subdomain> GetSubdomainWithAllVersions(int subdomainId);
         string GetSubdomainName(int subdomainId);
+        string GetSubdomainNamespace(int subdomainId);
 
         Subdomain GetSubdomainWithAllVersionsWithSubdomainName(string subdomainName);
     }

@@ -48,6 +48,7 @@
               .Columns(columns =>
               {
                   columns.AddFor(m => m.SubdomainName);
+                  columns.AddFor(m => m.SubdomainNamespace).Caption("Namespace");
               })
               .DataSource(d => d.Mvc()
                   .Controller("Subdomains")

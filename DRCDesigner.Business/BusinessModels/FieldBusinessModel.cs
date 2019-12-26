@@ -14,7 +14,7 @@ namespace DRCDesigner.Business.BusinessModels
         public int? CollaborationId { get; set; }
         public DrcCard CollaborationCard { get; set; }
         public DrcCard DrcCard { get; set; }
-        public EMeasurementTypes MeasurementType { get; set; }
+        public EMeasurementTypes? MeasurementType { get; set; }
 
         public string ItemName { get; set; }
         public string Description { get; set; }
