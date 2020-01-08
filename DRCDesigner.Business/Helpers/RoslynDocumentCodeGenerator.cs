@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using DRCDesigner.Entities.Concrete;
 using Microsoft.CodeAnalysis;
@@ -9,22 +10,65 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DRCDesigner.Business.Helpers
 {
-   public class RoslynDocumentCodeGenerator
+    public class RoslynDocumentCodeGenerator
     {
 
+        public CompilationUnitSyntax newFullDocumentTemplate()
+        {
+            return SyntaxFactory.CompilationUnit()
+                .WithUsings(
+                    SyntaxFactory.List<UsingDirectiveSyntax>(
+                        new UsingDirectiveSyntax[]
+                        {
+                            SyntaxFactory.UsingDirective(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.QualifiedName(
+                                        SyntaxFactory.QualifiedName(
+                                            SyntaxFactory.IdentifierName("Dexmo"),
+                                            SyntaxFactory.IdentifierName("Middleware")),
+                                        SyntaxFactory.IdentifierName("DAL")),
+                                    SyntaxFactory.IdentifierName("Abstraction"))),
+                            SyntaxFactory.UsingDirective(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.QualifiedName(
+                                        SyntaxFactory.QualifiedName(
+                                            SyntaxFactory.QualifiedName(
+                                                SyntaxFactory.IdentifierName("Dexmo"),
+                                                SyntaxFactory.IdentifierName("Middleware")),
+                                            SyntaxFactory.IdentifierName("DAL")),
+                                        SyntaxFactory.IdentifierName("Abstraction")),
+                                    SyntaxFactory.IdentifierName("Attributes"))),
+                            SyntaxFactory.UsingDirective(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.QualifiedName(
+                                        SyntaxFactory.QualifiedName(
+                                            SyntaxFactory.QualifiedName(
+                                                SyntaxFactory.IdentifierName("Dexmo"),
+                                                SyntaxFactory.IdentifierName("Middleware")),
+                                            SyntaxFactory.IdentifierName("DAL")),
+                                        SyntaxFactory.IdentifierName("Abstraction")),
+                                    SyntaxFactory.IdentifierName("Validation")))
+                        }));
+        }
 
         public NamespaceDeclarationSyntax generateNamespaceDeclaration(string nameSpace)
         {
-            var @namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName("Error with your namespace string")).NormalizeWhitespace();
+
             if (nameSpace != null)
             {
-                @namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(nameSpace)).NormalizeWhitespace();
+                var @namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(nameSpace)).NormalizeWhitespace();
+                return @namespace;
+            }
+            else
+            {
+                var @namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName("Not Defined")).NormalizeWhitespace();
+                return @namespace;
             }
 
-            return @namespace;
+            
         }
 
-        public InterfaceDeclarationSyntax generateDocumentInterface(string className,string comment)
+        public InterfaceDeclarationSyntax generateDocumentInterface(string className, string comment)
         {
             className = camelCaseDocumentName(className);
 
@@ -62,8 +106,9 @@ namespace DRCDesigner.Business.Helpers
 
 
         }
-        public InterfaceDeclarationSyntax generateShadowDocumentInterface(string className, string sourceDocumentName,string comment)
+        public InterfaceDeclarationSyntax generateShadowDocumentInterface(string className, string sourceDocumentName, string comment)
         {
+            className = camelCaseDocumentName(className);
             return SyntaxFactory.InterfaceDeclaration("I" + className)
                 .WithModifiers(
                     SyntaxFactory.TokenList(
@@ -134,7 +179,7 @@ namespace DRCDesigner.Business.Helpers
             if (field.Nullable)
             {
                 var attributelist = NormalPropertyAtributes(field);
-                
+
                 var fieldbase = SyntaxFactory.PropertyDeclaration(
                         SyntaxFactory.NullableType(
                             SyntaxFactory.IdentifierName(getNormalFieldType(field))),
@@ -144,7 +189,7 @@ namespace DRCDesigner.Business.Helpers
 
                         attributelist
                     ))
-                    
+
                     .WithAccessorList(
                         SyntaxFactory.AccessorList(
                             SyntaxFactory.List<AccessorDeclarationSyntax>(
@@ -166,8 +211,7 @@ namespace DRCDesigner.Business.Helpers
             else
             {
                 var fieldbase = SyntaxFactory.PropertyDeclaration(
-                        SyntaxFactory.NullableType(
-                            SyntaxFactory.IdentifierName(getNormalFieldType(field))),
+                     SyntaxFactory.IdentifierName(getNormalFieldType(field)),
                         SyntaxFactory.Identifier(field.AttributeName))
 
                     .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>(
@@ -190,74 +234,81 @@ namespace DRCDesigner.Business.Helpers
                                                     SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                                 })))
                     .NormalizeWhitespace();
-             
+
                 return fieldbase;
             }
-           
+
         }
         public PropertyDeclarationSyntax generateDocumentDexmoPropertiesDeclarationWithAttributes(Field field)
         {
-            var propertyName = cleanDetailElementName(field.AttributeName); // Lines[] will convert lines
+            var propertyName = cleanDetailElementName(field.AttributeName); // Lines[] will convert to Lines
+
+
+            //enums have gets and sets but other dexmo properties just have get method;
+            var getSetDeclaration = new AccessorDeclarationSyntax[]
+            {
+                SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            };
+            if (field.Type == FieldType.Enum)
+            {
+                getSetDeclaration = new AccessorDeclarationSyntax[]
+                {
+                    SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                    SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                };
+            }
+
 
             if (field.Nullable)
             {
-               var  fieldbase = SyntaxFactory.PropertyDeclaration(
-                        SyntaxFactory.NullableType(
-                            SyntaxFactory.IdentifierName(GetComplexFieldType(field))),
-                        SyntaxFactory.Identifier(propertyName))
+                var fieldbase = SyntaxFactory.PropertyDeclaration(
+                         SyntaxFactory.NullableType(
+                             SyntaxFactory.IdentifierName(GetComplexFieldType(field))),
+                         SyntaxFactory.Identifier(propertyName))
 
 
-                    .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>(
+                     .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>(
 
-                            complexPropertyAtributes(field)
-                        )
-                    )
-                    .WithAccessorList(
-                        SyntaxFactory.AccessorList(
-                            SyntaxFactory.List<AccessorDeclarationSyntax>(
-                                new AccessorDeclarationSyntax[]
-                                {
-                                    SyntaxFactory.AccessorDeclaration(
-                                            SyntaxKind.GetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                    SyntaxFactory.AccessorDeclaration(
-                                            SyntaxKind.SetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                                })))
-                    .NormalizeWhitespace();
+                             complexPropertyAtributes(field)
+                         )
+                     )
+                     .WithAccessorList(
+                         SyntaxFactory.AccessorList(
+                             SyntaxFactory.List<AccessorDeclarationSyntax>(
+                                 getSetDeclaration
+                               )))
+                     .NormalizeWhitespace();
 
-               return fieldbase;
+                return fieldbase;
             }
             else
             {
-              var  fieldbase = SyntaxFactory.PropertyDeclaration(
-                        SyntaxFactory.IdentifierName(GetComplexFieldType(field)),
-                        SyntaxFactory.Identifier(propertyName))
+                var fieldbase = SyntaxFactory.PropertyDeclaration(
+                          SyntaxFactory.IdentifierName(GetComplexFieldType(field)),
+                          SyntaxFactory.Identifier(propertyName))
 
-                    .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>(
+                      .WithAttributeLists(SyntaxFactory.List<AttributeListSyntax>(
 
-                        complexPropertyAtributes(field)
-                    ))
+                          complexPropertyAtributes(field)
+                      ))
 
-                    .WithAccessorList(
-                        SyntaxFactory.AccessorList(
-                            SyntaxFactory.List<AccessorDeclarationSyntax>(
-                                new AccessorDeclarationSyntax[]
-                                {
-                                    SyntaxFactory.AccessorDeclaration(
-                                            SyntaxKind.GetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                    SyntaxFactory.AccessorDeclaration(
-                                            SyntaxKind.SetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                                })))
-                    .NormalizeWhitespace();
+                      .WithAccessorList(
+                          SyntaxFactory.AccessorList(
+                              SyntaxFactory.List<AccessorDeclarationSyntax>(
+                                  getSetDeclaration
+                                  )))
+                      .NormalizeWhitespace();
 
-              return fieldbase;
+                return fieldbase;
             }
 
         }
@@ -274,7 +325,7 @@ namespace DRCDesigner.Business.Helpers
                                SyntaxFactory.Identifier(
                                    SyntaxFactory.TriviaList(),
                                    //key point
-                                   field.AttributeName + "Id",
+                                   field.AttributeName,
                                    SyntaxFactory.TriviaList(
                                        SyntaxFactory.Space)))
 
@@ -321,7 +372,7 @@ namespace DRCDesigner.Business.Helpers
             return mainProperty;
         }
 
-        public EnumMemberDeclarationSyntax generateEnumProperty(String enumMember,int value,int totalMemberCount)
+        public EnumMemberDeclarationSyntax generateEnumProperty(String enumMember, int value, int totalMemberCount)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
@@ -462,16 +513,26 @@ namespace DRCDesigner.Business.Helpers
                                         SyntaxFactory.TriviaList())))
                             }))));
         }
-        private string cleanDetailElementName(string attributeName)
+        public string cleanDetailElementName(string attributeName)
         {
-            string[] words = attributeName.Split("[");
+            try
+            {
+                string[] words = attributeName.Split("[");
 
-            return words[0].ToLower().Trim();
+                return words[0].Trim();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return attributeName;
         }
 
-        
-        
-            private string getNormalFieldType(Field field)
+
+
+        private string getNormalFieldType(Field field)
         {
             switch (field.Type)
             {
@@ -495,7 +556,7 @@ namespace DRCDesigner.Business.Helpers
 
                 case FieldType.Decimal:
                     return "decimal";
-
+                case FieldType.Measurement:
                 case FieldType.Double:
                     return "double";
 
@@ -593,7 +654,7 @@ namespace DRCDesigner.Business.Helpers
                                                 SyntaxFactory.Literal((double)field.MinValue))))))));
                 point++;
             }
-            if (field.RegularExpression != null)
+            if (!string.IsNullOrEmpty(field.RegularExpression))
             {
                 a[point] = SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
@@ -606,10 +667,49 @@ namespace DRCDesigner.Business.Helpers
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
                                                 SyntaxFactory.Literal(field.RegularExpression))))))));
-                    
+
 
                 point++;
             }
+            if (field.Type == FieldType.Measurement)
+            {
+                string measurementType = "Not Defined";
+                try
+                {
+                    measurementType = field.MeasurementType.ToString();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                
+                a[point] = SyntaxFactory.AttributeList(
+                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                        SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("MeasurementMember"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("DAL"),
+                                                            SyntaxFactory.IdentifierName("Abstraction")),
+                                                        SyntaxFactory.IdentifierName("FieldTypes")),
+                                                    SyntaxFactory.IdentifierName("EMeasurementTypes")),
+                                                SyntaxFactory.IdentifierName(measurementType))))))));
+
+
+                point++;
+            }
+
             if (field.Type == FieldType.Integer)
             {
                 a = fieldValueWithoutInstance(a, point, "IntegerMember", field);
@@ -662,17 +762,17 @@ namespace DRCDesigner.Business.Helpers
             }
             if (field.Type == FieldType.RelationElement)
             {
-                a = fieldValueWithoutInstance(a, point, "RelationElement", field);
+                a = fieldValueWithoutInstance(a, point, "RelationMember", field);
                 point++;
             }
 
             var b = new AttributeListSyntax[point];
 
-        
+
             for (int i = 0; i < point; i++)
             {
                 b[i] = a[i];
-              
+
             }
 
             if (b.Length > 0)
@@ -680,30 +780,22 @@ namespace DRCDesigner.Business.Helpers
                 b[0] = b[0].WithOpenBracketToken(SyntaxFactory.Token(generateSummaryComment(field.Description), SyntaxKind.OpenBracketToken,
                     SyntaxFactory.TriviaList()));
             }
-           
+
 
             return b;
         }
 
         private AttributeListSyntax[] fieldValueWithoutInstance(AttributeListSyntax[] a, int index, string atributeName, Field field)
         {
-            if (field.DefaultValue != null)
+
+            if (!String.IsNullOrEmpty(field.DefaultValue))
             {
-                a[index] = SyntaxFactory.AttributeList(
-                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                        SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName(atributeName))
-                            .WithArgumentList(
-                                SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                        SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(field.DefaultValue)))
-                                            .WithNameEquals(
-                                                SyntaxFactory.NameEquals(
-                                                    SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                //I am using this method because all default values are string I am converting them to related types by this method
+                a[index] = GetTypeOfDefaultValue(atributeName, field);
+
+
             }
+
             else if (field.Type == FieldType.RelationElement)
             {
                 a[index] = SyntaxFactory.AttributeList(
@@ -721,7 +813,7 @@ namespace DRCDesigner.Business.Helpers
                                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.IdentifierName(
-                                                                    field.AttributeName + "Id")))))))))));
+                                                                    field.AttributeName)))))))))));
             }
             else
             {
@@ -747,11 +839,177 @@ namespace DRCDesigner.Business.Helpers
 
             return a;
         }
+
+        public AttributeListSyntax GetTypeOfDefaultValue(string attributeName, Field field)
+        {
+            switch (field.Type)
+            {
+                case FieldType.Bool:
+                    var boolDefaultValue = Boolean.Parse(field.DefaultValue);
+                    var boolSyntax = SyntaxKind.TrueLiteralExpression;
+                    if (!boolDefaultValue)
+                    {
+                        boolSyntax = SyntaxKind.FalseLiteralExpression;
+                    }
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        boolSyntax
+                                                        ))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+                case FieldType.Byte:
+                    var ByteDefaultValue = Byte.Parse(field.DefaultValue);
+
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(ByteDefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+                case FieldType.Long:
+                    var LongDefaultValue = Convert.ToInt64(field.DefaultValue);
+
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(LongDefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+                case FieldType.Integer:
+                    var IntegerDefaultValue = Convert.ToInt32(field.DefaultValue);
+
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(IntegerDefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+                case FieldType.Decimal:
+                    var DecimalDefaultValue = Convert.ToDecimal(field.DefaultValue);
+
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(DecimalDefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+                case FieldType.Double:
+                case FieldType.Measurement:
+
+                    var DoubleDefaultValue = Convert.ToDouble(field.DefaultValue);
+
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(DoubleDefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+
+                case FieldType.Enum:
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName(field.ItemName),
+                                                        SyntaxFactory.IdentifierName(field.DefaultValue))
+                                                )
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+
+                    break;
+
+                default:
+                    return SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName(attributeName))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(field.DefaultValue)))
+                                                .WithNameEquals(
+                                                    SyntaxFactory.NameEquals(
+                                                        SyntaxFactory.IdentifierName("DefaultValue"))))))));
+                    break;
+            }
+
+        }
+
+
+
         private string GetComplexFieldType(Field field)
         {
             if (field.Type == FieldType.Enum)
             {
-                return camelCaseDocumentName(field.ItemName);
+                if (field.ItemName != null)
+                {
+                    return field.ItemName.Trim();
+                }
+               
             }
             else if (field.Type == FieldType.DetailElement)
             {
@@ -759,7 +1017,7 @@ namespace DRCDesigner.Business.Helpers
 
                 try
                 {
-                    string outputToReturn = "IDocumentDetailElementCollection<" + field.ItemName + ">";
+                    string outputToReturn = "IDocumentDetailElementCollection<" + field.ItemName.Trim() + ">";
                     return outputToReturn;
                 }
                 catch (Exception e)
@@ -778,7 +1036,7 @@ namespace DRCDesigner.Business.Helpers
             {
                 try
                 {
-                    string outputToReturn = "IDocumentDetailElementCollection<" + field.ItemName + ">";
+                    string outputToReturn = "IDocumentDetailElementCollection<" + field.ItemName.Trim() + ">";
                     return outputToReturn;
                 }
                 catch (Exception e)
@@ -809,7 +1067,7 @@ namespace DRCDesigner.Business.Helpers
 
             if (field.Type == FieldType.Enum)
             {
-                a = fieldValueWithoutInstance(a, point, "EnumMember");
+                a = fieldValueWithoutInstance(a, point, "EnumMember", field);
                 point++;
             }
 
@@ -847,6 +1105,15 @@ namespace DRCDesigner.Business.Helpers
             className = className.Replace(" ", "").Trim();
 
             return className;
+        }
+
+
+        public string generateHtmlPage(string url)
+        {
+            string html =
+                "<!DOCTYPE html>\r\n<html>\r\n<style>\r\nbody {\r\n    margin: 0;\r\n}\r\n</style>\r\n<body>\r\n\r\n<iframe height=\"820px\"  width=\"100%\" " + "src=" + url + ">\r\n \r\n</iframe>\r\n\r\n</body>\r\n</html>";
+
+            return html;
         }
 
     }

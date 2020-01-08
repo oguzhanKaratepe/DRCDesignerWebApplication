@@ -1,66 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
-
-using DevExtreme.AspNet.Mvc;
-using DevExtreme.AspNet.Data;
 using DRCDesigner.Business.Abstract;
-using DRCDesignerWebApplication.ViewModels;
-using DRCDesigner.Entities.Concrete;
-
-
+using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.AspNetCore.Hosting;
 namespace DRCDesignerWebApplication.Controllers
 {
     public class SubdomainVersionExportController : Controller
     {
         private readonly IExportService _exportService;
-        public SubdomainVersionExportController(IExportService exportService)
+        private IHostingEnvironment _env { get; }
+        public SubdomainVersionExportController(IExportService exportService, IHostingEnvironment env)
         {
             _exportService = exportService;
+            _env = env;
         }
 
 
-       [HttpGet]
+        [HttpGet]
         public IActionResult GenerateReportUrl(int subdomainId)
         {
             if (subdomainId > 0)
             {
-                string result = _exportService.generateSubdomainVersionReportUrl(subdomainId);
-
-                if (string.IsNullOrEmpty(result))
+                try
                 {
-                    return BadRequest(result);
+                    var result = _exportService.generateSubdomainVersionReportHtml(subdomainId);
+                    byte[] bytes = Encoding.ASCII.GetBytes(result[1]);
+
+                    string filename = result[0] + ".html";
+
+                    return File(bytes, "text/html",
+                        filename); // recommend specifying the download file name for zips
+
                 }
-                return Ok(result);
+                catch (Exception e)
+                {
+                    ViewData["Message"] =e.Message;
+                    ViewData["SubdomainVersionId"] = subdomainId;
+                    return View("ErrorPage");
+                }
+
             }
             else
             {
-                return BadRequest();
+                ViewData["Message"] = "Something went wrong while generating report";
+                ViewData["SubdomainVersionId"] = subdomainId;
+                return View("ErrorPage");
             }
-            
+
         }
 
-        [HttpPost]
-        public IActionResult DownloadSubdomainVersion(int subdomainId)
+        public async Task<IActionResult> DownloadSubdomainVersion(int subdomainId)
         {
+
+
             if (subdomainId > 0)
             {
-                _exportService.generateSubdomainVersionDocuments(subdomainId);
+                try
+                {
+                    byte[] data = _exportService.generateSubdomainVersionDocuments(subdomainId);
 
-                return Ok();
+                    return File(data, "application/x-zip-compressed",
+                        "DocumentStore.zip"); // recommend specifying the download file name for zips
+                }
+                catch (Exception e)
+                {
+                    ViewData["Message"] = e.Message;
+                    ViewData["SubdomainVersionId"] = subdomainId;
+                    return View("ErrorPage");
+                }
+              
             }
             else
             {
-                return BadRequest();
+                ViewData["Message"] = "Something went wrong while generation code";
+                ViewData["SubdomainVersionId"] = subdomainId;
+                return View("ErrorPage");
             }
+
+
         }
 
+
+
     }
+
+
+
+
+
+
 }

@@ -9,10 +9,9 @@
 <div class="d-flex flex-column ml-3">
     @*<h5>Document Name:</h5>*@
         @(Html.DevExtreme().DataGrid<DrcCardViewModel>()
-              .ShowBorders(true)
-              .ElementAttr(new { style = "margin-left:290px;" })
-              .Height(320)
-              .Width(660)
+              .ShowBorders(false)
+              .ElementAttr(new { style = "margin-left:240px;" })
+              .Width(670)
               .AllowColumnResizing(true)
               .Scrolling(z=>z.ShowScrollbar(ShowScrollbarMode.Never))
               // .ShowColumnHeaders(false)
@@ -21,6 +20,7 @@
               
               .Editing(editing =>
               {
+                  editing.Mode(GridEditMode.Cell);
                   editing.Mode(GridEditMode.Form).Form(a=>a.ColCount(3));
                   editing.AllowUpdating(true);
               })
@@ -29,7 +29,7 @@
                   .UpdateAction("Put")
                   .Key("Id").LoadParams(new { Id = Model.Id }))
               .Columns(columns => {
-                  columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate("Document Name");
+                  columns.AddFor(m => m.DrcCardName).AllowSorting(false).HeaderCellTemplate("Document Name").Width(220);
 
                   columns.AddFor(m => m.SecurityCriticalOption).AllowSorting(false)
                       .Caption("Security Option")
@@ -60,9 +60,8 @@
                       .Visible(false)
                       .FormItem(i => i
                           .Editor(e => e
-                              .TextBox())
+                              .TextArea().StylingMode(EditorStylingMode.Outlined)).IsRequired(true)
                           .ColSpan(3)
-
                       );
 
               })

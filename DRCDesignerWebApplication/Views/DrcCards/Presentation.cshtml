@@ -153,9 +153,28 @@ else {
         {
             <div id="shadowcardheader" class="card-header text-light border-secondary d-flex flex-wrap justify-content-between  pb-5">
 
-                <div>
+                <div id="@("header" + property.Id)">
                     <div class="align-self-start">@property.DrcCardName</div>
                     <div class=" align-self-start p-0">@property.SourceDrcCardPath</div>
+                     
+                    @(Html.DevExtreme().Popover()
+                          .Target("#header" + property.Id)
+                          .ShowEvent("mouseenter")
+                          .HideEvent("mouseleave")
+                          .Position(Position.Bottom)
+                          .Width(340)
+                          .ContentTemplate(@<text>
+                                               @if (!String.IsNullOrEmpty(@property.Definition))
+                                               {
+                                                   <h6>Document Definition:</h6>
+                                                   <span>@property.Definition</span>
+                                               }
+                                               else
+                                               {
+                                                   <h6>Document Definition:</h6>
+                                                   <span>"You have not write any comment about this document!!"</span>
+                                               }
+                                            </text>))
                 </div>
 
                 <div>
@@ -168,7 +187,26 @@ else {
         else
         {
             <div class="card-header text-light bg-info border-secondary d-flex flex-wrap justify-content-between dx-word-wrap">
-                <div class="d-flex ">@property.DrcCardName</div>
+                <div id="@("header" + property.Id)" class="d-flex ">@property.DrcCardName
+                    @(Html.DevExtreme().Popover()
+                          .Target("#header" + property.Id)
+                          .ShowEvent("mouseenter")
+                          .HideEvent("mouseleave")
+                          .Position(Position.Bottom)
+                          .Width(340)
+                          .ContentTemplate(@<text>
+                                               @if (!String.IsNullOrEmpty(@property.Definition))
+                                               {
+                                                   <h6>Document Definition:</h6>
+                                                   <span>@property.Definition</span>
+                                               }
+                                               else
+                                               {
+                                                   <h6>Document Definition:</h6>
+                                                   <span>"You have not write any comment about this document!!"</span>
+                                               }
+                                            </text>))
+                    </div>
 
                 <div>
                     <div><a>Security Option: @property.SecurityCriticalOption</a></div>
@@ -295,6 +333,11 @@ else {
                               .ContentTemplate(@<text>
                                                    <h6>Type:</h6>
                                                    <h6>@field.Type <br></h6>
+                                                   @if (@field.CollaborationCard != null)
+                                                   {
+                                                       <h6> Collaboration Card:</h6>
+                                                       <span>@field.CollaborationCard.DrcCardName</span>
+                                                   }
                                                    @if (@field.MeasurementType!=null)
                                                    {
                                                        <h6> @field.MeasurementType</h6>
@@ -342,6 +385,18 @@ else {
                                                    {
                                                        <h6>RegularExpression:</h6>
                                                        <span>@field.RegularExpression</span>
+
+                                                   }
+                                                   @if (@field.MeasurementType!=null)
+                                                   {
+                                                       <h6>MeasurementType:</h6>
+                                                       <span>@field.MeasurementType</span>
+
+                                                   }
+                                                   @if (!String.IsNullOrEmpty(@field.Description))
+                                                   {
+                                                       <h6>Field Definition:</h6>
+                                                       <span>@field.Description</span>
 
                                                    }
 
@@ -364,10 +419,16 @@ else {
                               .ContentTemplate(@<text>
                                                    <h6>Type:</h6>
                                                    <h6>@field.Type <br></h6>
+                                                   @if (@field.CollaborationCard != null)
+                                                   {
+                                                       <h6> Collaboration Card:</h6>
+                                                       <span>@field.CollaborationCard.DrcCardName</span>
+                                                   }
                                                    @if (@field.MeasurementType!=null)
                                                    {
                                                        <h6> @field.MeasurementType</h6>
                                                    }
+                                             
                                                    @if (@field.Required == true)
                                                    {
                                                        <h6> Required</h6>
@@ -411,6 +472,18 @@ else {
                                                    {
                                                        <h6>RegularExpression:</h6>
                                                        <span>@field.RegularExpression</span>
+
+                                                   }
+                                                   @if (@field.MeasurementType!=null)
+                                                   {
+                                                       <h6>MeasurementType:</h6>
+                                                       <span>@field.MeasurementType</span>
+
+                                                   }
+                                                   @if (!String.IsNullOrEmpty(@field.Description))
+                                                   {
+                                                       <h6>Field Definition:</h6>
+                                                       <span>@field.Description</span>
 
                                                    }
 

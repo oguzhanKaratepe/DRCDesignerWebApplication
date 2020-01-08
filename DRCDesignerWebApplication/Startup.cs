@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -22,6 +23,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using DRCDesigner.Business.Abstract;
 using DRCDesigner.Business.Concrete;
+using Microsoft.Extensions.FileProviders;
 
 namespace DRCDesignerWebApplication
 {
@@ -59,8 +61,10 @@ namespace DRCDesignerWebApplication
             services.AddScoped<IAuthorizationService, AuthorizationManager>();
             services.AddScoped<IDrcCardMoveService, DrcCardMoveManager>();
             services.AddScoped<IExportService, ExportManager>();
-          
 
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

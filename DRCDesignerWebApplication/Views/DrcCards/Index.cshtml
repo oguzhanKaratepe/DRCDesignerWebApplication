@@ -806,12 +806,33 @@
                         <div id="shadowcardheader" class="card-header  text-light border-secondary d-flex flex-column pb-5">
 
                             <div class="d-flex justify-content-between">
-                                <div> <h5 class="align-self-start">@property.DrcCardName</h5> <a class="align-self-start p-0">@property.SourceDrcCardPath</a></div>
+                                <div id="@("header" + property.Id)" > <h5 class="align-self-start">@property.DrcCardName</h5> <a class="align-self-start p-0">@property.SourceDrcCardPath</a>
+                                
+                                    @(Html.DevExtreme().Popover()
+                                          .Target("#header" + property.Id)
+                                          .ShowEvent("mouseenter")
+                                          .HideEvent("mouseleave")
+                                          .Position(Position.Bottom)
+                                          .Width(340)
+                                          .ContentTemplate(@<text>
+                                                               @if (!String.IsNullOrEmpty(@property.Definition))
+                                                               {
+                                                                   <h6>Document Definition:</h6>
+                                                                   <span>@property.Definition</span>
+                                                               }
+                                                               else
+                                                               {
+                                                                   <h6>Document Definition:</h6>
+                                                                   <span>"You have not write any comment about this document!!"</span>
+                                                               }
+                                                            </text>))
+                                </div>
                                 <div role="group">
                                     <button class="btn btn-secondary btn-circle btn-circle-xsm dx-icon-overflow" @IsDisabled data-toggle="dropdown"></button>
                                     <div class="dropdown-menu mt-1 ml-3 " aria-labelledby="btnGroupDrop1">
                                         <a class="dropdown-item cursor-pointer " onclick="OpenEditPage(@property.Id);" id="@property.Id">Edit</a>
                                         <a class="dropdown-item cursor-pointer" onclick="DeleteThisCard(@property.Id);" id="@property.Id">Delete</a>
+                                        <a class="dropdown-item cursor-pointer" onclick="moveCardPopUp(@property.Id);" id="@property.Id">Move</a>
                                     </div>
                                 </div>
                             </div>
@@ -821,7 +842,26 @@
                     else
                     {
                         <div class="card-header  text-light bg-info border-secondary d-flex flex-wrap justify-content-between dx-word-wrap">
-                            <div class="h5 d-flex">@property.DrcCardName</div>
+                            <div id="@("header" + property.Id)" class="h5 d-flex">@property.DrcCardName
+                                @(Html.DevExtreme().Popover()
+                                      .Target("#header" + property.Id)
+                                      .ShowEvent("mouseenter")
+                                      .HideEvent("mouseleave")
+                                      .Position(Position.Bottom)
+                                      .Width(340)
+                                      .ContentTemplate(@<text>
+                                                           @if (!String.IsNullOrEmpty(@property.Definition))
+                                                           {
+                                                               <h6>Document Definition:</h6>
+                                                               <span>@property.Definition</span>
+                                                           }
+                                                           else
+                                                           {
+                                                               <h6>Document Definition:</h6>
+                                                               <span>"You have not write any comment about this document!!"</span>
+                                                           }
+                                                        </text>))
+                                </div>
                             <div role="group">
                                 <button class="btn btn-secondary btn-circle btn-circle-xsm dx-icon-overflow" @IsDisabled data-toggle="dropdown"></button>
                                 <div class="dropdown-menu mt-1 ml-3" aria-labelledby="btnGroupDrop1">
@@ -877,13 +917,6 @@
                                                                                     <h6> Collaboration Cards:</h6>
                                                                                     @string.Join(", ", @responsibility.ResponsibilityCollaborationCards.Select(m => m.DrcCardName))
                                                                     }
-                                                                              
-
-
-
-
-
-
                                                                                             </text>)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                           .Position(a => a
                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .At(HorizontalAlignment.Center, VerticalAlignment.Bottom)
@@ -961,10 +994,7 @@
                                                                 {
                                                                 <h6> Collaboration Card:</h6>
                                                                 <span>@field.CollaborationCard.DrcCardName</span>
-                                                }
-                                                            
-
-
+                                               } 
 
                                                                         </text>))
                                 </div>
@@ -1034,34 +1064,32 @@
                                                                 <h6>MinValue:</h6>
                                                                 <span>@field.MinValue</span>
                                                 }
-                                                          
 
                                                                             @if (@field.CreditCard == true)
                                                                 {
                                                                 <h6>Credit Card</h6>
 
-                                                }
-                                                            
-
-                                                                            @if (@field.DefaultValue != null)
+                                                }@if (@field.DefaultValue != null)
                                                                 {
                                                                 <h6>Default Value:</h6>
                                                                 <span>@field.DefaultValue</span>
 
-                                                }
-                                                         
-                                                                            @if (@field.RegularExpression != null)
-                                                                {
-                                                                <h6>RegularExpression:</h6>
-                                                                <span>@field.RegularExpression</span>
+                                                }@if (@field.RegularExpression != null)
+                                                 {
+                                                     <h6>RegularExpression:</h6>
+                                                     <span>@field.RegularExpression</span>
 
-                                                }
-                                                                            @if (@field.MeasurementType!=null)
+                                                }@if (@field.MeasurementType!=null)
                                                 {
                                                     <h6>MeasurementType:</h6>
                                                     <span>@field.MeasurementType</span>
 
-                                                }
+                                                }@if (!String.IsNullOrEmpty(@field.Description))
+                                                 {
+                                                     <h6>Field Definition:</h6>
+                                                     <span>@field.Description</span>
+
+                                                 }
                                                                       
 
 
@@ -1158,13 +1186,7 @@
                         Model.DrcCardViewModel = property;
 
                         <div class=" d-flex align-items-top flex-column mt-auto">
-                            @if (Model.DrcCardViewModel.MainCardId != null)
-                            {
-                                <div class="d-flex alert alert-primary" role="alert">
-                                    *This is a Shadow Card. If you delete this card then you will lose all relations with this card!
-                                </div>
-
-                            }
+                        
 
                             @(Html.DevExtreme().Form<DrcCardViewModel>()
                                                   .ID("DeleteCardForm")
@@ -1348,12 +1370,13 @@
 
                 }
             },
-            failure: function (response) {
+            failure: function(response) {
                 DevExpress.ui.notify(" Your document delete operation failed", "error", 3500);
 
             },
-            error: function (response) {;
-                alert("Please delete the shadows of this document. You have fallowing shadows of this document;"+response.responseText);
+            error: function(response) {
+                ;
+                alert(response.responseText);
             }
         });
 
@@ -1366,9 +1389,9 @@
             visible: false
         });
     }
-    function moveCardClickHandler() {
 
-        //  $("#MoveCard").submit();
+    
+    function moveCardClickHandler() {
         var a = $("#MoveCardform").dxForm("instance").option("formData");
         var jsonData = JSON.stringify(a);
 
@@ -1378,32 +1401,36 @@
             contentType: 'application/json',
             processData: false,
             type: 'POST',
-            success: function (data) {
+            success: function(data) {
 
                 if (data !== null) {
-                    DevExpress.ui.notify(" Your document successfully moved", "success", 3500);
-
+                    window.location.href = "/DrcCards/index?id=" + @Model.DrcCardViewModel.SubdomainVersionId;
+                    DevExpress.ui.notify(" Your document successfully moved", "success", 2500);
                 }
             },
-            failure: function (response) {
-                DevExpress.ui.notify(response.status +" ( "+ response.statusText+" )"+"  "+ response.responseText, "error", 2500);
+            failure: function(response) {
+                DevExpress.ui.notify(
+                    response.status + " ( " + response.statusText + " )" + "  " + response.responseText,
+                    "error",
+                    2500);
 
             },
-            error: function (response) {
+            error: function(response) {
                 alert(response.responseText);
             }
         });
-
-
-
-        closeMoveDocumentPopUp();
+      closeMoveDocumentPopUp();
+       
     }
+
     function closeMoveDocumentPopUp() {
 
         $("#MoveCard-popup").dxPopup({
             visible: false
         });
     }
+
+
 
     function closeButton() {
 
@@ -1479,5 +1506,6 @@
     function es(rowData, value) {
         this.defaultSetCellValue(rowData, value);
     }
+
 
 </script>

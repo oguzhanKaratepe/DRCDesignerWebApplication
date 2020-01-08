@@ -39,13 +39,7 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> Get(DataSourceLoadOptions loadOptions)
         {
-            //IList<SubdomainViewModel> subdomainViewModels = new List<SubdomainViewModel>();
-            //var subdomains = await _subdomainService.GetAll();
-            //foreach (var subdomain in subdomains)
-            //{
-            //    var SubdomainViewModel = _mapper.Map<SubdomainViewModel>(subdomain);
-            //     subdomainViewModels.Add(SubdomainViewModel);
-            //}
+          
 
             SubdomainListViewModel subdomainListViewModel=new SubdomainListViewModel
             {
@@ -90,12 +84,7 @@ namespace DRCDesignerWebApplication.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public async Task<IActionResult>  CreateOutPutHtml(ExportViewModel exportViewModel)
-        {
-           
-            return Ok();
-        }
+  
         [HttpGet]
         public async Task<object> GetDropDownButtonSubdomains(int Id, DataSourceLoadOptions loadOptions)
         {

@@ -10,7 +10,7 @@ namespace DRCDesigner.Business.Abstract
    public interface IDrcCardService
    {
        void Add(DrcCardBusinessModel drcCard);
-       void AddShadowCard(DrcCard drcCard);
+       string AddShadowCard(DrcCard drcCard);
        void Update(int id,string values);
        Task<String> Delete(int id);
        IList<ResponsibilityBusinessModel> getListOfDrcCardResponsibilities(int cardId);

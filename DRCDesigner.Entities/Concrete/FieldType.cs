@@ -56,8 +56,9 @@ namespace DRCDesigner.Entities.Concrete
         [Display(Name = "DynamicField")]
         DynamicField =15
 
-
+        
 
 
     }
+    
 }

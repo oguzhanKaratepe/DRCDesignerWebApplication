@@ -403,11 +403,11 @@ namespace DRCDesigner.Business.Concrete
                 string pathName = "(" + subdomainName + " > " + subdomainVersion.VersionNumber + " > " + card.DrcCardName + ")";
                 return pathName;
             }
-            catch
+            catch (Exception e)
             {
-
+                return null;
             }
-            return null;
+
         }
 
         public DrcCardBusinessModel GetCard(int id)
@@ -478,14 +478,26 @@ namespace DRCDesigner.Business.Concrete
             return -1;
         }
 
-        public async void AddShadowCard(DrcCard drcCard)
+        public string AddShadowCard(DrcCard drcCard)
         {
-            var id = (int)drcCard.MainCardId;
 
+
+            var version = _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(drcCard.SubdomainVersionId);
+
+            foreach (var versionCard in version.DRCards.ToList())
+            {
+                if (versionCard.MainCardId != null && versionCard.MainCardId == (int)drcCard.MainCardId)
+                {
+
+                    return "You already have this shadow document with name: " + versionCard.DrcCardName + ". You are not allowed to create second one in same subdomain version.";
+                }
+            }
 
             _drcUnitOfWork.DrcCardRepository.Add(drcCard);
-
             _drcUnitOfWork.Complete();
+
+
+            return "";
         }
     }
 }

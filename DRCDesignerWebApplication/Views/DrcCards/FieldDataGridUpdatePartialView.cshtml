@@ -12,13 +12,14 @@
       .OnEditingStart("onEditingStart")
       .OnEditorPreparing("eds")
       .ShowBorders(true)
+
           .Editing(editing =>
           {
               editing.Mode(GridEditMode.Popup).AllowAdding(true).AllowUpdating(true).AllowDeleting(true)
                   .Popup(p => p
                       .Title("Details")
                       .OnHiding("hidingpopup")
-                  .ShowTitle(true).Width(700).Height(600)
+                  .ShowTitle(true).Width(800).Height(600)
                   .Position(pos => pos
                       .My(HorizontalAlignment.Center, VerticalAlignment.Center)
                       .At(HorizontalAlignment.Center, VerticalAlignment.Center)
@@ -129,7 +130,7 @@
 
                                           groupItems.AddSimpleFor(m => m.MinValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
                                           groupItems.AddSimpleFor(m => m.MaxValue).Editor(editor => editor.NumberBox().StylingMode(EditorStylingMode.Outlined));
-                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("[0-9]").Message("Value must be Long"));
+                                          groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2").ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be long"));
                                           groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
@@ -156,7 +157,7 @@
                       groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
                       groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-3");
                       groupItems.AddSimpleFor(m => m.Unique).Editor(editor => editor.Switch()).CssClass("ml-3");
-                      groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Enumeration"));
+                      groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Enumeration")).IsRequired(true);
                       groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Be careful about spelling!")).ColSpan(2).CssClass("mr-2");
                       groupItems.AddSimpleFor(m => m.EnumValues).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Please separate them with comma" + " ' , ' ")).ColSpan(3).CssClass("mr-2");
                       groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
@@ -223,7 +224,7 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of ComplexType Interface")).ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of ComplexType Interface")).ColSpan(2).IsRequired(true);
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(1);
                                           groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
@@ -236,7 +237,7 @@
                                       .Items(groupItems =>
                                       {
 
-                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of DetailElement Interface")).ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of DetailElement Interface")).ColSpan(2).IsRequired(true);
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(1);
                                           groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
@@ -250,9 +251,8 @@
                                       .Items(groupItems =>
                                       {
                                           groupItems.AddSimpleFor(m => m.DefaultValue).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined)).CssClass("mr-2");
-                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.Nullable).Editor(editor => editor.Switch()).CssClass("ml-5");
-                                          groupItems.AddSimpleFor(m => m.MeasurementType).Editor(m => m.Lookup().PopupHeight(300)).ColSpan(3).CssClass("mr-3");
+                                          groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5").ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.MeasurementType).Editor(m => m.Lookup().PopupHeight(300)).ColSpan(3).CssClass("mr-3").IsRequired(true);
                                           groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
                                       });
@@ -263,7 +263,7 @@
                                       .ColSpan(2)
                                       .Items(groupItems =>
                                       {
-                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Dynamic Field Interface")).ColSpan(2);
+                                          groupItems.AddSimpleFor(m => m.ItemName).Editor(editor => editor.TextBox().StylingMode(EditorStylingMode.Outlined).Placeholder("Name of Dynamic Field Interface")).ColSpan(2).IsRequired(true);
                                           groupItems.AddSimpleFor(m => m.Required).Editor(editor => editor.Switch()).CssClass("ml-5");
                                           groupItems.AddSimpleFor(m => m.Description).Editor(editor => editor.TextArea().StylingMode(EditorStylingMode.Outlined)).ColSpan(3).CssClass("mr-2").IsRequired(true);
 
@@ -293,7 +293,7 @@
 
                      columns.AddFor(m => m.AttributeName).Width(180);
                      columns.AddFor(m => m.Type)
-                         
+
                          .Caption("Attribute Type")
                          .Width(185)
                          .Lookup(lookup =>
@@ -302,25 +302,25 @@
                              lookup.DisplayExpr("Name");
                              lookup.AllowClearing(true);
                              lookup.ValueExpr("Id");
-                             
+
 
                          }).SetCellValue("es");
 
                      columns.AddFor(m => m.CollaborationId)
                          .Caption("Collaboration")
                          .Width(145)
-                         .Lookup(lookup => lookup.DataSource(m => m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id = Model.SubdomainVersionId, cardId = Model.Id }))
-                         .DisplayExpr("DrcCardName").AllowClearing(true)
+                         .Lookup(lookup => lookup.DataSource(m => m.Mvc().Controller("Fields").LoadAction("GetCollaborations").LoadParams(new { Id = Model.SubdomainVersionId, cardId = Model.Id }).Key("Id"))
+                        .DisplayExpr("DrcCardName").AllowClearing(true)
                          .ValueExpr("Id")
                          ).MinWidth(180);
-                      columns.AddFor(m=>m.MoreDetails)
-                         .SetCellValue("es")
-                         .Visible(false);
+                     columns.AddFor(m=>m.MoreDetails)
+                        .SetCellValue("es")
+                        .Visible(false);
                      columns.Add().DataField("ItemName").Visible(false);
                      columns.Add().DataField("Description").Visible(false);
                      columns.Add().DataField("Nullable").Visible(false);
-                     columns.Add().DataField("MaxLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer")); 
-                     columns.Add().DataField("MinLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer")); 
+                     columns.Add().DataField("MaxLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer"));
+                     columns.Add().DataField("MinLength").Visible(false).ValidationRules(r => r.AddPattern().Pattern("^\\d+$").Message("Value must be integer"));
                      columns.Add().DataField("MaxValue").Visible(false);
                      columns.Add().DataField("MinValue").Visible(false);
                      columns.Add().DataField("Required").Visible(false);
@@ -340,9 +340,9 @@
                          }).SetCellValue("es");
                      columns.Add().DataField("DefaultValue").Visible(false);
 
-                     
+
                  })
-                
+
 
                           .Paging(p => p.PageSize(10))
                       .RemoteOperations(true)

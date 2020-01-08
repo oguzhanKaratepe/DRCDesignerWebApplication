@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Runtime.InteropServices.ComTypes;
@@ -36,10 +37,10 @@ namespace DRCDesignerWebApplication.Controllers
         public async Task<object> Index()
         {
             int id = Convert.ToInt32(HttpContext.Request.Query["id"]);
-
+            if (id >= 0) {
             DrcCardContainerViewModel drcCardContainerViewModel = new DrcCardContainerViewModel();
             DrcCardViewModel drcCardViewModel;
-            if (id != 0)
+            if (id >=0)
             {
                 var tempCards = await _drcCardService.GetAllDrcCards(id);
 
@@ -76,14 +77,21 @@ namespace DRCDesignerWebApplication.Controllers
             drcCardContainerViewModel.TotalSubdomainSize = _drcCardService.TotalSubdomainSize();
             drcCardContainerViewModel.IsSubdomainVersionLocked = _drcCardService.isSubdomainVersionLocked(id);
 
-                
-            return View(drcCardContainerViewModel);
 
+            return View(drcCardContainerViewModel);
+            }
+            else
+            {
+                ViewData["Message"] = "version Id passed as negatif number";
+                ViewData["SubdomainVersionId"] = 0;
+
+                return View("ErrorPage");
+            }
         }
         [HttpGet]
         public async Task<object> Presentation(string searchText)
         {
-     
+
             String querySubdomain = HttpContext.Request.Query["subdomain"];
             String queryVersion = HttpContext.Request.Query["version"];
 
@@ -91,7 +99,7 @@ namespace DRCDesignerWebApplication.Controllers
             int id = _drcCardService.getVersionIdFromQueryString(querySubdomain, queryVersion);
             if (id > 0)
             {
-              
+
 
                 if (id != 0)
                 {
@@ -132,7 +140,7 @@ namespace DRCDesignerWebApplication.Controllers
 
             drcCardContainerViewModel.ErrorMessage = "The address you entered is not available";
 
-            return View(drcCardContainerViewModel); 
+            return View(drcCardContainerViewModel);
 
         }
 
@@ -153,11 +161,27 @@ namespace DRCDesignerWebApplication.Controllers
             shadowCard.MainCardId = shadowCard.Id;
             shadowCard.Id = 0;
             if (!TryValidateModel(shadowCard))
-                return BadRequest(ModelState.GetFullErrorMessage());
+            {
+                ViewData["Message"] = "model is not valid";
+                ViewData["SubdomainVersionId"] = shadowCard.SubdomainVersionId;
 
-            _drcCardService.AddShadowCard(shadowCard);
+                return View("ErrorPage");
+            }
+             
 
-            return Redirect("/DrcCards/index?id=" + shadowCard.SubdomainVersionId);
+            var result = _drcCardService.AddShadowCard(shadowCard);
+
+            if (String.IsNullOrEmpty(result))
+            {
+                return Redirect("/DrcCards/index?id=" + shadowCard.SubdomainVersionId);
+            }
+            else
+            {
+                ViewData["Message"] = result;
+                ViewData["SubdomainVersionId"] = shadowCard.SubdomainVersionId;
+
+                return View("ErrorPage");
+            }
         }
 
         [HttpPost]
@@ -198,14 +222,30 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody]DrcCardViewModel model)
         {
-            string result = await _drcCardService.Delete(model.Id);
 
-            if (string.IsNullOrEmpty(result))
+            string IsdocumentUsedAsCollaboration = _drcCardMoveService.checkIfDocumentConnectedToCurrentVersion(model.Id);
+
+            if (String.IsNullOrEmpty(IsdocumentUsedAsCollaboration))
             {
-                return Ok();
+                string result = await _drcCardService.Delete(model.Id);
+
+                if (string.IsNullOrEmpty(result))
+                {
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Please delete the shadows of this document. You have fallowing shadows of this document; " + result);
+                }
+            }
+            else
+            {
+                return BadRequest("To be able to delete this document you must first delete relations with fallowing documents: " + IsdocumentUsedAsCollaboration);
             }
 
-            return BadRequest(result);
+
+
         }
 
         [HttpGet]
@@ -238,13 +278,14 @@ namespace DRCDesignerWebApplication.Controllers
                 {
                     var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
 
-                    if (result.MoveResultType != MoveResultType.Success)
+                    if (result.MoveResultType == MoveResultType.Success)
                     {
-                        return BadRequest(result.MoveResultDefinition);
+                        return Ok(result);
+                     
                     }
                     else
                     {
-                        return Ok(result);
+                          return BadRequest(result.MoveResultDefinition);
                     }
                 }
                 else
@@ -252,14 +293,13 @@ namespace DRCDesignerWebApplication.Controllers
                     return BadRequest(checkReferences);
                 }
 
-             
+
             }
             else
             {
                 return BadRequest("I will add error to here");
             }
 
-            //  return Redirect("/DrcCards/index?id=" + currentSubdomainVersionId);
         }
 
         public static List<object> GetDeleteBehaviorOptions()
@@ -274,5 +314,6 @@ namespace DRCDesignerWebApplication.Controllers
             }
             return items;
         }
+
     }
 }

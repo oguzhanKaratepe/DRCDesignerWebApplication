@@ -94,14 +94,23 @@ namespace DRCDesignerWebApplication.Controllers
                 {
                     return BadRequest("You are not allowed to change source version!!");
                 }
-                 bool update= await _subdomainVersionService.Update(values, key);
-                 if (update)
+
+                var checkDeletedRefereceUse=await _subdomainVersionService.CheckDeletedReferenceUse(key,values);
+
+                if (!String.IsNullOrEmpty(checkDeletedRefereceUse))
+                {
+                    return BadRequest(checkDeletedRefereceUse);
+                }
+
+                bool update= await _subdomainVersionService.Update(values, key);
+                if (update)
                  {
                      return Ok();
                  }
             }
+
             else
-                return BadRequest("I will add error to here");
+                return BadRequest("state is not valid");
 
             return Ok();
         }

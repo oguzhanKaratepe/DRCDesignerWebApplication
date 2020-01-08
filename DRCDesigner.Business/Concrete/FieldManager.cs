@@ -144,6 +144,7 @@ namespace DRCDesigner.Business.Concrete
                     field.MaxLength = null;
                     field.MinLength = null;
                     field.EnumValues = null;
+                    field.Nullable = false;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
@@ -301,6 +302,7 @@ namespace DRCDesigner.Business.Concrete
                     field.MaxLength = null;
                     field.MinLength = null;
                     field.EnumValues = null;
+                    field.Nullable = false;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;

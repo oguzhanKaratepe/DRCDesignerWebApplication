@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using AutoMapper;
@@ -10,10 +11,13 @@ using DRCDesigner.Business.Abstract;
 using DRCDesigner.Business.Helpers;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.Entities.Concrete;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace DRCDesigner.Business.Concrete
 {
@@ -22,35 +26,69 @@ namespace DRCDesigner.Business.Concrete
         private IDrcUnitOfWork _drcUnitOfWork;
         private IMapper _mapper;
         private IConfiguration _configuration;
+        private IHostingEnvironment _env { get; }
 
         private RoslynDocumentCodeGenerator _documentGenerator;
-        public ExportManager(IDrcUnitOfWork drcUnitOfWork, IConfiguration configuration, IMapper mapper)
+        public ExportManager(IDrcUnitOfWork drcUnitOfWork, IConfiguration configuration, IMapper mapper, IHostingEnvironment env)
         {
             _documentGenerator = new RoslynDocumentCodeGenerator();
             _drcUnitOfWork = drcUnitOfWork;
             _configuration = configuration;
             _mapper = mapper;
+            _env = env;
         }
 
-        public void generateSubdomainVersionDocuments(int subdomainVersionId)
+        public byte[] generateSubdomainVersionDocuments(int subdomainVersionId)
         {
 
-            var subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(subdomainVersionId);
-            var subdomainNamespace = _drcUnitOfWork.SubdomainRepository.GetSubdomainNamespace(subdomainVersion.SubdomainId);
+            var subdomainVersion =
+                _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(subdomainVersionId);
+            var subdomainNamespace =
+                _drcUnitOfWork.SubdomainRepository.GetSubdomainNamespace(subdomainVersion.SubdomainId);
 
 
 
-            foreach (var drcCard in subdomainVersion.DRCards)
+            string file = _env.WebRootPath + "\\temp.zip"; // in production, would probably want to use a GUID as the file name so that it is unique
+            System.IO.FileStream fs = System.IO.File.Create(file);
+
+            using (ZipOutputStream zip = new ZipOutputStream(fs))
             {
-                string classString = GenerateClassString(drcCard, subdomainNamespace);
-                System.IO.File.WriteAllText(@"C:\Users\oguzhan.karatepe\Desktop\DocumentStore\" + "I" + camelCaseDocumentName(drcCard.DrcCardName) + ".cs", classString);
-            }
 
+                byte[] data;
+                ZipEntry entry;
+                foreach (var drcCard in subdomainVersion.DRCards)
+                {
+                    string classString = GenerateClassString(drcCard, subdomainNamespace);
+                    string filename = "I" + camelCaseDocumentName(drcCard.DrcCardName) + ".cs";
+                    byte[] byteArray = Encoding.UTF8.GetBytes(classString);
+                    data = byteArray.ToArray();
+
+                    entry = new ZipEntry(filename);
+                    entry.DateTime = System.DateTime.Now;
+                    zip.PutNextEntry(entry);
+                    zip.Write(data, 0, data.Length);
+                }
+                zip.Finish();
+                zip.Close();
+
+                fs.Dispose(); // must dispose of it
+                fs = System.IO.File.OpenRead(file); // must re-open the zip file
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                fs.Close();
+                System.IO.File.Delete(file);
+
+                return data;
+
+            }
         }
+
 
 
         private string GenerateClassString(DrcCard document, string subdomainNamespace)
         {
+            //full document template with required libraries
+            var fullDocument = _documentGenerator.newFullDocumentTemplate();
 
             // Create a namespace: (namespace CodeGeneration)
             var @namespace = _documentGenerator.generateNamespaceDeclaration(subdomainNamespace);
@@ -64,21 +102,21 @@ namespace DRCDesigner.Business.Concrete
 
             var firstFields = cloneList(documentFields);
             var fieldlistlayer = cloneListByReshapingFieldAttribute(firstFields, 1);
-            List<InterfaceDeclarationSyntax> childsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer);
+            List<InterfaceDeclarationSyntax> firstLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer);
 
             var secondFields = cloneList(documentFields);
             var fieldlistlayer2 = cloneListByReshapingFieldAttribute(secondFields, 2);
-            List<InterfaceDeclarationSyntax> childsOfChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer2);
+            List<InterfaceDeclarationSyntax> secondLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer2);
 
 
             var thirdFields = cloneList(documentFields);
             var fieldlistlayer3 = cloneListByReshapingFieldAttribute(thirdFields, 3);
-            List<InterfaceDeclarationSyntax> childsOfChildsOfChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer3);
+            List<InterfaceDeclarationSyntax> thirdLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer3);
 
 
             var fourthFields = cloneList(documentFields);
-            var fieldlistlayer4 = cloneListByReshapingFieldAttribute(thirdFields, 4);
-            List<InterfaceDeclarationSyntax> childsOfChildsOfChildsOffChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer4);
+            var fieldlistlayer4 = cloneListByReshapingFieldAttribute(fourthFields, 4);
+            List<InterfaceDeclarationSyntax> fourthLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer4);
 
 
             var fieldsForEnumGeneration = cloneList(documentFields);
@@ -91,19 +129,19 @@ namespace DRCDesigner.Business.Concrete
             // Add the classes to the namespace.
             @namespace = @namespace.AddMembers(mainDocument);
 
-            foreach (var child in childsOfMainDocument)
+            foreach (var child in firstLevelChildsOfMainDocument)
             {
                 @namespace = @namespace.AddMembers(child);
             }
-            foreach (var child in childsOfChildsOfMainDocument)
+            foreach (var child in secondLevelChildsOfMainDocument)
             {
                 @namespace = @namespace.AddMembers(child);
             }
-            foreach (var child in childsOfChildsOfChildsOfMainDocument)
+            foreach (var child in thirdLevelChildsOfMainDocument)
             {
                 @namespace = @namespace.AddMembers(child);
             }
-            foreach (var child in childsOfChildsOfChildsOffChildsOfMainDocument)
+            foreach (var child in fourthLevelChildsOfMainDocument)
             {
                 @namespace = @namespace.AddMembers(child);
             }
@@ -114,10 +152,9 @@ namespace DRCDesigner.Business.Concrete
 
 
 
-            // Normalize and get code as string.
-            var code = @namespace.NormalizeWhitespace().ToFullString();
 
-            return code;
+            fullDocument = fullDocument.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(@namespace));
+            return fullDocument.NormalizeWhitespace().ToFullString();
         }
 
         private InterfaceDeclarationSyntax generateMainDocumentCode(DrcCard document, IEnumerable<Field> drcCardFields)
@@ -171,16 +208,21 @@ namespace DRCDesigner.Business.Concrete
                     {
 
                         var mainProperty = _documentGenerator.generateDocumentRelationPropertyDeclarationWithAttributes(field);
+                        //this is string key of relation element
                         properties.Add(mainProperty);
 
                         //there is a bridge table for relation documents
                         var documentFieldRelation = _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(field.Id);
-                        var relatedDocumentName = _drcUnitOfWork.DrcCardRepository.getDrcCardName(documentFieldRelation.DrcCardId);
-                        var camelCaseRelatedDocumentName = camelCaseDocumentName(relatedDocumentName);
+                        if (documentFieldRelation != null)
+                        {
+                            var relatedDocumentName = _drcUnitOfWork.DrcCardRepository.getDrcCardName(documentFieldRelation.DrcCardId);
+                            var camelCaseRelatedDocumentName = camelCaseDocumentName(relatedDocumentName);
 
-                        var relationKey = _documentGenerator.generateDocumentRelationForeignKeyPropertyDeclaration(field, camelCaseRelatedDocumentName);
+                            var relationKey = _documentGenerator.generateDocumentRelationForeignKeyPropertyDeclaration(field, camelCaseRelatedDocumentName);
 
-                        properties.Add(relationKey);
+                            properties.Add(relationKey);
+                        }
+
                     }
                     else
                     {
@@ -220,7 +262,9 @@ namespace DRCDesigner.Business.Concrete
 
                         if (indsideString.Length > 1)
                         {
-                            if (indsideString[0].Equals(words[0], StringComparison.InvariantCultureIgnoreCase))
+                            string outField = _documentGenerator.cleanDetailElementName(words[0]);
+                            string innerField = _documentGenerator.cleanDetailElementName(indsideString[0]);
+                            if (innerField.Equals(outField, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 inside.Add(field);
                             }
@@ -274,6 +318,7 @@ namespace DRCDesigner.Business.Concrete
             List<EnumDeclarationSyntax> enumDeclarationSyntaxes = new List<EnumDeclarationSyntax>();
 
             List<Field> enumFields = new List<Field>();
+
             foreach (var field in fields)
             {
                 if (field.Type == FieldType.Enum)
@@ -282,7 +327,10 @@ namespace DRCDesigner.Business.Concrete
                 }
             }
 
-            foreach (var enumField in enumFields)
+            List<Field> uniqueEnumFields = getUniqueEnumFields(enumFields);
+
+
+            foreach (var enumField in uniqueEnumFields)
             {
                 var enumDeclaretion = _documentGenerator.generateEnumDeclaration(enumField);
 
@@ -296,12 +344,56 @@ namespace DRCDesigner.Business.Concrete
                 enumDeclarationSyntaxes.Add(enumDeclaretion);
             }
 
-
-
-
             return enumDeclarationSyntaxes;
         }
 
+        private List<Field> getUniqueEnumFields(List<Field> enumFields)
+        {
+            Dictionary<string, List<Field>> reusedEnumsDictinary = new Dictionary<string, List<Field>>(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var enumField in enumFields)
+            {
+                if (!reusedEnumsDictinary.Any(a => a.Key.ToLower().Trim().Contains(enumField.ItemName.ToLower().Trim())))
+                {
+                    var sameFields = new List<Field>();
+                    sameFields.Add(enumField);
+                    reusedEnumsDictinary.Add(enumField.ItemName.ToLower().Trim(), sameFields);
+                }
+                else
+                {
+                    reusedEnumsDictinary[enumField.ItemName.Trim().ToLower()].Add(enumField);
+                }
+            }
+
+            List<Field> uniqueFields = new List<Field>();
+            foreach (var enumDictionary in reusedEnumsDictinary)
+            {
+                Field newEnumField = enumDictionary.Value.First();
+
+                var uniqueProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var field in enumDictionary.Value)
+                {
+                    if (field.EnumValues != null)
+                    {
+                        List<String> enumProperties=field.EnumValues.Split(",").ToList();
+
+                        foreach (var property in enumProperties)
+                        {
+                            if (!String.IsNullOrEmpty(property))
+                            {
+                                uniqueProperties.Add(property);
+                            }
+                          
+                        }
+                    }
+                    
+                }
+                newEnumField.EnumValues = string.Join(",", uniqueProperties);
+                uniqueFields.Add(newEnumField);
+            }
+
+            return uniqueFields;
+        }
 
         private List<EnumMemberDeclarationSyntax> getPropertiesOfEnum(string enumValues)
         {
@@ -344,7 +436,7 @@ namespace DRCDesigner.Business.Concrete
             return cleanFields;
         }
 
-        
+
 
         private List<Field> cloneList(List<Field> fields)
         {
@@ -451,29 +543,40 @@ namespace DRCDesigner.Business.Concrete
             return className;
         }
 
-        public string generateSubdomainVersionReportUrl(int subdomainId)
+        public string[] generateSubdomainVersionReportHtml(int subdomainId)
         {
             //example url
             //https://localhost:44347/DrcCards/presentation?subdomain=warehousemanagement&version=0.2.0
 
-            string url = "Something went wrong";
+            string url;
+            string subdomainName;
+            SubdomainVersion subdomainVersion;
+            string[] returnString = new string[2];
             try
             {
                 var webAddress = _configuration.GetSection("WebSettings").GetSection("DrcDesignerWebAddress").Value;
 
-                var subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetById(subdomainId);
-                string subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(subdomainVersion.SubdomainId);
+                subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetById(subdomainId);
+                subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(subdomainVersion.SubdomainId);
                 subdomainName = subdomainName.ToLower().Replace(" ", "");
 
                 url = webAddress + "DrcCards/presentation?subdomain=" + subdomainName + "&version=" + subdomainVersion.VersionNumber;
+
+
+
+
+                returnString[0] = camelCaseDocumentName(subdomainName) + "_Version_" + subdomainVersion.VersionNumber;
+
+                string htmlPage = _documentGenerator.generateHtmlPage(url);
+
+                returnString[1] = htmlPage;
             }
             catch (Exception e)
             {
                 // ignored
             }
 
-
-            return url;
+            return returnString;
         }
     }
 }

@@ -1,0 +1,30 @@
+﻿
+@{
+    Layout = "_Layout";
+}
+@{
+    ViewBag.Title = "PostShadow";
+}
+
+@{
+    var errorMessage =(string) ViewData["Message"];
+    var versionId = (int)ViewData["SubdomainVersionId"];
+}
+
+
+<div class="alert alert-danger  mt-5 ml-4 mr-5" role="alert">
+
+        @errorMessage
+    </div>
+
+    @(Html.DevExtreme().Button()
+              .ElementAttr(new { style = "margin-left:20px;" })
+                          .Text("Go Back")
+                          .Type(ButtonType.Default)
+                          .Icon("refresh")
+                          .OnClick(@<text>
+                            function() {
+                            window.location.href = "/DrcCards/index?id=" + @versionId;
+                            }
+                        </text>)
+    )
