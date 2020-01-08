@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using DRCDesigner.Core.Entities;
 using Newtonsoft.Json;
 
+
+
 namespace DRCDesigner.Entities.Concrete
 {
     public class DrcCard : IEntity
@@ -18,6 +20,7 @@ namespace DRCDesigner.Entities.Concrete
         [DisplayName("Card Name")]
         public string DrcCardName { get; set; }
         public int Order { get; set; }
+        public string Definition { get; set; }
 
         public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
 

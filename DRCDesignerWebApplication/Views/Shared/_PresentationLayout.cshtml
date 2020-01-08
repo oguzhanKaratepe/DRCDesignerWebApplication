@@ -1,8 +1,8 @@
 ﻿@using DevExtreme.AspNet.Mvc.Builders
 @using DRCDesignerWebApplication.ViewModels
 <!DOCTYPE html>
-<html>
-<head>
+<html class="">
+<head class="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,40 +10,24 @@
     <meta name="author" content="">
 
     <title>web designer</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- DevExtreme library -->
+
     <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.1.0.min.js"></script>
- 
-    <!-- Reference either Knockout or AngularJS, if you do -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 
     <!-- DevExtreme themes -->
     <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/19.2.3/css/dx.common.css">
     <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/19.2.3/css/dx.material.purple.dark.css">
- 
-    <!-- DevExtreme library -->
     <script type="text/javascript" src="https://cdn3.devexpress.com/jslib/19.2.3/js/dx.all.js"></script>
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+
 </head>
 
-<body >
 
-    <div class="bg-dark">
 
-        @(Html.DevExtreme().Toolbar()
+<body class="bg-dark">
 
-              .ElementAttr(new { style = "border-bottom:1px solid;" })
-              .ID("layout-toolbar")
-              .Items(items =>
-              {
-                  items.Add()
-                      .Template(@<text>
-                                    <div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
-                      .LocateInMenu(ToolbarItemLocateInMenuMode.Never)
-                      .Location(ToolbarItemLocation.Center);
-
-              })
-              )
+    <div class="">
 
             <main role="main" class="pb-3">
                 @RenderBody()

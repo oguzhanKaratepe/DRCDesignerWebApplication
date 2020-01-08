@@ -8,9 +8,14 @@
 <div class="d-flex flex-wrap">
     <div class="border border-left border-right rounded mt-1">
         @(Html.DevExtreme().Menu()
-                      .ID("menu") 
-                      .DataSource(Model.SubdomainMenuItems)
-                      .OnItemClick("menuItem_click")
+                      .ID("menu")
+              .DataSource(d => d.Mvc()
+                  .Controller("DrcCards")
+                  .LoadAction("GetSubdomainsWithVersions")
+                  .LoadParams(new { Id = Model.DrcCardViewModel.SubdomainVersionId })
+                  .Key("Id"))
+             
+              .OnItemClick("menuItem_click")
         )
     </div>
  

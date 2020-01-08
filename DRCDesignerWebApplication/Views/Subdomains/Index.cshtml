@@ -48,6 +48,7 @@
               .Columns(columns =>
               {
                   columns.AddFor(m => m.SubdomainName);
+                  columns.AddFor(m => m.SubdomainNamespace).Caption("Namespace");
               })
               .DataSource(d => d.Mvc()
                   .Controller("Subdomains")
@@ -64,35 +65,35 @@
 
     <script>
         function toolbar_preparing(e) {
-            var dataGrid = e.component;
-            e.toolbarOptions.items.unshift({
-                location: "before",
-                widget: "dxSelectBox",
+            //var dataGrid = e.component;
+            //e.toolbarOptions.items.unshift({
+            //    location: "before",
+            //    widget: "dxSelectBox",
 
-                options: {
-                    width: 140,
-                    items: [{
-                        value: 1,
-                        text: "Dexmo 0.1.0"
-                    }, {
-                        value: 2,
-                        text: "Dexmo 1.0.0"
-                    }
-                        , {
-                        value: 3,
-                        text: "Dexmo 2.0.0"
-                    }
-                    ],
-                    displayExpr: "text",
-                    valueExpr: "value",
-                    value: 1
-                    //onValueChanged: function(e) {
-                    //    dataGrid.clearGrouping();
-                    //    dataGrid.columnOption(e.value, "groupIndex", 0);
-                    //    $(".informer .count").text(getGroupCount(e.value));
-                    //}
-                }
-            });
+            //    options: {
+            //        width: 140,
+            //        items: [{
+            //            value: 1,
+            //            text: "Dexmo 0.1.0"
+            //        }, {
+            //            value: 2,
+            //            text: "Dexmo 1.0.0"
+            //        }
+            //            , {
+            //            value: 3,
+            //            text: "Dexmo 2.0.0"
+            //        }
+            //        ],
+            //        displayExpr: "text",
+            //        valueExpr: "value",
+            //        value: 1
+            //        //onValueChanged: function(e) {
+            //        //    dataGrid.clearGrouping();
+            //        //    dataGrid.columnOption(e.value, "groupIndex", 0);
+            //        //    $(".informer .count").text(getGroupCount(e.value));
+            //        //}
+            //    }
+            //});
         }
 
     </script>

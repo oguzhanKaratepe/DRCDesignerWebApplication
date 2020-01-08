@@ -21,7 +21,9 @@ namespace DRCDesigner.Business.Abstract
           Task<bool> Add(string values);
        Task<bool> Update(string values, int id);
         Task<bool> LookForSourceChange(int id,string values);
+        Task<string> CheckDeletedReferenceUse(int key, string values);
         Task<bool> VersionIsASource(int subdomainVersionId);
         bool Remove(int subdomainVersionId);
+        
     }
 }

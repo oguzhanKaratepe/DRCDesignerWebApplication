@@ -8,15 +8,30 @@
     ViewData["Title"] = "HelpPage";
 }
 <div class="min-vh-100">
-    <div class="d-flex justify-content-center pt-5"> <h3 class=" border-bottom rounded-bottom mr-5">&nbsp; Drc Designer Guide&nbsp; </h3></div>
-    <div>
-        <ol>
-
-            <li class="ml-4 h5 pt-5 mt-4">How can I start a project?</li>
-            <li class="ml-4 h5 pt-4">How can I start a project?</li>
-            <li class="ml-4 h5 pt-4">How can I start a project?</li>
-            <li class="ml-4 h5 pt-4">How can I start a project?</li>
-        </ol>
+    <div class="d-flex justify-content-center pt-5"> <h3 style="color: #9c27b0;" class=" border-bottom rounded-bottom mr-5">&nbsp; Drc Designer Guide&nbsp; </h3></div>
+  
+    <div class="m-5">
+      
+        <h5>&nbsp; &nbsp; &nbsp; This model is a collection of card views that represent the whole or part of an application or problem. Aim of that modeling method is to identify user requirements with similar pieces of card views and create a simple system model in a systematic way to understand the business structure.&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">What will be over each card?&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp;Cards are the symbolization of documents in a problem and that documents are composed of field-and-value pairs to represent a collection of similar entities. That documents can have other documents nested in them.&nbsp;</h5>
+        <h5>&nbsp; &nbsp; &nbsp;With the help of DRC (Document-Responsibility-Collaboration) modeling method, we can create a model for a problem domain. In a problem domain we must define sub-problem areas and we will call them as sub-domains in that designer. After deciding sub-domains we have to model each sub-domains with the help of DRC documents. After following that technique we are going to have a simple and effective representation of a domain structure.&nbsp;</h5>
+        <h5>&nbsp;<span style="color:#9c27b0;">Parts of a DRC card</span></h5>
+        <h5>1. Header&nbsp;</h5>
+        <h5>2. Responsibilities&nbsp;</h5>
+        <h5>3. Auth &amp; Roles&nbsp;</h5>
+        <h5>4. Collaborations&nbsp;</h5>
+        <h5>5. Field&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">Header&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp;The header is the name of the represented document. Names must be clear and fit with the mission of that document.&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">Responsibilities&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp; A responsibility is anything that a document knows or does.&nbsp; Important: A document is able to change the values of the things it knows, but it is unable to change the values of what other documents know.&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">Auth &amp; Roles&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp; Roles are specific authorizations over a document.&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">Collaborations&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp; Sometimes a document will have a responsibility to fulfill, but will not have enough information to do it. When this happens it has to collaborate with other documents to get the job done. If that collaboration document exists under the same sub-domain, we do not have to do any extra work to obtain that collaboration. But, if the collaboration document exists under a different sub-domain then we have to create a shadow document from a collaboration document to that sub-domain. This will make it easier to understand each sub-domain independently.&nbsp;</h5>
+        <h5><span style="color: #9c27b0;">Fields&nbsp;</span></h5>
+        <h5>&nbsp; &nbsp; &nbsp;A field is a place where variables and attributes defined.</h5>
     </div>
 
 </div>

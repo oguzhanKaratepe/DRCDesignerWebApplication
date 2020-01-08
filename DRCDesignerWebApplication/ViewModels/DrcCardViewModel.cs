@@ -28,7 +28,7 @@ namespace DRCDesignerWebApplication.ViewModels
         public ESecurityCriticalOptions SecurityCriticalOption { get; set; }
 
         public EDeleteBehaviorOptions DeleteBehaviorOption { get; set; }
-
+        public string Definition { get; set; }
         public string SourceDrcCardPath { get; set; }
         [JsonIgnore]
         public virtual ICollection<FieldViewModel> Fields { get; set; }

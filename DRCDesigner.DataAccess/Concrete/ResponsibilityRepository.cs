@@ -23,7 +23,7 @@ namespace DRCDesigner.DataAccess.Concrete
 
             return result.Where(m => m.DrcCardResponsibilities.Any(c => c.DrcCardId == id)).ToList();
         }
-
+    
         public Responsibility GetByIdWithoutTracking(int id)
         {
             return  DrcCardContext.Responsibilities.AsNoTracking().Where(c => c.Id==id).Single();

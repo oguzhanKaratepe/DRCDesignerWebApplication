@@ -1,0 +1,75 @@
+﻿
+@using DRCDesignerWebApplication.ViewModels
+@model DRCDesignerWebApplication.ViewModels.DrcCardContainerViewModel;
+
+
+@if (Model.TotalSubdomainSize > 0 && Model.DrcCardViewModel.SubdomainVersionId != 0)
+{
+ 
+
+    <div class="border border-left border-right rounded mt-1">
+        @(Html.DevExtreme().DropDownButton()
+              .ID("ExportDropDown")
+              .Icon("download")
+              .StylingMode(ButtonStylingMode.Outlined)
+              .FocusStateEnabled(false)
+              .DropDownOptions(options => options.Width(230))
+              .ShowArrowIcon(false)
+              .UseSelectMode(false)
+              .DataSource(new JS("fillExport"))
+              .DisplayExpr("name")
+     
+              .OnItemClick(@<text>
+                               function (e) {
+                               export_click(e, @Model.DrcCardViewModel.SubdomainVersionId);
+                               }
+                            </text>)
+              )
+   
+    </div>
+
+}
+
+
+<script>
+
+    function export_click(e, subdomainId) {
+   
+        var a = e.itemData.id;
+        if (a === 1) {
+            ExportUrl(subdomainId);
+        } else if (a === 2) {
+            ExportSubdomain(subdomainId);
+        }
+
+    }
+
+    function ExportUrl(SubdomainId) {
+        window.location.href = "@Url.RouteUrl(new 
+            { Controller = "SubdomainVersionExport", Action = "GenerateReportUrl"})/?subdomainId=" + SubdomainId;
+
+    }
+
+    function ExportSubdomain(subdomainId) {
+        window.location.href = "@Url.RouteUrl(new 
+            { Controller = "SubdomainVersionExport", Action = "DownloadSubdomainVersion"})/?subdomainId=" + subdomainId;
+    }
+    
+
+    var fillExport = [
+        {
+            id: 1,
+            name: "Generate Version Report",
+            delay: { show: 0, hide: 500 }
+            
+            
+        }, {
+            id: 2,
+            name: "Generate Version Code",
+            delay: { show: 0, hide: 300 }
+        }
+    ];
+
+ 
+
+</script>

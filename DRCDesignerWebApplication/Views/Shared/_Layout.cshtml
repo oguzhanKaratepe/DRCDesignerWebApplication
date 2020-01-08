@@ -64,48 +64,50 @@
     </style>
 </head>
 
-<body class="" style="background-color: #222;">
+<body class="" style="background-color:#222;">
 
     <div class="bg-dark h-100 ">
 
         @(Html.DevExtreme().Toolbar()
 
-                      .ElementAttr(new { style = "border-bottom:1px solid;" })
-                      .ID("layout-toolbar")
-                      .Items(items =>
-                      {
-                          items.Add().Widget(w => w.Button()
-                              .Icon("menu")
-                              .OnClick("button_clickHandler")
-                              ).Location(ToolbarItemLocation.Before);
+                  .ElementAttr(new { style = "border-bottom:1px solid;" })
+                  .ID("layout-toolbar")
+                  .Items(items =>
+                  {
+                  items.Add().Widget(w => w.Button()
+                          .Icon("menu")
+                          .OnClick("button_clickHandler")
+                          ).Location(ToolbarItemLocation.Before);
 
-                          items.Add()
-                              .Widget(w => w
-                                  .Button()
-                                  .Text("Help")
-                                  .OnClick("helpButton_click")
-                              )
-                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                  items.Add()
+                          .Widget(w => w
+                              .Button()
+                              .Text("Help")
+                              .OnClick("helpButton_click")
+                          )
+                          .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
-                          items.Add()
-                              .Widget(w => w
-                                  .Button()
-                                  .Text("Export Project")
-                                  .OnClick("exportButton_click")
+                      //items.Add()
+                      //    .Widget(w => w
+                      //        .Button()
+                      //        .Text("Export Project")
+                      //        .OnClick("exportButton_click")
 
-                              )
-                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                      //    )
+                      //    .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
 
-                          items.Add()
-                              .Widget(w => w
-                                  .Button()
-                                  .Text("Settıngs")
+                      items.Add()
+                          .Widget(w => w
+                              .Button()
+                              .Text("Settıngs")
+                              .OnClick("settingButton_click")
 
-                              )
-                              .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
-                          items.Add()
-                              .Template(@<text>
+
+                          )
+                          .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                  items.Add()
+                          .Template(@<text>
                                 <div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
                                               .LocateInMenu(ToolbarItemLocateInMenuMode.Never)
                                               .Location(ToolbarItemLocation.Center);
@@ -203,7 +205,9 @@
 
         <script type="text/javascript">
 
-
+            function settingButton_click() {
+                DevExpress.ui.notify("coming soon", "error", 2000);
+            }
             function button_clickHandler() {
 
                 var drawer = $("#layout-drawer").dxDrawer("instance");

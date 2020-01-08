@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DRCDesignerWebApplication.Migrations
 {
-    public partial class initalcreate : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,15 +16,19 @@ namespace DRCDesignerWebApplication.Migrations
                     AttributeName = table.Column<string>(nullable: true),
                     Type = table.Column<int>(nullable: false),
                     MeasurementType = table.Column<int>(nullable: true),
+                    ItemName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Nullable = table.Column<bool>(nullable: false),
                     DefaultValue = table.Column<string>(nullable: true),
-                    MinValue = table.Column<double>(nullable: false),
-                    MaxValue = table.Column<double>(nullable: false),
-                    MinLength = table.Column<int>(nullable: false),
-                    MaxLength = table.Column<int>(nullable: false),
+                    MinValue = table.Column<double>(nullable: true),
+                    MaxValue = table.Column<double>(nullable: true),
+                    MinLength = table.Column<int>(nullable: true),
+                    MaxLength = table.Column<int>(nullable: true),
                     CreditCard = table.Column<bool>(nullable: false),
                     Required = table.Column<bool>(nullable: false),
                     Unique = table.Column<bool>(nullable: false),
-                    RegularExpression = table.Column<string>(nullable: true)
+                    RegularExpression = table.Column<string>(nullable: true),
+                    EnumValues = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,7 +71,8 @@ namespace DRCDesignerWebApplication.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    SubdomainName = table.Column<string>(nullable: false)
+                    SubdomainName = table.Column<string>(nullable: false),
+                    SubdomainNamespace = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -112,6 +117,7 @@ namespace DRCDesignerWebApplication.Migrations
                     MainCardId = table.Column<int>(nullable: true),
                     DrcCardName = table.Column<string>(nullable: false),
                     Order = table.Column<int>(nullable: false),
+                    Definition = table.Column<string>(nullable: true),
                     SecurityCriticalOption = table.Column<int>(nullable: false),
                     DeleteBehaviorOption = table.Column<int>(nullable: false)
                 },

@@ -30,6 +30,12 @@ namespace DRCDesigner.DataAccess.Concrete
         {
             return  DrcCardContext.Fields.AsNoTracking().Single(c => c.Id == id);
         }
+
+        public IEnumerable<Field> getDrcCardAllFieldsWithoutTracking(int id)
+        {
+            var result = DrcCardContext.Fields.AsNoTracking().Include(m => m.DrcCardFields).ThenInclude(m => m.DrcCard).ToList();
+            return result.Where(m => m.DrcCardFields.Any(c => c.DrcCardId == id && !c.IsRelationCollaboration));
+        }
     }
 
 }

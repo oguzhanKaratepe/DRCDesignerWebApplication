@@ -72,7 +72,7 @@ namespace DRCDesigner.Business.Concrete
                 }
 
             }
-
+            
             if (newSubdomainVersionBModel.ReferencedVersionIds != null)
             {
                 foreach (var referenceId in newSubdomainVersionBModel.ReferencedVersionIds)
@@ -341,6 +341,8 @@ namespace DRCDesigner.Business.Concrete
             return allVersions;
         }
 
+     
+
         public async Task<bool> VersionIsASource(int subdomainVersionId)
         {
             var versionIsASource = await _subdomainUnitOfWork.SubdomainVersionRepository.CheckIfSourceVersion(subdomainVersionId);
@@ -429,9 +431,72 @@ namespace DRCDesigner.Business.Concrete
                 subdomainVersion.ReferencedSubdomainVersions.Add(newReference);
             }
             _subdomainUnitOfWork.Complete();
+            
             return true;
         }
+        public async Task<string> CheckDeletedReferenceUse(int key, string values)
+        {
+            SubdomainVersionBusinessModel subdomainVersionBusinessModel = new SubdomainVersionBusinessModel();
 
+            var subdomainReferences = await _subdomainUnitOfWork.SubdomainVersionReferenceRepository.getAllVersionReferences(key);
+
+            JsonConvert.PopulateObject(values, subdomainVersionBusinessModel);
+
+            List<int> oldReferences=new List<int>();
+            foreach (var reference in subdomainReferences)
+            {
+                oldReferences.Add(reference.ReferencedVersionId);
+            }
+
+            //these are the references that user want to delete
+            List<int> deletedReferences = new List<int>();
+
+            foreach (var oldRef in oldReferences)
+            {
+                if (!subdomainVersionBusinessModel.ReferencedVersionIds.Contains(oldRef))
+                {
+                    deletedReferences.Add(oldRef);
+                }
+            }
+
+            List<DrcCard> documentsThatHasRelations=new List<DrcCard>();
+
+            var versionShadowDocuments = _drcUnitOfWork.DrcCardRepository.getAllShadowCardsBySubdomainVersion(key);
+
+            foreach (var shadowDocument in versionShadowDocuments)
+            {
+                var sourceDocument = _drcUnitOfWork.DrcCardRepository.GetById((int)shadowDocument.MainCardId);
+
+                if (deletedReferences.Contains(sourceDocument.SubdomainVersionId))
+                {
+                    documentsThatHasRelations.Add(sourceDocument);
+                }
+
+            }
+            _subdomainUnitOfWork.Complete();
+
+            if (documentsThatHasRelations.Count>0)
+            {
+                int count = 1;
+                string message = "You can not delete fallowing references Because you have used same documents from that referenced versions:" + Environment.NewLine;
+                foreach (var document in documentsThatHasRelations)
+                {
+                    var version = _drcUnitOfWork.SubdomainVersionRepository.GetById(document.SubdomainVersionId);
+                    var subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
+                    message += count + ") " + subdomainName + "> " + version.VersionNumber + "> " + document.DrcCardName + Environment.NewLine;
+                    count++;
+                }
+
+                return message;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        
         public async Task<bool> LookForSourceChange(int id, string values)
         {
             var subdomainVersion = _subdomainUnitOfWork.SubdomainVersionRepository.GetById(id);

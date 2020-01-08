@@ -40,6 +40,16 @@ namespace DRCDesigner.DataAccess.Concrete
             return DrcCardContext.Subdomains.Where(m => m.Id == subdomainId).Select(m => m.SubdomainName).SingleOrDefault();
         }
 
+        public string GetSubdomainNamespace(int subdomainId)
+        {
+            return DrcCardContext.Subdomains.Where(m => m.Id == subdomainId).Select(m => m.SubdomainNamespace).SingleOrDefault();
+        }
+
+        public Subdomain GetSubdomainWithAllVersionsWithSubdomainName(string subdomainName)
+        {
+            return DrcCardContext.Subdomains.Where(m => m.SubdomainName.ToLower().Replace(" ","").Equals(subdomainName.ToLower())).Include(n=>n.SubdomainVersions).SingleOrDefault();
+        }
+
 
         //public void Remove(Subdomain subdomain)
         //{

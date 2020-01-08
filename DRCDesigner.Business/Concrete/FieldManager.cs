@@ -35,9 +35,12 @@ namespace DRCDesigner.Business.Concrete
             switch (field.Type)
             {
                 case FieldType.String:
+                    field.Nullable = false;
                     field.MeasurementType = null;
-                    field.MaxValue = 0;
-                    field.MaxValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.EnumValues = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
@@ -49,101 +52,99 @@ namespace DRCDesigner.Business.Concrete
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
+                    field.ItemName = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
 
               
                 case FieldType.Bool:
-                    field.Unique = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.Enum:
-                    field.DefaultValue = null;
+
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.Time:
                 case FieldType.DateTime:
                 case FieldType.DateOnly:
-                    field.DefaultValue = null;
-                    field.Unique = false;
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.RelationElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
+                    field.Nullable = false;
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.DefaultValue = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.ComplexTypeElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
-                    field.CreditCard = false;
-                    field.RegularExpression = null;
-                    field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
-                    newFieldBusinessModel.CollaborationId = null;
-                    _drcUnitOfWork.FieldRepository.Add(field);
-                    break;
-
+                case FieldType.DynamicField:
                 case FieldType.DetailElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
+                    field.Nullable = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.DefaultValue = null;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
 
                 case FieldType.Measurement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.Nullable = false;
                     newFieldBusinessModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
@@ -188,12 +189,16 @@ namespace DRCDesigner.Business.Concrete
             _drcUnitOfWork.FieldRepository.Remove(oldField);
             var field = _mapper.Map<Field>(fieldViewModel);
 
+            //   fieldViewModel
             switch (field.Type)
             {
                 case FieldType.String:
+                    field.Nullable = false;
                     field.MeasurementType = null;
-                    field.MaxValue = 0;
-                    field.MaxValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.EnumValues = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
@@ -205,106 +210,105 @@ namespace DRCDesigner.Business.Concrete
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
+                    field.ItemName = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
 
 
                 case FieldType.Bool:
-                    field.Unique = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.Enum:
-                    field.DefaultValue = null;
+
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.Time:
                 case FieldType.DateTime:
                 case FieldType.DateOnly:
-                    field.DefaultValue = null;
-                    field.Unique = false;
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.RelationElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
+                    field.Nullable = false;
                     field.CreditCard = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.DefaultValue = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
                 case FieldType.ComplexTypeElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
-                    field.CreditCard = false;
-                    field.RegularExpression = null;
-                    field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
-                    fieldViewModel.CollaborationId = null;
-                    _drcUnitOfWork.FieldRepository.Add(field);
-                    break;
-
+                case FieldType.DynamicField:
                 case FieldType.DetailElement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
+                    field.Nullable = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
                     field.MeasurementType = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.DefaultValue = null;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
 
                 case FieldType.Measurement:
-                    field.DefaultValue = null;
-                    field.Unique = false;
                     field.CreditCard = false;
+                    field.Unique = false;
                     field.RegularExpression = null;
-                    field.MaxLength = 0;
-                    field.MinLength = 0;
-                    field.MaxValue = 0;
-                    field.MinValue = 0;
+                    field.ItemName = null;
+                    field.MaxValue = null;
+                    field.MaxValue = null;
+                    field.MaxLength = null;
+                    field.MinLength = null;
+                    field.EnumValues = null;
+                    field.Nullable = false;
                     fieldViewModel.CollaborationId = null;
                     _drcUnitOfWork.FieldRepository.Add(field);
                     break;
             }
-          
+
+
             if (fieldViewModel.CollaborationId != null)
             {
                 var collaborationId = (int)fieldViewModel.CollaborationId;

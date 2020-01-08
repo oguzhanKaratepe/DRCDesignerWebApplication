@@ -9,8 +9,7 @@
 
 @(Html.DevExtreme().DataGrid<ResponsibilityViewModel>()
                     .ID("gridContainer")
-
-                    .Editing(editing =>
+      .Editing(editing =>
                     {
                         editing.Mode(GridEditMode.Popup).Popup(p => p
                                            .Title("Responsibility Details")
@@ -70,7 +69,7 @@
                                 .ValueExpr("Id")
                             ).Caption("Collaborations");
                           
-                                                columns.AddFor(m => m.PriorityOrder).Width(110);
+                                                columns.AddFor(m => m.PriorityOrder).Width(110).SortIndex(0);
 
                                                 columns.AddFor(m => m.ResponsibilityDefinition).Visible(false).Width(0);
                                                 columns.AddFor(m => m.ShadowCardIds).Visible(false).Width(0);

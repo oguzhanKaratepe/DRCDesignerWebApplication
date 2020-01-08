@@ -48,6 +48,12 @@ namespace DRCDesigner.DataAccess.Concrete
             return  DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId).AsNoTracking().ToList();
         }
 
+        public IEnumerable<DrcCard> getAllShadowCardsBySubdomainVersion(int subdomainVersionId)
+        {
+            return DrcCardContext.DrcCards.Where(s => s.SubdomainVersionId == subdomainVersionId && s.MainCardId!=null).AsNoTracking().ToList();
+
+        }
+
         //public void Remove(DrcCard drcCard)
             //{
             //    var existingCard = DrcCardContext.DrcCards

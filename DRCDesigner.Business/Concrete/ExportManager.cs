@@ -1,241 +1,582 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
+using AutoMapper;
 using DRCDesigner.Business.Abstract;
-using DRCDesigner.Business.BusinessModels;
-using DRCDesigner.DataAccess.Abstract;
+using DRCDesigner.Business.Helpers;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.Entities.Concrete;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Configuration;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace DRCDesigner.Business.Concrete
 {
     public class ExportManager : IExportService
     {
-        private readonly IDrcCardService _drcCardService;
-        private readonly ISubdomainUnitOfWork _subdomainUnitOfWork;
+        private IDrcUnitOfWork _drcUnitOfWork;
+        private IMapper _mapper;
+        private IConfiguration _configuration;
+        private IHostingEnvironment _env { get; }
 
-        public ExportManager(IDrcCardService drcCardService,ISubdomainUnitOfWork subdomainUnitOfWork)
+        private RoslynDocumentCodeGenerator _documentGenerator;
+        public ExportManager(IDrcUnitOfWork drcUnitOfWork, IConfiguration configuration, IMapper mapper, IHostingEnvironment env)
         {
-            _drcCardService = drcCardService;
-            _subdomainUnitOfWork = subdomainUnitOfWork;
+            _documentGenerator = new RoslynDocumentCodeGenerator();
+            _drcUnitOfWork = drcUnitOfWork;
+            _configuration = configuration;
+            _mapper = mapper;
+            _env = env;
         }
-        
-        public async void ExportSubdomainVersionAsHtmlFile(int versionId)
+
+        public byte[] generateSubdomainVersionDocuments(int subdomainVersionId)
         {
 
-            var version = _subdomainUnitOfWork.SubdomainVersionRepository.GetById(versionId);
-            var SubdomainName= _subdomainUnitOfWork.SubdomainRepository.GetSubdomainName(version.SubdomainId);
+            var subdomainVersion =
+                _drcUnitOfWork.SubdomainVersionRepository.GetSubdomainVersionCardsWithId(subdomainVersionId);
+            var subdomainNamespace =
+                _drcUnitOfWork.SubdomainRepository.GetSubdomainNamespace(subdomainVersion.SubdomainId);
 
-            IList<DrcCardBusinessModel> drcCards = await _drcCardService.GetAllDrcCards(versionId);
 
-            string fileName = SubdomainName + "_" + version.VersionNumber + ".html";
-            using (FileStream fs = new FileStream(fileName, FileMode.Create))
+
+            string file = _env.WebRootPath + "\\temp.zip"; // in production, would probably want to use a GUID as the file name so that it is unique
+            System.IO.FileStream fs = System.IO.File.Create(file);
+
+            using (ZipOutputStream zip = new ZipOutputStream(fs))
             {
-                using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
+
+                byte[] data;
+                ZipEntry entry;
+                foreach (var drcCard in subdomainVersion.DRCards)
                 {
-                   
-                    w.WriteLine("<html>");
-                    w.WriteLine("<head>");
-                    w.WriteLine("<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
-                    w.WriteLine("</head>");
-                    w.WriteLine("<body style=\"background-color: #222;\">");
-                    w.WriteLine("<style>    " +
-                                ".bg-info {" +
-                                "        background: #9c27b0 !important;" +
-                                "    }"+
-                                
-                                ".caption {" +
-                                "        font-size: 16px;" +
-                                "        padding-bottom: 3px;" +
-                                "        padding-left: 10px;" +
-                                "    }" +
-                                "    .container-fluid .card {" +
-                                "        max-width: 500px;" +
-                                "    }" +
-                                "    .container-fluid {" +
-                                "        display: flex;" +
-                                "        flex-wrap: wrap;" +
-                                "        min-height: 300px;" +
-                                "    }" +
-                                "        .container-fluid .card .card-footer {" +
-                                "            display: flex;" +
-                                "            flex-flow: row wrap;" +
-                                "        }" +
-                                "        .container-fluid .card-deck {" +
-                                "            display: flex;" +
-                                "            align-items: flex-start;" +
-                                "            align-content: flex-start;" +
-                                "            flex-wrap: wrap;" +
-                                "        }" +
-                                "        .container-fluid .card .card-body {" +
-                                "            display: flex;" +
-                                "            flex-flow: row wrap;" +
-                                "            flex-direction: column;" +
-                                "        }" +
-                                "        .container-fluid .card .card-footer > div {" +
-                                "            margin: 5px;" +
-                                "        }" +
-                                "    .card-header {" +
-                                "        height: 60px;" +
-                                "    }" +
-                                "   " +
-                                "    .btn-circle {" +
-                                "        width: 50px;" +
-                                "        height: 50px;" +
-                                "        line-height: 45px;" +
-                                "        text-align: center;" +
-                                "        padding: 0;" +
-                                "        border-radius: 50%;" +
-                                "    }" +
-                                "    .card.border-secondary.mb-3.mr-2.mt-2:hover {" +
-                                "        border-color: red !important;" +
-                                "    }" +
-                                "    .btn-circle-sm {" +
-                                "        width: 40px;" +
-                                "        height: 40px;" +
-                                "        line-height: 35px;" +
-                                "        font-size: 1.5rem;" +
-                                "        font-weight: bold;" +
-                                "    }" +
-                                "    .btn-circle-xsm {" +
-                                "        width: 35px;" +
-                                "        height: 35px;" +
-                                "        line-height: 30px;" +
-                                "        font-size: 1.5rem;" +
-                                "        font-weight: bold;" +
-                                "    }" +
-                                "    .container-fluid {" +
-                                "        padding-left: 0px;" +
-                                "        padding-right: 0px;" +
-                                "    }" +
-                                "    #shadowcardheader {" +
-                                "        background-color: #808080;" +
-                                "    }" +
-                                "</style>");
-                    w.WriteLine(" <div class=\"justify-content-center pt-5\"> <h3 class=\"  text-light border-bottom rounded-bottom mr-5\">&nbsp;" + SubdomainName +" : "+ version.VersionNumber+"&nbsp; </h3></div>");
-                    w.WriteLine(" <div class=\"flex-container d-flex flex-wrap ml-3 align-items-baseline \">");
-                    CreateDocumentHtml(w, drcCards);
-                    w.WriteLine("</div>");
-                    w.WriteLine("</body>");
-                    w.WriteLine("</html>");
-                    w.Close();
-                    
+                    string classString = GenerateClassString(drcCard, subdomainNamespace);
+                    string filename = "I" + camelCaseDocumentName(drcCard.DrcCardName) + ".cs";
+                    byte[] byteArray = Encoding.UTF8.GetBytes(classString);
+                    data = byteArray.ToArray();
+
+                    entry = new ZipEntry(filename);
+                    entry.DateTime = System.DateTime.Now;
+                    zip.PutNextEntry(entry);
+                    zip.Write(data, 0, data.Length);
                 }
+                zip.Finish();
+                zip.Close();
+
+                fs.Dispose(); // must dispose of it
+                fs = System.IO.File.OpenRead(file); // must re-open the zip file
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                fs.Close();
+                System.IO.File.Delete(file);
+
+                return data;
+
             }
         }
 
-        public void CreateDocumentHtml(StreamWriter w, IEnumerable<DrcCardBusinessModel> drcCards)
+
+
+        private string GenerateClassString(DrcCard document, string subdomainNamespace)
         {
-          
-            foreach (var drcCard in drcCards)
+            //full document template with required libraries
+            var fullDocument = _documentGenerator.newFullDocumentTemplate();
+
+            // Create a namespace: (namespace CodeGeneration)
+            var @namespace = _documentGenerator.generateNamespaceDeclaration(subdomainNamespace);
+
+
+            //Document Fields
+            var documentFields = _drcUnitOfWork.FieldRepository.getDrcCardAllFieldsWithoutTracking(document.Id).ToList();
+
+            var mainDocument = generateMainDocumentCode(document, documentFields);
+
+
+            var firstFields = cloneList(documentFields);
+            var fieldlistlayer = cloneListByReshapingFieldAttribute(firstFields, 1);
+            List<InterfaceDeclarationSyntax> firstLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer);
+
+            var secondFields = cloneList(documentFields);
+            var fieldlistlayer2 = cloneListByReshapingFieldAttribute(secondFields, 2);
+            List<InterfaceDeclarationSyntax> secondLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer2);
+
+
+            var thirdFields = cloneList(documentFields);
+            var fieldlistlayer3 = cloneListByReshapingFieldAttribute(thirdFields, 3);
+            List<InterfaceDeclarationSyntax> thirdLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer3);
+
+
+            var fourthFields = cloneList(documentFields);
+            var fieldlistlayer4 = cloneListByReshapingFieldAttribute(fourthFields, 4);
+            List<InterfaceDeclarationSyntax> fourthLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer4);
+
+
+            var fieldsForEnumGeneration = cloneList(documentFields);
+            //I am planning to store enum first then I will compare that enums. Because same enum type could be use 
+            List<EnumDeclarationSyntax> documentEnumsFromAllLayers = generateEnums(fieldsForEnumGeneration);
+
+
+
+
+            // Add the classes to the namespace.
+            @namespace = @namespace.AddMembers(mainDocument);
+
+            foreach (var child in firstLevelChildsOfMainDocument)
             {
-                var responsibilities = _drcCardService.getListOfDrcCardResponsibilities(drcCard.Id);
-                var authorizations = _drcCardService.getListOfDrcCardAuthorizations(drcCard.Id);
-                var fields = _drcCardService.getListOfDrcCardFields(drcCard.Id,drcCard.MainCardId);
-                w.WriteLine(" <div class=\"card border-secondary  mb-3 mr-2 mt-2 d-flex\" style=\"min-width: 28rem; max-width: 36rem;\">");
-                if (drcCard.MainCardId != null)
+                @namespace = @namespace.AddMembers(child);
+            }
+            foreach (var child in secondLevelChildsOfMainDocument)
+            {
+                @namespace = @namespace.AddMembers(child);
+            }
+            foreach (var child in thirdLevelChildsOfMainDocument)
+            {
+                @namespace = @namespace.AddMembers(child);
+            }
+            foreach (var child in fourthLevelChildsOfMainDocument)
+            {
+                @namespace = @namespace.AddMembers(child);
+            }
+            foreach (var child in documentEnumsFromAllLayers)
+            {
+                @namespace = @namespace.AddMembers(child);
+            }
+
+
+
+
+            fullDocument = fullDocument.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(@namespace));
+            return fullDocument.NormalizeWhitespace().ToFullString();
+        }
+
+        private InterfaceDeclarationSyntax generateMainDocumentCode(DrcCard document, IEnumerable<Field> drcCardFields)
+        {
+
+            InterfaceDeclarationSyntax classDeclaration;
+            //  Create a class: (class Order)
+            if (document.MainCardId == null)
+            {
+                classDeclaration = _documentGenerator.generateDocumentInterface(document.DrcCardName, document.Definition);
+            }
+            else
+            {
+                string shadowDocumentName = camelCaseDocumentName(document.DrcCardName);
+                classDeclaration = _documentGenerator.generateShadowDocumentInterface(document.DrcCardName, shadowDocumentName, document.Definition);
+            }
+
+            var fields = documentPropertiesWithAllAttributes(drcCardFields);
+
+
+            foreach (var property in fields)
+            {
+                // Add the field, the property and method to the class.
+                classDeclaration = classDeclaration.AddMembers(property);
+            }
+
+            return classDeclaration;
+        }
+
+        private IEnumerable<PropertyDeclarationSyntax> documentPropertiesWithAllAttributes(IEnumerable<Field> drcCardFields)
+        {
+            List<PropertyDeclarationSyntax> properties = new List<PropertyDeclarationSyntax>();
+
+
+            foreach (var field in drcCardFields)
+            {
+
+
+                if (!field.AttributeName.Contains("."))
                 {
-                    w.WriteLine("<div id=\"shadowcardheader\" class=\"card-header  text-light border-secondary d-flex flex-column pb-5\">");
-                    w.WriteLine("   <div> <h5 class=\"align-self-start\">" + drcCard.DrcCardName + "</h5> <a class=\"align-self-start p-0\">" + drcCard.SourceDrcCardPath + "</a></div>");
-                    w.WriteLine("</div>");
-                    w.WriteLine("  <div class=\"card-body text-dark bg-light row m-0 p-0\" style=\"min-height: 11rem\">");
-                    CreateResponsibilityHtml(w, responsibilities);
-                    w.WriteLine("<div class=\"bg-light border-right border-left rounded-left rounded-right col col-3 pr-0 pl-0\">" + "</div>"); //authorization area
-                    CreateCollaborationHtml(w, responsibilities, fields);
-                    w.WriteLine("</div>");
-                    w.WriteLine(" <div id=\"card-footer\" class=\"border-top rounded-top card-footer  bg-transparent d-flex flex-wrap \" style=\"min-height: 4rem\">");
-                    CreateFieldHtml(w, fields);
-                    w.WriteLine("</div>");
-                  
+
+                    if (field.Type == FieldType.ComplexTypeElement || field.Type == FieldType.DetailElement ||
+                        field.Type == FieldType.DynamicField || field.Type == FieldType.Enum)
+                    {
+                        var fieldbase = _documentGenerator.generateDocumentDexmoPropertiesDeclarationWithAttributes(field);
+
+                        properties.Add(fieldbase);
+
+                    }
+                    else if (field.Type == FieldType.RelationElement)
+                    {
+
+                        var mainProperty = _documentGenerator.generateDocumentRelationPropertyDeclarationWithAttributes(field);
+                        //this is string key of relation element
+                        properties.Add(mainProperty);
+
+                        //there is a bridge table for relation documents
+                        var documentFieldRelation = _drcUnitOfWork.DrcCardFieldRepository.GetFieldCollaborationByFieldId(field.Id);
+                        if (documentFieldRelation != null)
+                        {
+                            var relatedDocumentName = _drcUnitOfWork.DrcCardRepository.getDrcCardName(documentFieldRelation.DrcCardId);
+                            var camelCaseRelatedDocumentName = camelCaseDocumentName(relatedDocumentName);
+
+                            var relationKey = _documentGenerator.generateDocumentRelationForeignKeyPropertyDeclaration(field, camelCaseRelatedDocumentName);
+
+                            properties.Add(relationKey);
+                        }
+
+                    }
+                    else
+                    {
+                        var fieldbase = _documentGenerator.generateDocumentPropertiesDeclarationWithAttributes(field);
+                        properties.Add(fieldbase);
+
+                    }
+                }
+            }
+
+            _drcUnitOfWork.Complete();
+            return properties;
+        }
+
+
+        // child interfaces of main document 
+        private List<InterfaceDeclarationSyntax> generateChildInterfacesCodeOfMainDocument(List<Field> drcCardFields)
+        {
+
+
+            List<InterfaceDeclarationSyntax> innerInterfaces = new List<InterfaceDeclarationSyntax>();
+
+
+
+            var fieldDictionary = new Dictionary<Field, List<Field>>();
+
+            List<Field> inside = new List<Field>();
+            foreach (var outfield in drcCardFields)
+            {
+                string[] words = outfield.AttributeName.Split(".");
+                if (words.Length < 2 && (outfield.Type == FieldType.ComplexTypeElement || outfield.Type == FieldType.DetailElement || outfield.Type == FieldType.DynamicField))
+                {
+                    foreach (var field in drcCardFields)
+                    {
+
+                        string[] indsideString = field.AttributeName.Split(".");
+
+                        if (indsideString.Length > 1)
+                        {
+                            string outField = _documentGenerator.cleanDetailElementName(words[0]);
+                            string innerField = _documentGenerator.cleanDetailElementName(indsideString[0]);
+                            if (innerField.Equals(outField, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                inside.Add(field);
+                            }
+                        }
+
+                    }
+                    fieldDictionary.Add(outfield, inside);
+                    inside = new List<Field>();
+                }
+
+            }
+
+
+            //until here my aim was grouping fields with one "."
+            //now I am going to start creating documents
+
+            foreach (var firstLayerInterface in fieldDictionary)
+            {//this equals one of inner class interface
+
+                var intercaseDeclarationSyntax = _documentGenerator.generateDetailComplexDynamicDocumentInterface(firstLayerInterface.Key.ItemName, firstLayerInterface.Key);
+
+
+                var fields = new List<PropertyDeclarationSyntax>();
+                if (firstLayerInterface.Value != null)
+                {
+                    //values and their layer
+                    var cleanedfieldAtributeNamesFromDots = getFieldAttributeNamesWithoutDotsByTheirLayer(firstLayerInterface.Value);
+
+                    //fields And their layers 
+                    fields = documentPropertiesWithAllAttributes(cleanedfieldAtributeNamesFromDots).ToList();
+                }
+
+
+                foreach (var property in fields)
+                {
+                    // Add the field, the property and method to the class.
+                    intercaseDeclarationSyntax = intercaseDeclarationSyntax.AddMembers(property);
+                }
+
+                innerInterfaces.Add(intercaseDeclarationSyntax);
+            }
+
+
+            return innerInterfaces;
+        }
+
+        //this method will find all enums in a document and will return list of enum class syntax
+        private List<EnumDeclarationSyntax> generateEnums(List<Field> fields)
+        {
+
+            List<EnumDeclarationSyntax> enumDeclarationSyntaxes = new List<EnumDeclarationSyntax>();
+
+            List<Field> enumFields = new List<Field>();
+
+            foreach (var field in fields)
+            {
+                if (field.Type == FieldType.Enum)
+                {
+                    enumFields.Add(field);
+                }
+            }
+
+            List<Field> uniqueEnumFields = getUniqueEnumFields(enumFields);
+
+
+            foreach (var enumField in uniqueEnumFields)
+            {
+                var enumDeclaretion = _documentGenerator.generateEnumDeclaration(enumField);
+
+                List<EnumMemberDeclarationSyntax> propertiesOfEnum = getPropertiesOfEnum(enumField.EnumValues);
+
+                foreach (var enumProp in propertiesOfEnum)
+                {
+                    enumDeclaretion = enumDeclaretion.AddMembers(enumProp);
+                }
+
+                enumDeclarationSyntaxes.Add(enumDeclaretion);
+            }
+
+            return enumDeclarationSyntaxes;
+        }
+
+        private List<Field> getUniqueEnumFields(List<Field> enumFields)
+        {
+            Dictionary<string, List<Field>> reusedEnumsDictinary = new Dictionary<string, List<Field>>(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var enumField in enumFields)
+            {
+                if (!reusedEnumsDictinary.Any(a => a.Key.ToLower().Trim().Contains(enumField.ItemName.ToLower().Trim())))
+                {
+                    var sameFields = new List<Field>();
+                    sameFields.Add(enumField);
+                    reusedEnumsDictinary.Add(enumField.ItemName.ToLower().Trim(), sameFields);
                 }
                 else
                 {
-                    w.WriteLine("  <div class=\"card-header  text-light bg-info border-secondary d-flex flex-wrap justify-content-between \">");
-                    w.WriteLine("  <div class=\"h5 d-flex\">" + drcCard.DrcCardName + "</div>");
-                    w.WriteLine("</div>");
-                    w.WriteLine("  <div class=\"card-body text-dark bg-light row m-0 p-0\" style=\"min-height: 11rem\">");
-                    CreateResponsibilityHtml(w, responsibilities);
-                    CreateAuthorizationHtml(w, authorizations);
-                    CreateCollaborationHtml(w, responsibilities, fields);
-                    w.WriteLine("</div>");
-                    w.WriteLine(" <div id=\"card-footer\" class=\"border-top rounded-top card-footer  bg-transparent d-flex flex-wrap \" style=\"min-height: 4rem\">");
-                    CreateFieldHtml(w, fields);
-                    w.WriteLine("</div>");
-                   
+                    reusedEnumsDictinary[enumField.ItemName.Trim().ToLower()].Add(enumField);
                 }
-
-                w.WriteLine("</div>");
             }
-           
+
+            List<Field> uniqueFields = new List<Field>();
+            foreach (var enumDictionary in reusedEnumsDictinary)
+            {
+                Field newEnumField = enumDictionary.Value.First();
+
+                var uniqueProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var field in enumDictionary.Value)
+                {
+                    if (field.EnumValues != null)
+                    {
+                        List<String> enumProperties=field.EnumValues.Split(",").ToList();
+
+                        foreach (var property in enumProperties)
+                        {
+                            if (!String.IsNullOrEmpty(property))
+                            {
+                                uniqueProperties.Add(property);
+                            }
+                          
+                        }
+                    }
+                    
+                }
+                newEnumField.EnumValues = string.Join(",", uniqueProperties);
+                uniqueFields.Add(newEnumField);
+            }
+
+            return uniqueFields;
         }
 
-        private void CreateCollaborationHtml(StreamWriter w, IList<ResponsibilityBusinessModel> responsibilities, IList<FieldBusinessModel> fields)
+        private List<EnumMemberDeclarationSyntax> getPropertiesOfEnum(string enumValues)
         {
-            w.WriteLine("<div class=\"bg-light col col-4 pl-0 pr-0\">");
-            var cardContainer = new List<DrcCard>();
-            foreach(var responsibility in responsibilities)
+
+
+            List<EnumMemberDeclarationSyntax> enumMembers = new List<EnumMemberDeclarationSyntax>();
+
+            if (enumValues != null)
             {
-                foreach (var collaboration in responsibility.ResponsibilityCollaborationCards)
+                string[] enumStrings = enumValues.Split(",");
+
+                int value = 1;
+                foreach (var enumMember in enumStrings)
                 {
-                    if (!cardContainer.Contains(collaboration))
+                    var member = _documentGenerator.generateEnumProperty(enumMember, value, enumStrings.Length);
+
+                    value++;
+                    enumMembers.Add(member);
+                }
+            }
+
+            return enumMembers;
+        }
+
+
+
+        //fields and their interface layer
+        private List<Field> getFieldAttributeNamesWithoutDotsByTheirLayer(List<Field> values)
+        {
+            List<Field> cleanFields = new List<Field>();
+
+            foreach (var field in values)
+            {
+                string[] words = field.AttributeName.Split(".");
+                field.AttributeName = words[1];
+                cleanFields.Add(field);
+            }
+
+
+            return cleanFields;
+        }
+
+
+
+        private List<Field> cloneList(List<Field> fields)
+        {
+            List<Field> newlist = new List<Field>();
+            foreach (var oldField in fields)
+            {
+                newlist.Add(_mapper.Map<Field>(oldField));
+
+            }
+
+            return newlist;
+        }
+
+        //In this method I am going to deep clone field list after that I will cut left side of each field atribute name to find inner complex types
+        // by doing this I will process creating interfaces from top to inner ones
+        //Lines[]                                                             -> complex
+        //   Lines[].Id                                                          ->int                   1. seviye
+        //   Lines[].ComplexA                                             -> complex
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //   ComplexA                                             ->complex
+        //   ComplexA.Age                                       -> int                                      2. Seviye
+        //    ComplexA.ComplexB                           -> complex
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //    ComplexB                                      -> complex
+        //    ComplexB.Value                                -> int                                           3. seviye
+        private List<Field> cloneListByReshapingFieldAttribute(List<Field> fields, int layer)
+        {
+            List<Field> newlist = new List<Field>();
+            foreach (var oldField in fields)
+            {
+                string newAttribute = AttributeReshaperForLayer(oldField, layer);
+                if (newAttribute != null)
+                {
+                    oldField.AttributeName = newAttribute;
+                    newlist.Add(oldField);
+                }
+
+
+            }
+
+            return newlist;
+        }
+        public string AttributeReshaperForLayer(Field oldfield, int layer)
+        {
+            string newAttributeName = "";
+            string[] fieldStrings = oldfield.AttributeName.Split(".");
+            if (layer != 1)
+            {
+                if (fieldStrings.Length == layer &&
+                    !(oldfield.Type == FieldType.ComplexTypeElement || oldfield.Type == FieldType.DetailElement || oldfield.Type == FieldType.DetailElement))
+                {
+                    return null;
+                }
+            }
+
+            if (fieldStrings.Length < layer + 2)
+            {
+                string[] returnString = new string[2];
+                int index = 0;
+                for (int i = layer - 1; i < fieldStrings.Length; i++)
+                {
+                    returnString[index] = fieldStrings[i];
+                    if (index < 1)
                     {
-                        cardContainer.Add(collaboration);
+                        index++;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 
-            }
-            foreach(var field in fields)
-            {
-                if (!cardContainer.Contains(field.CollaborationCard) && field.CollaborationCard != null)
+                if (returnString[0] != null && returnString[1] != null)
                 {
-                    if (!field.IsShadowField)
-                    {
-                        cardContainer.Add(field.CollaborationCard);
-                    }
-
+                    return returnString[0] + "." + returnString[1];
                 }
+                else if (returnString[0] != null && returnString[1] == null)
+                {
+                    return returnString[0];
+                }
+                else
+                {
+                    return null;
+                }
+
+
+
             }
-            foreach (var card in cardContainer)
+            else
             {
-                w.WriteLine("<div class=\"p-1 text-dark border-bottom rounded-bottom\">"+card.DrcCardName+"</div>");
+                return null;
+
             }
-           
-            w.WriteLine("</div>");
+
         }
 
-        private  void CreateResponsibilityHtml(StreamWriter w, IList<ResponsibilityBusinessModel> listOfDrcCardResponsibilities)
+        private string camelCaseDocumentName(string className)
         {
-            w.WriteLine("<div class=\"bd-highlight bg-light col col-5 pr-0 pl-0\">");
-            foreach (var responsibility in listOfDrcCardResponsibilities)
-            {
-                w.WriteLine("<div class=\"border-bottom rounded-bottom m-0 p-0\">");
-                w.WriteLine(" <div class=\"text-truncate pl-2 pr-2 pt-1 pb-1 text-dark\">" + responsibility.Title + "<br></div>");
-                w.WriteLine("</div>");
-            }
-            w.WriteLine("</div>");
-        }
-        private void CreateAuthorizationHtml(StreamWriter w, IList<AuthorizationBusinessModel> listOfDrcCardAuthorizations)
-        {
+            TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+            className = className.ToLower();
+            className = myTI.ToTitleCase(className);
+            className = className.Replace(" ", "").Trim();
 
-            w.WriteLine("<div class=\"bg-light border-right border-left rounded-left rounded-right col col-3 pr-0 pl-0\">");
-            foreach (var authorization in listOfDrcCardAuthorizations)
-            {
-                w.WriteLine("<div>");
-                w.WriteLine(" <div class=\"p-1 text-dark\">" + authorization.OperationName + "()</div>");
-                w.WriteLine("</div>");
-            }
-            w.WriteLine("</div>");
+            return className;
         }
-        private void CreateFieldHtml(StreamWriter w, IList<FieldBusinessModel> listOfDrcCardFields)
-        {
 
-            foreach(var field in listOfDrcCardFields)
+        public string[] generateSubdomainVersionReportHtml(int subdomainId)
+        {
+            //example url
+            //https://localhost:44347/DrcCards/presentation?subdomain=warehousemanagement&version=0.2.0
+
+            string url;
+            string subdomainName;
+            SubdomainVersion subdomainVersion;
+            string[] returnString = new string[2];
+            try
             {
-                w.WriteLine("<div class=\" text-dark border-left border-right border-bottom rounded-bottom rounded-right p-1 m-1 \">"+field.AttributeName+ "</div>");
+                var webAddress = _configuration.GetSection("WebSettings").GetSection("DrcDesignerWebAddress").Value;
+
+                subdomainVersion = _drcUnitOfWork.SubdomainVersionRepository.GetById(subdomainId);
+                subdomainName = _drcUnitOfWork.SubdomainRepository.GetSubdomainName(subdomainVersion.SubdomainId);
+                subdomainName = subdomainName.ToLower().Replace(" ", "");
+
+                url = webAddress + "DrcCards/presentation?subdomain=" + subdomainName + "&version=" + subdomainVersion.VersionNumber;
+
+
+
+
+                returnString[0] = camelCaseDocumentName(subdomainName) + "_Version_" + subdomainVersion.VersionNumber;
+
+                string htmlPage = _documentGenerator.generateHtmlPage(url);
+
+                returnString[1] = htmlPage;
             }
+            catch (Exception e)
+            {
+                // ignored
+            }
+
+            return returnString;
         }
     }
 }

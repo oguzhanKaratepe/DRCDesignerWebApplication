@@ -57,7 +57,7 @@ namespace DRCDesigner.DataAccess.Concrete
 
         public DrcCardField GetFieldCollaborationByFieldId(int id)
         {
-            return DrcCardContext.DrcCardFields.Where(a => a.FieldId == id && a.IsRelationCollaboration).SingleOrDefault();
+            return DrcCardContext.DrcCardFields.SingleOrDefault(a => a.FieldId == id && a.IsRelationCollaboration);
         }
     }
 }

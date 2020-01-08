@@ -10,13 +10,13 @@ namespace DRCDesignerWebApplication.ViewModels
         {
             DrcCardViewModes = new List<DrcCardViewModel>();
             DrcCardViewModel = new DrcCardViewModel();
-            SubdomainMenuItems=new List<SubdomainMenuItemBusinessModel>();
+          //  SubdomainMenuItems=new List<SubdomainMenuItemBusinessModel>();
         }
         public IList<DrcCardViewModel> DrcCardViewModes { get; set; }
         public DrcCardViewModel DrcCardViewModel { get; set; }
-        public IEnumerable<SubdomainMenuItemBusinessModel> SubdomainMenuItems { get; set; }
+      //  public IEnumerable<SubdomainMenuItemBusinessModel> SubdomainMenuItems { get; set; }
         public int TotalSubdomainSize { get; set; }
-
+        public string ErrorMessage { get; set; }
         public bool IsSubdomainVersionLocked { get; set; }
         public String PresentationHeader { get; set; }
      
