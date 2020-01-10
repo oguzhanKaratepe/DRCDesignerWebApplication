@@ -26,7 +26,7 @@ namespace DRCDesigner.Business.BusinessModels
 
         [DisplayName("Version number")]
         public string VersionNumber { get; set; }
-
+        public string DexmoVersion { get; set; }
         public bool EditLock { get; set; }
 
         public int[] ReferencedVersionIds { get; set; }

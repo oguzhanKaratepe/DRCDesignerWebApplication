@@ -37,10 +37,21 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> Get(int cardId, DataSourceLoadOptions loadOptions)
         {
-            var fieldBusinessModels =await _fieldService.GetCardFields(cardId);
+            try
+            {
+
+                var fieldBusinessModels =await _fieldService.GetCardFields(cardId);
             var fieldViewModels= _mapper.Map<IList<FieldBusinessModel>, IList<FieldViewModel>>(fieldBusinessModels);
 
             return DataSourceLoader.Load(fieldViewModels, loadOptions);
+            
+            }
+            catch (Exception e)
+            {
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = 0;
+                return View("ErrorPage");
+            }
         }
 
         [HttpPost]

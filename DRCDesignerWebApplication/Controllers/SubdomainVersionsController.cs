@@ -32,26 +32,50 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpGet]
         public async Task<object> Get(int id, DataSourceLoadOptions loadOptions)
         {
-            IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
-            var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersions(id);
-            foreach (var BModelVersion in subdomainVersions)
+          
+            try
             {
-                var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
-                viewModels.Add(viewmodel);
+                IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
+                var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersions(id);
+                foreach (var BModelVersion in subdomainVersions)
+                {
+                    var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
+                    viewModels.Add(viewmodel);
+                }
+                return DataSourceLoader.Load(viewModels, loadOptions);
+
             }
-            return DataSourceLoader.Load(viewModels, loadOptions);
+            catch (Exception e)
+            {
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = id;
+                return View("ErrorPage");
+            }
+
         }
         [HttpGet]
         public async Task<object> GetSourceOptions(int id, int subdomainId, DataSourceLoadOptions loadOptions)
         {
-            IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
-            var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersionSourceOptions(subdomainId,id);
-            foreach (var BModelVersion in subdomainVersions)
+            
+            try
             {
-                var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
-                viewModels.Add(viewmodel);
+                IList<SubdomainVersionViewModel> viewModels = new List<SubdomainVersionViewModel>();
+                var subdomainVersions = await _subdomainVersionService.GetAllSubdomainVersionSourceOptions(subdomainId, id);
+                foreach (var BModelVersion in subdomainVersions)
+                {
+                    var viewmodel = _mapper.Map<SubdomainVersionViewModel>(BModelVersion);
+                    viewModels.Add(viewmodel);
+                }
+                return DataSourceLoader.Load(viewModels, loadOptions);
+
             }
-            return DataSourceLoader.Load(viewModels, loadOptions);
+            catch (Exception e)
+            {
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = subdomainId;
+                return View("ErrorPage");
+            }
+
         }
         [HttpGet]
         public async Task<object> GetReferenceOptions(int id, DataSourceLoadOptions loadOptions)
@@ -59,6 +83,8 @@ namespace DRCDesignerWebApplication.Controllers
             var refenceOptions = await _subdomainVersionService.GetReferenceOptions(id);
             return DataSourceLoader.Load(refenceOptions, loadOptions);
         }
+
+   
         [HttpGet]
         public async Task<object> GetVersionExportOptions(DataSourceLoadOptions loadOptions)
         {
@@ -68,51 +94,74 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string values)
         {
-            if (ModelState.IsValid)
+    
+            try
             {
-                var CheckSourceLocked = _subdomainVersionService.Add(values);
-
-                if (!await CheckSourceLocked)
+                if (ModelState.IsValid)
                 {
-                    return BadRequest("Your source version locked. Please unlock source before create new one!");
-                }
-            }
-            else
-                return BadRequest(ModelState.GetFullErrorMessage());
+                    var CheckSourceLocked = _subdomainVersionService.Add(values);
 
-            return Ok();
+                    if (!await CheckSourceLocked)
+                    {
+                        return BadRequest("Your source version locked. Please unlock source before create new one!");
+                    }
+                }
+                else
+                {
+                    return BadRequest(ModelState.GetFullErrorMessage());
+                }
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = 0;
+                return View("ErrorPage");
+            }
+
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(int key, string values)
         {
-            if (ModelState.IsValid)
+ 
+            try
             {
-                var SourceChange= await _subdomainVersionService.LookForSourceChange(key,values);
-
-                if (!SourceChange)
+                if (ModelState.IsValid)
                 {
-                    return BadRequest("You are not allowed to change source version!!");
+                    var SourceChange = await _subdomainVersionService.LookForSourceChange(key, values);
+
+                    if (!SourceChange)
+                    {
+                        return BadRequest("You are not allowed to change source version!!");
+                    }
+
+                    var checkDeletedRefereceUse = await _subdomainVersionService.CheckDeletedReferenceUse(key, values);
+
+                    if (!String.IsNullOrEmpty(checkDeletedRefereceUse))
+                    {
+                        return BadRequest(checkDeletedRefereceUse);
+                    }
+
+                    bool update = await _subdomainVersionService.Update(values, key);
+                    if (update)
+                    {
+                        return Ok();
+                    }
                 }
-
-                var checkDeletedRefereceUse=await _subdomainVersionService.CheckDeletedReferenceUse(key,values);
-
-                if (!String.IsNullOrEmpty(checkDeletedRefereceUse))
+                else
                 {
-                    return BadRequest(checkDeletedRefereceUse);
+                    return BadRequest("state is not valid");
                 }
-
-                bool update= await _subdomainVersionService.Update(values, key);
-                if (update)
-                 {
-                     return Ok();
-                 }
+                return Ok();
             }
-
-            else
-                return BadRequest("state is not valid");
-
-            return Ok();
+            catch (Exception e)
+            {
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = 0;
+                return View("ErrorPage");
+            }
         }
 
         [HttpDelete]

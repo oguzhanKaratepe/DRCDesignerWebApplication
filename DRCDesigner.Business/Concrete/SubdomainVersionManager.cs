@@ -51,6 +51,15 @@ namespace DRCDesigner.Business.Concrete
                 else
                 {
                     sourceSubdomainVersion.EditLock = true;
+
+                    if (subdomainVersionModel.DexmoVersion == null)
+                    {
+                        if (sourceSubdomainVersion.DexmoVersion != null)
+                        {
+                            subdomainVersionModel.DexmoVersion = sourceSubdomainVersion.DexmoVersion;
+                        }
+                    }
+               
                     foreach (var sourceReference in sourceSubdomainVersion.ReferencedSubdomainVersions)
                     {
                         var newReference = new SubdomainVersionReference();
@@ -467,10 +476,12 @@ namespace DRCDesigner.Business.Concrete
             {
                 var sourceDocument = _drcUnitOfWork.DrcCardRepository.GetById((int)shadowDocument.MainCardId);
 
-                if (deletedReferences.Contains(sourceDocument.SubdomainVersionId))
+                if (sourceDocument != null && deletedReferences.Contains(sourceDocument.SubdomainVersionId))
                 {
                     documentsThatHasRelations.Add(sourceDocument);
+                  
                 }
+             
 
             }
             _subdomainUnitOfWork.Complete();

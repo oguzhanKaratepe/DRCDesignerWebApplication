@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using AutoMapper;
 using DRCDesigner.Business.Abstract;
+using DRCDesigner.Business.BusinessModels;
 using DRCDesigner.Business.Helpers;
 using DRCDesigner.DataAccess.UnitOfWork.Abstract;
 using DRCDesigner.Entities.Concrete;
@@ -97,54 +98,62 @@ namespace DRCDesigner.Business.Concrete
             //Document Fields
             var documentFields = _drcUnitOfWork.FieldRepository.getDrcCardAllFieldsWithoutTracking(document.Id).ToList();
 
+            //I need also bring source document fields for shadow documents
+            if (document.MainCardId != null)
+            {
+                var shadowSourceFields = _drcUnitOfWork.FieldRepository.getDrcCardAllFieldsWithoutTracking((int)document.MainCardId).ToList();
+
+                foreach (var shadowField in shadowSourceFields)
+                {
+                    documentFields.Add(shadowField);
+                }
+            }
+
             var mainDocument = generateMainDocumentCode(document, documentFields);
 
+            List<Field> allFieldsToGenerateComplexInterfaces=new List<Field>();
 
-            var firstFields = cloneList(documentFields);
-            var fieldlistlayer = cloneListByReshapingFieldAttribute(firstFields, 1);
-            List<InterfaceDeclarationSyntax> firstLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer);
+            int codeGenerationLevelSupport = 12;
+            //codeGenerationLevelSupport means How many level code generation support do we want.
+            //An Field name example:Lines[].DetailLines[].ComplexA.Count=> to generate code for this you need to dig  3 layer  
+            //An Field name example:Lines[].DetailLines[].ComplexA.ComplexB.Details[].ID=> to generate code for this you need to dig 5 layer  
+            for (int i = 1; i < codeGenerationLevelSupport; i++)
+            {
+                var firstFields = cloneList(documentFields);
+                var fieldsForLayer = cloneListByReshapingFieldAttribute(firstFields, i);
 
-            var secondFields = cloneList(documentFields);
-            var fieldlistlayer2 = cloneListByReshapingFieldAttribute(secondFields, 2);
-            List<InterfaceDeclarationSyntax> secondLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer2);
+                //this will stop digging fields deeper
+                if (fieldsForLayer.Count == 0)
+                {
+                    break;
+                }
 
+                foreach (var field in fieldsForLayer)
+                {
+                    allFieldsToGenerateComplexInterfaces.Add(field);
+                }
+            }
 
-            var thirdFields = cloneList(documentFields);
-            var fieldlistlayer3 = cloneListByReshapingFieldAttribute(thirdFields, 3);
-            List<InterfaceDeclarationSyntax> thirdLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer3);
-
-
-            var fourthFields = cloneList(documentFields);
-            var fieldlistlayer4 = cloneListByReshapingFieldAttribute(fourthFields, 4);
-            List<InterfaceDeclarationSyntax> fourthLevelChildsOfMainDocument = generateChildInterfacesCodeOfMainDocument(fieldlistlayer4);
+            //Interfaces that for main document
+            List<InterfaceDeclarationSyntax> childInterfacesOfMainDocument = generateChildInterfacesCodeOfMainDocument(allFieldsToGenerateComplexInterfaces);
 
 
             var fieldsForEnumGeneration = cloneList(documentFields);
+
             //I am planning to store enum first then I will compare that enums. Because same enum type could be use 
             List<EnumDeclarationSyntax> documentEnumsFromAllLayers = generateEnums(fieldsForEnumGeneration);
 
 
 
 
-            // Add the classes to the namespace.
+            // Add the interface classes to the namespace.
             @namespace = @namespace.AddMembers(mainDocument);
 
-            foreach (var child in firstLevelChildsOfMainDocument)
+            foreach (var child in childInterfacesOfMainDocument)
             {
                 @namespace = @namespace.AddMembers(child);
             }
-            foreach (var child in secondLevelChildsOfMainDocument)
-            {
-                @namespace = @namespace.AddMembers(child);
-            }
-            foreach (var child in thirdLevelChildsOfMainDocument)
-            {
-                @namespace = @namespace.AddMembers(child);
-            }
-            foreach (var child in fourthLevelChildsOfMainDocument)
-            {
-                @namespace = @namespace.AddMembers(child);
-            }
+
             foreach (var child in documentEnumsFromAllLayers)
             {
                 @namespace = @namespace.AddMembers(child);
@@ -246,7 +255,7 @@ namespace DRCDesigner.Business.Concrete
             List<InterfaceDeclarationSyntax> innerInterfaces = new List<InterfaceDeclarationSyntax>();
 
 
-
+            //in this fieldDictionary I have duclicates interfaces. 
             var fieldDictionary = new Dictionary<Field, List<Field>>();
 
             List<Field> inside = new List<Field>();
@@ -278,10 +287,13 @@ namespace DRCDesigner.Business.Concrete
             }
 
 
+            //in this fieldDictionary I have duclicates interfaces. So I need to merge these interfaces.
+            var uniqueInterfaces = getUniqueInterfaces(fieldDictionary);
+
             //until here my aim was grouping fields with one "."
             //now I am going to start creating documents
 
-            foreach (var firstLayerInterface in fieldDictionary)
+            foreach (var firstLayerInterface in uniqueInterfaces)
             {//this equals one of inner class interface
 
                 var intercaseDeclarationSyntax = _documentGenerator.generateDetailComplexDynamicDocumentInterface(firstLayerInterface.Key.ItemName, firstLayerInterface.Key);
@@ -309,6 +321,27 @@ namespace DRCDesigner.Business.Concrete
 
 
             return innerInterfaces;
+        }
+
+        private Dictionary<Field, List<Field>> getUniqueInterfaces(Dictionary<Field, List<Field>> fieldDictionary)
+        {
+            Dictionary<Field, List<Field>> uniqueDictionary=new Dictionary<Field, List<Field>>();
+
+            foreach (var interfacekeyValuePair in fieldDictionary)
+            {
+                
+                if (!uniqueDictionary.Keys.Any(c => c.AttributeName.Trim().Equals(interfacekeyValuePair.Key.AttributeName.Trim(),StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    uniqueDictionary.Add(interfacekeyValuePair.Key,interfacekeyValuePair.Value);
+                }
+                else
+                {
+                    //this means It is Dublicated Interface
+                }
+            
+            }
+
+            return uniqueDictionary;
         }
 
         //this method will find all enums in a document and will return list of enum class syntax
@@ -428,8 +461,17 @@ namespace DRCDesigner.Business.Concrete
             foreach (var field in values)
             {
                 string[] words = field.AttributeName.Split(".");
-                field.AttributeName = words[1];
-                cleanFields.Add(field);
+                if (words.Length > 1)
+                {
+                    field.AttributeName = words[1];
+                    cleanFields.Add(field);
+                }
+                else
+                {
+                    field.AttributeName = words[0];
+                    cleanFields.Add(field);
+                }
+              
             }
 
 
@@ -577,6 +619,27 @@ namespace DRCDesigner.Business.Concrete
             }
 
             return returnString;
+        }
+
+
+        public IEnumerable<DexmoVersionBusinessModel> getDexmoVersionOptions()
+        {
+            List<DexmoVersionBusinessModel> versions=new List<DexmoVersionBusinessModel>();
+
+            List<string> versionStrings = _configuration.GetSection("DexmoVersions:Versions").Get<List<string>>();
+
+            int i = 0;
+            foreach (var versionName in versionStrings)
+            {
+                versions.Add(new DexmoVersionBusinessModel()
+                {
+                    Id = i,
+                    DexmoVersion = versionName
+                });
+                i++;
+            }
+
+            return versions;
         }
     }
 }

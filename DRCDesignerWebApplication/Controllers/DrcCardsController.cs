@@ -270,36 +270,42 @@ namespace DRCDesignerWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> MoveCardToDestinationSubdomain([FromBody]DrcCardViewModel drcCardViewModel)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var checkReferences = await _drcCardMoveService.CheckMoveOperationReferenceNeeds(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId);
-
-                if (string.IsNullOrWhiteSpace(checkReferences))
+                if (ModelState.IsValid)
                 {
-                    var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+                    var checkReferences = await _drcCardMoveService.CheckMoveOperationReferenceNeeds(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId);
 
-                    if (result.MoveResultType == MoveResultType.Success)
+                    if (string.IsNullOrWhiteSpace(checkReferences))
                     {
-                        return Ok(result);
-                     
+                        var result = await _drcCardMoveService.MoveCardToDestinationSubdomainAsync(drcCardViewModel.Id, drcCardViewModel.SubdomainVersionId, drcCardViewModel.DrcCardName);
+
+                        if (result.MoveResultType == MoveResultType.Success)
+                        {
+                            return Ok(result);
+                        }
+                        else
+                        {
+                            return BadRequest(result.MoveResultDefinition);
+                        }
                     }
                     else
                     {
-                          return BadRequest(result.MoveResultDefinition);
+                        return BadRequest(checkReferences);
                     }
+
                 }
                 else
                 {
-                    return BadRequest(checkReferences);
+                    return BadRequest("I will add error to here");
                 }
-
-
             }
-            else
+            catch (Exception e)
             {
-                return BadRequest("I will add error to here");
+                ViewData["Message"] = e.Message;
+                ViewData["SubdomainVersionId"] = 0;
+                return View("ErrorPage");
             }
-
         }
 
         public static List<object> GetDeleteBehaviorOptions()

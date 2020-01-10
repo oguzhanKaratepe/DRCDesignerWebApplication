@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using DRCDesigner.Business.Abstract;
 using ICSharpCode.SharpZipLib.Zip;
@@ -84,6 +86,13 @@ namespace DRCDesignerWebApplication.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<object> GetDexmoVersions(DataSourceLoadOptions loadOptions)
+        {
+
+            var DexmoVersions = _exportService.getDexmoVersionOptions();
+            return DataSourceLoader.Load(DexmoVersions, loadOptions);
+        }
 
 
     }
