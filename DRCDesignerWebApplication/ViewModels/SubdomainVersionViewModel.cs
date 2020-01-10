@@ -33,6 +33,7 @@ namespace DRCDesignerWebApplication.ViewModels
 
         [DisplayName("Source Version")]
         public int? SourceVersionId { get; set; }
+        public string DexmoVersion { get; set; }
 
         public int[] ReferencedVersionIds { get; set; }
 

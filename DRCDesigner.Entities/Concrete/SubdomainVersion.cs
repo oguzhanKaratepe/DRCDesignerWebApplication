@@ -32,6 +32,8 @@ namespace DRCDesigner.Entities.Concrete
   
         public int? SourceVersionId { get; set; }
 
+        public string DexmoVersion { get; set;}
+
         public SubdomainVersion SourceSubdomainVersion { get; set; }
 
         [JsonIgnore]

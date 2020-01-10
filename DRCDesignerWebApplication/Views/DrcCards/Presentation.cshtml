@@ -350,6 +350,10 @@ else {
                                                    {
                                                        <h6>Unique</h6>
                                                    }
+                                                   @if (@field.Nullable== true)
+                                                   {
+                                                       <h6>Nullable</h6>
+                                                   }
                                                    @if (@field.MaxLength != null)
                                                    {
                                                        <h6>MaxLength:</h6>

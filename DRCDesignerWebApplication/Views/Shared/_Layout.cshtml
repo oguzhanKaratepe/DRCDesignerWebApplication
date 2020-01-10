@@ -87,25 +87,15 @@
                           )
                           .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
 
-                      //items.Add()
-                      //    .Widget(w => w
-                      //        .Button()
-                      //        .Text("Export Project")
-                      //        .OnClick("exportButton_click")
-
-                      //    )
-                      //    .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                  //items.Add()
+                  //    .Widget(w => w
+                  //        .Button()
+                  //        .Text("Settıngs")
+                  //        .OnClick("settingButton_click")
 
 
-                      items.Add()
-                          .Widget(w => w
-                              .Button()
-                              .Text("Settıngs")
-                              .OnClick("settingButton_click")
-
-
-                          )
-                          .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
+                  //    )
+                  //    .LocateInMenu(ToolbarItemLocateInMenuMode.Always);
                   items.Add()
                           .Template(@<text>
                                 <div class="toolbar-label"><b>DRC</b>Model Designer</div></text>)
@@ -136,8 +126,7 @@
 
                                                         items.Add().Text("Home").Icon("home").Option("path", @Url.Action("Index", "Home"));
                                                         items.Add().Text("Subdomains").Icon("folder").Option("path", @Url.Action("Index", "Subdomains"));
-
-                                                        items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
+                                          items.Add().Text("Cards").Icon("unselectall").Option("path", @Url.Action("Index", "DrcCards"));
 
                                                     })
                                       .KeyExpr("path")
@@ -152,62 +141,12 @@
         </div>
 
 
-        @(Html.DevExtreme().Popup()
-                      .ID("exportHtmlFormPopup")
-                      .ElementAttr("class", "popup")
-                      .Width(500)
-                      .Height(350)
-                      .ShowTitle(true)
-                      .Title("Select subdomain to export?")
-                      .Visible(false)
-                      .DragEnabled(true)
-                      .CloseOnOutsideClick(false)
-              .ShowCloseButton(true))
-
-        @using (Html.DevExtreme().NamedTemplate("exportHtml-popup-template"))
-        {
-
-        @using (Html.BeginForm("CreateOutPutHtml", "Subdomains", FormMethod.Post, new { id = "acx" }))
-        {
-
-          
-                @(Html.DevExtreme().Form<ExportViewModel>
-                     ()
-                     .ID("form")
-                     .ValidationGroup("ExportModel")
-                     .LabelLocation(FormLabelLocation.Top)
-                     .ReadOnly(false)
-                     .ShowColonAfterLabel(true)
-                     .Items(formItems =>
-                     {
-                         formItems.AddSimpleFor(m => m.VersionId).Editor(editor => editor.SelectBox().DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetVersionExportOptions")
-                             .Key("Id"))
-                             .DisplayExpr("VersionNumber")
-                             .ValueExpr("Id").DataSourceOptions(o => o.Group("SubdomainName")).Grouped(true).ElementAttr(new { style = "border-bottom:0.5px solid;" }));
-
-                      
-                     })
-
-                      )
-
-            <div>
-                @(Html.DevExtreme().Button()
-                      .Text("Export")
-                      .ValidationGroup("ExportModel")
-                      .OnClick("exportClick")
-                      .UseSubmitBehavior(false)
-                  
-                      )
-            </div>
-            }
-
-        }
 
         <script type="text/javascript">
 
-            function settingButton_click() {
-                DevExpress.ui.notify("coming soon", "error", 2000);
-            }
+            //function settingButton_click() {
+            //    DevExpress.ui.notify("coming soon", "error", 2000);
+            //}
             function button_clickHandler() {
 
                 var drawer = $("#layout-drawer").dxDrawer("instance");
@@ -227,17 +166,6 @@
 
             }
 
-            function exportClick() {
-
-                $("#acx").submit();
-            }
-
-            function exportButton_click() {
-
-                var popup = $("#exportHtmlFormPopup").dxPopup("instance");
-                popup.option("contentTemplate", $("#exportHtml-popup-template"));
-                popup.show();
-            }
 
 
         </script>

@@ -28,7 +28,7 @@
           .ShowBorders(true)
           .Grouping(m => m.ExpandMode(GridGroupingExpandMode.ButtonClick))
 
-          .Paging(paging => paging.PageSize(4))
+          .Paging(paging => paging.PageSize(5))
           .SearchPanel(searchPanel => searchPanel
               .Visible(true)
               .Width(300)
@@ -61,42 +61,8 @@
                   .Enabled(true)
                   .Template(new TemplateName("gridContainer-details"))
               )
-              .OnToolbarPreparing("toolbar_preparing"))
+              )
 
-    <script>
-        function toolbar_preparing(e) {
-            //var dataGrid = e.component;
-            //e.toolbarOptions.items.unshift({
-            //    location: "before",
-            //    widget: "dxSelectBox",
-
-            //    options: {
-            //        width: 140,
-            //        items: [{
-            //            value: 1,
-            //            text: "Dexmo 0.1.0"
-            //        }, {
-            //            value: 2,
-            //            text: "Dexmo 1.0.0"
-            //        }
-            //            , {
-            //            value: 3,
-            //            text: "Dexmo 2.0.0"
-            //        }
-            //        ],
-            //        displayExpr: "text",
-            //        valueExpr: "value",
-            //        value: 1
-            //        //onValueChanged: function(e) {
-            //        //    dataGrid.clearGrouping();
-            //        //    dataGrid.columnOption(e.value, "groupIndex", 0);
-            //        //    $(".informer .count").text(getGroupCount(e.value));
-            //        //}
-            //    }
-            //});
-        }
-
-    </script>
 
 
 
@@ -149,7 +115,6 @@
                                       if(e.itemData.title=="Roles"){
                                       $("#RoleDataGrid").dxDataGrid("instance").refresh();
                                       }
-
                                       }
                                    </text>)
                   )
@@ -158,32 +123,30 @@
     @using (Html.DevExtreme().NamedTemplate("gridContainer-details-tab1Template"))
     {
 
-        //  <div>"<%- tabExtras.s %>"</div>
-
         @(Html.DevExtreme().DataGrid<SubdomainVersionViewModel>().ID("VersionsDataGrid")
-                                                                                                                       .ColumnAutoWidth(true)
-                                                                                                                       .ShowBorders(true)
-              .OnEditingStart("onEditingStart")  
-              .OnInitNewRow("onInitNewRow")  
+              .ColumnAutoWidth(true)
+              .ShowBorders(true)
+              .OnEditingStart("onEditingStart")
+              .OnInitNewRow("onInitNewRow")
               .SearchPanel(searchPanel => searchPanel
                   .Visible(true)
                   .Width(240)
                   .Placeholder("Search...")
               )
-                                                                                                                      .Editing(editing =>
-                                                                                                                      {
-                                                                                                                          editing.Mode(GridEditMode.Popup)
-                                                                                                                              .AllowUpdating(true)
-                                                                                                                              .AllowAdding(true)
-                                                                                                                              .AllowDeleting(true)
+              .Editing(editing =>
+              {
+                  editing.Mode(GridEditMode.Popup)
+                      .AllowUpdating(true)
+                      .AllowAdding(true)
+                      .AllowDeleting(true)
 
-                                                                                                                              .Popup(p => p
+                      .Popup(p => p
 
-                                                                                                                                  .Title("Version Details")
-                                                                                                                                  .ShowTitle(true).Width(700).Height(415)
-                                                                                                                                  .Position(pos => pos
-                                                                                                                                      .My(HorizontalAlignment.Center, VerticalAlignment.Center)
-                                                                                                                                      .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                          .Title("Version Details")
+                          .ShowTitle(true).Width(700).Height(415)
+                          .Position(pos => pos
+                              .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                              .At(HorizontalAlignment.Center, VerticalAlignment.Center)
                                                                                                                                       .Of(new JS("window"))
                                                                                                                                   )
                                                                                                                               )
@@ -199,12 +162,17 @@
 
                                                                                                                                           groupItems.AddSimple().DataField("VersionNumber");
                                                                                                                                           groupItems.AddSimple().DataField("SourceVersionId");
-                                                                                                                                         
                                                                                                                                           groupItems.AddSimple().DataField("ReferencedVersionIds").Editor(editor => editor.TagBox().DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
                                                                                                                                               .Key("Id").LoadParams(new {id = new JS("tabExtras.id")}))
                                                                                                                                               .DisplayExpr("VersionNumber")
                                                                                                                                               .ValueExpr("Id").DataSourceOptions(o => o.Group("SubdomainName")).Grouped(true).ElementAttr(new {style = "border-bottom:0.5px solid;"}));
 
+                                                                                                                                          groupItems.AddSimple().DataField("DexmoVersion");
+                                                                                                                                          //.Editor(editor => editor.Lookup().DataSource(d => d.Mvc().Controller("SubdomainVersionExport").LoadAction("GetDexmoVersions")
+                                                                                                                                          //    .Key("Id"))
+                                                                                                                                          //.DisplayExpr("VersionNumber")
+                                                                                                                                          //.ValueExpr("VersionNumber")
+                                                                                                                                          //);
                                                                                                                                           groupItems.AddSimple().DataField("EditLock").Editor(editor => editor.Switch()).CssClass("ml-3");
                                                                                                                                       });
 
@@ -212,9 +180,9 @@
                                                                                                                               })
                                                                                                                                   .CustomizeItem("customizeItem")
                                                                                                                           );
-                                                                                                                             editing.UseIcons(true);
+                  editing.UseIcons(true);
 
-                                                                                                                             })
+              })
                                                                                                                                 .Columns(columns =>
                                                                                                                                 {
                                                                                                                                     columns.AddFor(m => m.VersionNumber).SortIndex(0).SortOrder(SortOrder.Desc);
@@ -229,15 +197,20 @@
                                                                                                                                     columns.AddFor(m => m.EditLock).Caption("Lock");
                                                                                                                                     columns.AddFor(m => m.References);
                                                                                                                                     columns.AddFor(m => m.ReferencedVersionIds).Visible(false)
-                                                                                                                                     // .CellTemplate(new JS("customizeRefDisplayText"))
-                                                                                                                                     .Lookup(lookup => lookup
+                                                                                                                                        .Lookup(lookup => lookup
                                                                                                                                    .DataSource(d => d.Mvc().Controller("SubdomainVersions").LoadAction("GetReferenceOptions")
                                                                                                                                      .Key("Id").LoadParams(new { id = new JS("tabExtras.id") }))
                                                                                                                                     .DisplayExpr("VersionNumber")
-                                                                                                                                    .ValueExpr("Id")
+                                                                                                                                            .ValueExpr("Id")
                                                                                                                              )
                                                                                                                                          .Caption("Add Reference");
-                                                                                                                             })
+
+                                                                                                                                    columns.AddFor(m => m.DexmoVersion)
+                                                                                                                                                                                                                                                                                
+                                                                                                                                        .Lookup(l => l.DataSource(d => d.Mvc().Controller("SubdomainVersionExport").LoadAction("GetDexmoVersions"))
+                                                                                                                                            .DisplayExpr("DexmoVersion")
+                                                                                                                                        .ValueExpr("DexmoVersion"));
+                                                                                                                                })
                                                                                                                                    .DataSource(d => d.Mvc()
                                                                                                                                        .Controller("SubdomainVersions")
                                                                                                                                        .LoadAction("Get")
@@ -247,7 +220,7 @@
                                                                                                                                        .Key("Id")
                                                                                                                                        .LoadParams(new { id = new JS("tabExtras.id") })
                                                                           ).OnRowInserting("function(e) {  e.data.SubdomainId = tabExtras.id;}")
-                                                                     
+
 
 
 
@@ -388,20 +361,23 @@
     };
 
 
-    var itemVisible = true;  
+    var SourceVersionItemVisible = true;  
   
     function onInitNewRow(opts) {  
-        itemVisible = true;  
+        SourceVersionItemVisible = true;  
     }  
   
     function onEditingStart(opts) {  
-        itemVisible = false;  
+        SourceVersionItemVisible = false;  
     }  
   
     function customizeItem(item) {  
 
         if (item.dataField == "SourceVersionId") {  
-            item.visible = itemVisible;  
+            item.visible = SourceVersionItemVisible;  
+        } 
+        if (item.dataField == "ReferencedVersionIds") {  
+            item.visible = !SourceVersionItemVisible;  
         }  
     }
 </script>
